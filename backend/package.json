@@ -17,7 +17,9 @@
   "dependencies": {
     "@strapi/plugin-cloud": "5.12.4",
     "@strapi/plugin-users-permissions": "5.12.4",
+    "@strapi/provider-email-nodemailer": "^5.36.1",
     "@strapi/strapi": "5.12.4",
+    "bcryptjs": "^3.0.3",
     "pg": "8.8.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
