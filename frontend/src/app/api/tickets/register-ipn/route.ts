@@ -142,14 +142,14 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors
     console.error("Error in Pesapal IPN registration:", error);
     return NextResponse.json(
       {
         success: false,
         message: `Failed to register IPN with Pesapal: ${
-          error.message || "Unknown error"
+          (error as Error).message || "Unknown error"
         }`,
       },
       { status: 500 }

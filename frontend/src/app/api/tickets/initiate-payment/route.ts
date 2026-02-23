@@ -125,15 +125,16 @@ export async function POST(request: NextRequest) {
       });
       console.log("Auth response status:", authResponse.status);
       console.log("Auth response OK:", authResponse.ok);
-    } catch (authError: any) {
+    } catch (authError: unknown) {
+      const err = authError as Record<string, unknown>;
       console.error("Error fetching auth token:", {
-        message: authError.message,
-        cause: authError.cause
-          ? JSON.stringify(authError.cause)
+        message: (err as Error).message,
+        cause: err.cause
+          ? JSON.stringify(err.cause)
           : "No cause provided",
-        stack: authError.stack,
+        stack: (err as Error).stack,
       });
-      throw new Error(`Direct auth request failed: ${authError.message}`);
+      throw new Error(`Direct auth request failed: ${(err as Error).message}`);
     }
 
     const authData = await authResponse.json();
@@ -204,26 +205,28 @@ export async function POST(request: NextRequest) {
       });
       console.log("Order submission response status:", orderResponse.status);
       console.log("Order submission response OK:", orderResponse.ok);
-    } catch (pesapalError: any) {
+    } catch (pesapalError: unknown) {
+      const err = pesapalError as Record<string, unknown>;
       console.error("Pesapal API request failed:", {
-        message: pesapalError.message,
-        cause: pesapalError.cause
-          ? JSON.stringify(pesapalError.cause)
+        message: (err as Error).message,
+        cause: err.cause
+          ? JSON.stringify(err.cause)
           : "No cause provided",
-        code: pesapalError.code || "No error code",
-        stack: pesapalError.stack,
+        code: err.code || "No error code",
+        stack: (err as Error).stack,
       });
 
-      if (pesapalError.cause) {
+      if (err.cause) {
+        const cause = err.cause as Record<string, unknown>;
         console.error("Error cause details:", {
-          name: pesapalError.cause.name,
-          code: pesapalError.cause.code,
-          library: pesapalError.cause.library,
-          reason: pesapalError.cause.reason,
+          name: cause.name,
+          code: cause.code,
+          library: cause.library,
+          reason: cause.reason,
         });
       }
 
-      throw new Error(`Pesapal API request failed: ${pesapalError.message}`);
+      throw new Error(`Pesapal API request failed: ${(err as Error).message}`);
     }
 
     const orderData = await orderResponse.json();
@@ -258,17 +261,17 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors
     console.error("Error initiating payment:", error);
-    console.log("Error stack:", error.stack);
+    console.log("Error stack:", (error as Error).stack);
     console.log("==== PAYMENT INITIATION FAILED WITH EXCEPTION ====");
 
     return NextResponse.json(
       {
         success: false,
         message: `Failed to initiate payment: ${
-          error.message || "Unknown error"
+          (error as Error).message || "Unknown error"
         }`,
       },
       { status: 500 }

@@ -15,17 +15,13 @@
       "type": "string",
       "required": true
     },
-    "ShortDescription": {
-      "type": "text",
-      "required": true
-    },
-    "Location": {
-      "type": "string",
-      "required": true
-    },
     "Slug": {
       "type": "uid",
       "targetField": "Title",
+      "required": true
+    },
+    "ShortDescription": {
+      "type": "text",
       "required": true
     },
     "Description": {
@@ -33,32 +29,16 @@
       "required": true
     },
     "StartDate": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     },
     "EndDate": {
-      "type": "datetime"
-    },
-    "RoomNumber": {
-      "type": "string"
-    },
-    "Enumeration": {
-      "type": "enumeration",
-      "enum": [
-        "Conference",
-        "Workshop",
-        "Networking",
-        "Exhibition",
-        "Panel"
-      ],
+      "type": "datetime",
       "required": true
     },
-    "FeaturedEvent": {
-      "type": "boolean",
-      "default": false,
+    "Location": {
+      "type": "string",
       "required": true
-    },
-    "MaxAttendees": {
-      "type": "integer"
     },
     "Image": {
       "type": "media",
@@ -68,11 +48,58 @@
         "images"
       ]
     },
-    "speakers": {
+    "Banner": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Category": {
+      "type": "enumeration",
+      "enum": [
+        "conference",
+        "festival",
+        "expo",
+        "summit",
+        "workshop-series",
+        "meetup",
+        "webinar"
+      ],
+      "required": true
+    },
+    "accessMode": {
+      "type": "enumeration",
+      "enum": [
+        "open",
+        "registration",
+        "ticketed"
+      ],
+      "required": true,
+      "default": "open"
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "Status": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "published",
+        "live",
+        "completed",
+        "cancelled"
+      ],
+      "required": true,
+      "default": "draft"
+    },
+    "sessions": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::speaker.speaker",
-      "inversedBy": "events"
+      "relation": "oneToMany",
+      "target": "api::session.session",
+      "mappedBy": "event"
     },
     "sponsors": {
       "type": "relation",
@@ -80,17 +107,41 @@
       "target": "api::sponsor.sponsor",
       "mappedBy": "events"
     },
+    "ticketCategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::ticket-category.ticket-category",
+      "mappedBy": "allowedEvents"
+    },
     "venue": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::venue.venue",
       "inversedBy": "events"
     },
-    "ticketCategories": {
+    "organizers": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::ticket-category.ticket-category",
-      "mappedBy": "allowedEvents"
+      "target": "api::organizer.organizer",
+      "inversedBy": "events"
+    },
+    "organizations": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::organization.organization",
+      "inversedBy": "events"
+    },
+    "faqs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::faq.faq",
+      "mappedBy": "event"
+    },
+    "contactMessages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::contact-message.contact-message",
+      "mappedBy": "event"
     }
   }
 }

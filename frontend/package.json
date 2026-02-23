@@ -20,7 +20,8 @@
     "pdfmake": "^0.2.18",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-fast-marquee": "^1.6.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

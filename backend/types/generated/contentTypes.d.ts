@@ -385,6 +385,7 @@ export interface ApiContactMessageContactMessage
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
+    event: Schema.Attribute.Relation<'manyToOne', 'api::event.event'>;
     inquiryType: Schema.Attribute.Enumeration<
       ['general', 'sponsorship', 'exhibitor', 'speaker', 'media', 'ticket']
     >;
@@ -406,6 +407,45 @@ export interface ApiContactMessageContactMessage
   };
 }
 
+export interface ApiEntitlementEntitlement extends Struct.CollectionTypeSchema {
+  collectionName: 'entitlements';
+  info: {
+    description: '';
+    displayName: 'Entitlement';
+    pluralName: 'entitlements';
+    singularName: 'entitlement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    event: Schema.Attribute.Relation<'manyToOne', 'api::event.event'>;
+    grantedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::entitlement.entitlement'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    session: Schema.Attribute.Relation<'manyToOne', 'api::session.session'>;
+    source: Schema.Attribute.Enumeration<
+      ['ticket_purchase', 'free_registration', 'manual_grant', 'speaker']
+    >;
+    ticket: Schema.Attribute.Relation<'manyToOne', 'api::ticket.ticket'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
@@ -418,31 +458,59 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    accessMode: Schema.Attribute.Enumeration<
+      ['open', 'registration', 'ticketed']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'open'>;
+    Banner: Schema.Attribute.Media<'images'>;
+    Category: Schema.Attribute.Enumeration<
+      [
+        'conference',
+        'festival',
+        'expo',
+        'summit',
+        'workshop-series',
+        'meetup',
+        'webinar',
+      ]
+    > &
+      Schema.Attribute.Required;
+    contactMessages: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-message.contact-message'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     Description: Schema.Attribute.Blocks & Schema.Attribute.Required;
-    EndDate: Schema.Attribute.DateTime;
-    Enumeration: Schema.Attribute.Enumeration<
-      ['Conference', 'Workshop', 'Networking', 'Exhibition', 'Panel']
-    > &
-      Schema.Attribute.Required;
-    FeaturedEvent: Schema.Attribute.Boolean &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<false>;
+    EndDate: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    faqs: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'>;
     Image: Schema.Attribute.Media<'images'>;
+    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::event.event'> &
       Schema.Attribute.Private;
     Location: Schema.Attribute.String & Schema.Attribute.Required;
-    MaxAttendees: Schema.Attribute.Integer;
+    organizations: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::organization.organization'
+    >;
+    organizers: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::organizer.organizer'
+    >;
     publishedAt: Schema.Attribute.DateTime;
-    RoomNumber: Schema.Attribute.String;
+    sessions: Schema.Attribute.Relation<'oneToMany', 'api::session.session'>;
     ShortDescription: Schema.Attribute.Text & Schema.Attribute.Required;
     Slug: Schema.Attribute.UID<'Title'> & Schema.Attribute.Required;
-    speakers: Schema.Attribute.Relation<'manyToMany', 'api::speaker.speaker'>;
     sponsors: Schema.Attribute.Relation<'manyToMany', 'api::sponsor.sponsor'>;
-    StartDate: Schema.Attribute.DateTime;
+    StartDate: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    Status: Schema.Attribute.Enumeration<
+      ['draft', 'published', 'live', 'completed', 'cancelled']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'draft'>;
     ticketCategories: Schema.Attribute.Relation<
       'manyToMany',
       'api::ticket-category.ticket-category'
@@ -507,6 +575,7 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    event: Schema.Attribute.Relation<'manyToOne', 'api::event.event'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'> &
       Schema.Attribute.Private;
@@ -535,6 +604,7 @@ export interface ApiOrganizationOrganization
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     Description: Schema.Attribute.Blocks;
+    events: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -572,6 +642,7 @@ export interface ApiOrganizerOrganizer extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    events: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
     Image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     ImagePlaceholder: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -591,6 +662,112 @@ export interface ApiOrganizerOrganizer extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiOtpVerificationOtpVerification
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'otp_verifications';
+  info: {
+    description: '';
+    displayName: 'OTP Verification';
+    pluralName: 'otp-verifications';
+    singularName: 'otp-verification';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attempts: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<0>;
+    codeHash: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::otp-verification.otp-verification'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    verified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+  };
+}
+
+export interface ApiSessionSession extends Struct.CollectionTypeSchema {
+  collectionName: 'sessions';
+  info: {
+    description: '';
+    displayName: 'Session';
+    pluralName: 'sessions';
+    singularName: 'session';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    accessOverride: Schema.Attribute.Enumeration<
+      ['open', 'registration', 'ticketed']
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dailyRoomName: Schema.Attribute.String;
+    dailyRoomUrl: Schema.Attribute.String;
+    Description: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    EndDate: Schema.Attribute.DateTime;
+    event: Schema.Attribute.Relation<'manyToOne', 'api::event.event'>;
+    FeaturedSession: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    format: Schema.Attribute.Enumeration<['in-person', 'virtual', 'hybrid']> &
+      Schema.Attribute.DefaultTo<'in-person'>;
+    Image: Schema.Attribute.Media<'images'>;
+    isRecorded: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session.session'
+    > &
+      Schema.Attribute.Private;
+    Location: Schema.Attribute.String;
+    MaxAttendees: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    recordingUrl: Schema.Attribute.String;
+    RoomNumber: Schema.Attribute.String;
+    SessionType: Schema.Attribute.Enumeration<
+      [
+        'Conference',
+        'Workshop',
+        'Networking',
+        'Exhibition',
+        'Panel',
+        'Keynote',
+        'Breakout',
+        'Fireside',
+      ]
+    >;
+    ShortDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    Slug: Schema.Attribute.UID<'Title'> & Schema.Attribute.Required;
+    SortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    speakers: Schema.Attribute.Relation<'manyToMany', 'api::speaker.speaker'>;
+    StartDate: Schema.Attribute.DateTime;
+    streamType: Schema.Attribute.Enumeration<['call', 'livestream']>;
+    ticketCategories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::ticket-category.ticket-category'
+    >;
+    Title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    venue: Schema.Attribute.Relation<'manyToOne', 'api::venue.venue'>;
+  };
+}
+
 export interface ApiSpeakerSpeaker extends Struct.CollectionTypeSchema {
   collectionName: 'speakers';
   info: {
@@ -607,7 +784,6 @@ export interface ApiSpeakerSpeaker extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    events: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
     Featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     LinkedIn: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -622,6 +798,7 @@ export interface ApiSpeakerSpeaker extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'Current Org'>;
     ProfileImage: Schema.Attribute.Media<'images'>;
     publishedAt: Schema.Attribute.DateTime;
+    sessions: Schema.Attribute.Relation<'manyToMany', 'api::session.session'>;
     ShortBio: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'A short description about the speaker'>;
@@ -689,6 +866,10 @@ export interface ApiTicketCategoryTicketCategory
   };
   attributes: {
     allowedEvents: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
+    allowedSessions: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::session.session'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -696,6 +877,9 @@ export interface ApiTicketCategoryTicketCategory
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'UGX'>;
     description: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    grantsFullEventAccess: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
     isActive: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<true>;
@@ -847,6 +1031,7 @@ export interface ApiVenueVenue extends Struct.CollectionTypeSchema {
     Name: Schema.Attribute.String & Schema.Attribute.Required;
     Phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    sessions: Schema.Attribute.Relation<'oneToMany', 'api::session.session'>;
     Slug: Schema.Attribute.UID<'Name'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1313,44 +1498,28 @@ export interface PluginUsersPermissionsUser
     timestamps: true;
   };
   attributes: {
-    blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
-    confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    adminEvents: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    email: Schema.Attribute.Email &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        minLength: 6;
-      }>;
+    entitlements: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::entitlement.entitlement'
+    >;
+    isEventAdmin: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
-    password: Schema.Attribute.Password &
-      Schema.Attribute.Private &
-      Schema.Attribute.SetMinMaxLength<{
-        minLength: 6;
-      }>;
-    provider: Schema.Attribute.String;
+    name: Schema.Attribute.String;
+    organization: Schema.Attribute.String;
+    phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
-    role: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.role'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    username: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetMinMaxLength<{
-        minLength: 3;
-      }>;
   };
 }
 
@@ -1365,11 +1534,14 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
+      'api::entitlement.entitlement': ApiEntitlementEntitlement;
       'api::event.event': ApiEventEvent;
       'api::faq-category.faq-category': ApiFaqCategoryFaqCategory;
       'api::faq.faq': ApiFaqFaq;
       'api::organization.organization': ApiOrganizationOrganization;
       'api::organizer.organizer': ApiOrganizerOrganizer;
+      'api::otp-verification.otp-verification': ApiOtpVerificationOtpVerification;
+      'api::session.session': ApiSessionSession;
       'api::speaker.speaker': ApiSpeakerSpeaker;
       'api::sponsor.sponsor': ApiSponsorSponsor;
       'api::ticket-category.ticket-category': ApiTicketCategoryTicketCategory;

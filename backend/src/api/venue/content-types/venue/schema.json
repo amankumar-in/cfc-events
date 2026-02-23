@@ -68,6 +68,12 @@
     },
     "Address": {
       "type": "text"
+    },
+    "sessions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::session.session",
+      "mappedBy": "venue"
     }
   }
 }

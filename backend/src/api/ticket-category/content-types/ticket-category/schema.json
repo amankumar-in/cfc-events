@@ -65,6 +65,17 @@
       "relation": "manyToMany",
       "target": "api::event.event",
       "inversedBy": "ticketCategories"
+    },
+    "grantsFullEventAccess": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "allowedSessions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::session.session",
+      "inversedBy": "ticketCategories"
     }
   }
 }

@@ -1,0 +1,137 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sessions",
+  "info": {
+    "singularName": "session",
+    "pluralName": "sessions",
+    "displayName": "Session",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "ShortDescription": {
+      "type": "text",
+      "required": true
+    },
+    "Location": {
+      "type": "string"
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Title",
+      "required": true
+    },
+    "Description": {
+      "type": "blocks",
+      "required": true
+    },
+    "StartDate": {
+      "type": "datetime"
+    },
+    "EndDate": {
+      "type": "datetime"
+    },
+    "RoomNumber": {
+      "type": "string"
+    },
+    "SessionType": {
+      "type": "enumeration",
+      "enum": [
+        "Conference",
+        "Workshop",
+        "Networking",
+        "Exhibition",
+        "Panel",
+        "Keynote",
+        "Breakout",
+        "Fireside"
+      ]
+    },
+    "FeaturedSession": {
+      "type": "boolean",
+      "default": false
+    },
+    "MaxAttendees": {
+      "type": "integer"
+    },
+    "SortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "format": {
+      "type": "enumeration",
+      "enum": [
+        "in-person",
+        "virtual",
+        "hybrid"
+      ],
+      "default": "in-person"
+    },
+    "streamType": {
+      "type": "enumeration",
+      "enum": [
+        "call",
+        "livestream"
+      ]
+    },
+    "accessOverride": {
+      "type": "enumeration",
+      "enum": [
+        "open",
+        "registration",
+        "ticketed"
+      ]
+    },
+    "isRecorded": {
+      "type": "boolean",
+      "default": false
+    },
+    "recordingUrl": {
+      "type": "string"
+    },
+    "dailyRoomName": {
+      "type": "string"
+    },
+    "dailyRoomUrl": {
+      "type": "string"
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "sessions"
+    },
+    "speakers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::speaker.speaker",
+      "inversedBy": "sessions"
+    },
+    "venue": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::venue.venue",
+      "inversedBy": "sessions"
+    },
+    "ticketCategories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::ticket-category.ticket-category",
+      "mappedBy": "allowedSessions"
+    }
+  }
+}

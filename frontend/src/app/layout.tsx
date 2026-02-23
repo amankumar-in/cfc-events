@@ -1,26 +1,28 @@
-// frontend/src/app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/lib/react-query-provider";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import SiteLayout from "@/components/layout/SiteLayout";
+import { ActiveEventProvider } from "@/components/layout/ActiveEventContext";
 import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "UNITE - Uganda Next Investment & Trade Expo 2025",
+  title: "CFC Events - Multi-Event Platform",
   description:
-    "Showcasing trade partnerships and International Collaboration in Uganda",
+    "Discover and participate in events, conferences, and sessions across the platform.",
   keywords: [
-    "Uganda",
-    "Investment",
-    "Trade Expo",
-    "International Collaboration",
+    "Events",
+    "Conferences",
+    "Sessions",
+    "Virtual Events",
+    "Livestream",
   ],
   viewport: "width=device-width, initial-scale=1",
   appleWebApp: {
-    title: "UNITE 2025",
+    title: "CFC Events",
     capable: true,
     statusBarStyle: "default",
   },
@@ -29,43 +31,21 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: "UNITE - Uganda Next Investment & Trade Expo 2025",
+    title: "CFC Events - Multi-Event Platform",
     description:
-      "Showcasing trade partnerships and International Collaboration in Uganda",
+      "Discover and participate in events, conferences, and sessions across the platform.",
     type: "website",
-    siteName: "UNITE 2025",
-    images: [
-      {
-        url: "https://unite-backend-gg5m.onrender.com/uploads/og_image1_eb1ac92835.jpg",
-        width: 1200,
-        height: 630,
-        alt: "UNITE 2025 - Uganda Next Investment & Trade Expo",
-      },
-    ],
-    locale: "en_US",
+    siteName: "CFC Events",
   },
   twitter: {
     card: "summary_large_image",
-    title: "UNITE - Uganda Next Investment & Trade Expo 2025",
+    title: "CFC Events - Multi-Event Platform",
     description:
-      "Showcasing trade partnerships and International Collaboration in Uganda",
-    images: [
-      {
-        url: "https://unite-backend-gg5m.onrender.com/uploads/og_image2_f4440ac129.jpg",
-        width: 1200,
-        height: 600,
-        alt: "UNITE 2025 - Uganda Next Investment & Trade Expo",
-      },
-    ],
-    creator: "@uniteexpo",
-    site: "@uniteexpo",
+      "Discover and participate in events, conferences, and sessions across the platform.",
   },
   robots: {
     index: true,
     follow: true,
-  },
-  alternates: {
-    canonical: "https://ugandanext.com",
   },
 };
 
@@ -79,7 +59,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ReactQueryProvider>
-            <SiteLayout>{children}</SiteLayout>
+            <AuthProvider>
+              <ActiveEventProvider>
+                <SiteLayout>{children}</SiteLayout>
+              </ActiveEventProvider>
+            </AuthProvider>
           </ReactQueryProvider>
         </ThemeProvider>
       </body>

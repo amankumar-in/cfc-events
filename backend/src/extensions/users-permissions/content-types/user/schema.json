@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "up_users",
+  "info": {
+    "name": "user",
+    "description": "",
+    "singularName": "user",
+    "pluralName": "users",
+    "displayName": "User"
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "organization": {
+      "type": "string"
+    },
+    "isEventAdmin": {
+      "type": "boolean",
+      "default": false
+    },
+    "entitlements": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::entitlement.entitlement"
+    },
+    "adminEvents": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::event.event"
+    }
+  }
+}

@@ -60,10 +60,10 @@
     "Website": {
       "type": "string"
     },
-    "events": {
+    "sessions": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::event.event",
+      "target": "api::session.session",
       "mappedBy": "speakers"
     },
     "SortOrder": {

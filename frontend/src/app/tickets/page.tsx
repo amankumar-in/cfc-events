@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { fetchAPI } from "@/lib/api/api-config";
 import { Button } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Chip";
 
 interface TicketCategory {
   id: number;
   documentId: string;
   name: string;
-  description: any[];
+  description: Record<string, unknown>[];
   price: number;
   currency: string;
   validFrom: string;
@@ -22,7 +20,7 @@ interface TicketCategory {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  allowedEvents: any[];
+  allowedEvents: Record<string, unknown>[];
 }
 
 export default function TicketsPage() {
@@ -65,15 +63,15 @@ export default function TicketsPage() {
   };
 
   // Helper function to render rich text description
-  const renderDescription = (description: any[]) => {
+  const renderDescription = (description: Record<string, unknown>[]) => {
     if (!description || !Array.isArray(description)) return null;
 
     return description.map((block, blockIndex) => {
       if (block.type === "paragraph") {
         return (
           <p key={blockIndex} className="mb-2">
-            {block.children?.map((child: any, childIndex: number) => (
-              <span key={childIndex}>{child.text}</span>
+            {(block.children as Record<string, unknown>[])?.map((child: Record<string, unknown>, childIndex: number) => (
+              <span key={childIndex}>{child.text as string}</span>
             ))}
           </p>
         );
@@ -87,10 +85,10 @@ export default function TicketsPage() {
                 : "list-disc ml-5"
             }
           >
-            {block.children?.map((item: any, itemIndex: number) => (
+            {(block.children as Record<string, unknown>[])?.map((item: Record<string, unknown>, itemIndex: number) => (
               <li key={itemIndex}>
-                {item.children?.map((child: any, childIndex: number) => (
-                  <span key={childIndex}>{child.text}</span>
+                {(item.children as Record<string, unknown>[])?.map((child: Record<string, unknown>, childIndex: number) => (
+                  <span key={childIndex}>{child.text as string}</span>
                 ))}
               </li>
             ))}
@@ -131,7 +129,7 @@ function HeroSection() {
               UNITE Expo 2025 Tickets
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Secure your place at Uganda's premier investment and trade expo
+              Secure your place at Uganda&apos;s premier investment and trade expo
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" href="#tickets">
@@ -202,7 +200,7 @@ function TicketsSection({
   loading: boolean;
   error: string | null;
   formatCurrency: (amount: number, currency: string) => string;
-  renderDescription: (description: any[]) => React.ReactNode;
+  renderDescription: (description: Record<string, unknown>[]) => React.ReactNode;
 }) {
   return (
     <section
@@ -387,8 +385,8 @@ function FAQsSection() {
         </div>
 
         <div className="text-center mt-8">
-          <Button variant="primary" buttonType="outline" href="/about/faq">
-            View All FAQs
+          <Button variant="primary" buttonType="outline" href="/events">
+            Browse Events
           </Button>
         </div>
       </div>
@@ -422,7 +420,7 @@ function GroupRegistrationSection() {
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
               Coming with a team of 5 or more? Contact us for special group
               rates and custom packages that can be tailored to your
-              organization's needs.
+              organization&apos;s needs.
             </p>
             <Button variant="primary" href="/contact">
               Contact for Group Bookings

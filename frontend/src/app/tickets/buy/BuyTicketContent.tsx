@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { fetchAPI } from "@/lib/api/api-config";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
@@ -12,7 +11,7 @@ interface TicketCategory {
   id: number;
   documentId: string;
   name: string;
-  description: any[];
+  description: Record<string, unknown>[];
   price: number;
   currency: string;
   validFrom: string;
@@ -349,9 +348,9 @@ export default function BuyTicketContent() {
       } else {
         throw new Error("Failed to create purchase record");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error in payment process:", err);
-      setError(`Payment process failed: ${err.message || "Unknown error"}`);
+      setError(`Payment process failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsSubmitting(false);
     }

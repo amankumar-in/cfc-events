@@ -14,23 +14,34 @@ export const getStrapiURL = (path = "") => {
 };
 
 // Function to get API response with error handling
-export async function fetchAPI(path: string, options = {}) {
-  const defaultOptions = {
+export async function fetchAPI(path: string, options: RequestInit = {}) {
+  const defaultOptions: RequestInit = {
     headers: {
       "Content-Type": "application/json",
     },
   };
 
-  const mergedOptions = {
+  const mergedOptions: RequestInit = {
     ...defaultOptions,
     ...options,
+    headers: {
+      ...defaultOptions.headers as Record<string, string>,
+      ...(options.headers as Record<string, string>),
+    },
   };
 
   const requestUrl = getStrapiURL(`/api${path}`);
-  console.log("Fetching from URL:", requestUrl);
 
   try {
-    const response = await fetch(requestUrl, mergedOptions);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    const response = await fetch(requestUrl, {
+      ...mergedOptions,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
 
     if (!response.ok) {
       console.error(
@@ -44,7 +55,20 @@ export async function fetchAPI(path: string, options = {}) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching API:", error);
+    console.error("Error fetching API:", requestUrl, error);
     throw error;
   }
+}
+
+// Authenticated fetch - injects JWT from localStorage
+export async function fetchAPIWithAuth(path: string, options: RequestInit = {}) {
+  const token = typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options.headers as Record<string, string>),
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return fetchAPI(path, { ...options, headers });
 }

@@ -88,8 +88,8 @@ export async function POST(request: NextRequest) {
         } else {
           console.log(`Update failed with URL: ${url}`, updateResult);
         }
-      } catch (error: any) {
-        console.error(`Error with URL ${url}:`, error.message);
+      } catch (error: unknown) {
+        console.error(`Error with URL ${url}:`, (error as Error).message);
       }
     }
 
@@ -111,13 +111,13 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in test update:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: `Test update failed: ${error.message || "Unknown error"}`,
+        message: `Test update failed: ${(error as Error).message || "Unknown error"}`,
       },
       { status: 500 }
     );

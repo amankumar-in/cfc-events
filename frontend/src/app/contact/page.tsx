@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Chip";
 
 // Define contact form state type
 interface ContactFormState {
@@ -99,9 +97,9 @@ export default function ContactPage() {
       }, 5000);
 
       console.log("Form submitted successfully:", result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setSubmitError(
-        error.message ||
+        (error instanceof Error ? error.message : null) ||
           "There was a problem submitting your form. Please try again."
       );
       console.error("Form submission error:", error);
@@ -435,7 +433,7 @@ function ContactFormSection({
                       Message sent successfully
                     </h3>
                     <p className="mt-2 text-sm">
-                      Thank you for contacting us. We'll get back to you
+                      Thank you for contacting us. We&apos;ll get back to you
                       shortly.
                     </p>
                   </div>
@@ -873,8 +871,8 @@ function FAQTeaserSection() {
           Find answers to commonly asked questions about the expo, registration,
           venues, and more.
         </p>
-        <Button variant="primary" size="lg" href="/about/faq">
-          View FAQs
+        <Button variant="primary" size="lg" href="/events">
+          Browse Events
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="ml-2 h-5 w-5"

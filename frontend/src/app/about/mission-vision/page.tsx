@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 
@@ -53,7 +51,7 @@ function HeroSection() {
               Our Mission & Vision
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Driving Uganda's economic transformation through strategic
+              Driving Uganda&apos;s economic transformation through strategic
               investments and partnerships
             </p>
           </div>
@@ -102,7 +100,7 @@ function MissionSection() {
             </h2>
             <div className="space-y-6 text-gray-600 dark:text-gray-300">
               <p className="text-lg">
-                UNITE 2025 is dedicated to accelerating Uganda's economic
+                UNITE 2025 is dedicated to accelerating Uganda&apos;s economic
                 development by creating a dynamic platform that showcases
                 investment opportunities and facilitates meaningful
                 partnerships.
@@ -114,7 +112,7 @@ function MissionSection() {
                   </h3>
                   <p>
                     Connecting international investors with high-potential
-                    opportunities across Uganda's diverse economy
+                    opportunities across Uganda&apos;s diverse economy
                   </p>
                 </div>
                 <div className="border border-gray-200 dark:border-gray-600 p-4 bg-white dark:bg-gray-800">
@@ -122,7 +120,7 @@ function MissionSection() {
                     Showcasing Uganda
                   </h3>
                   <p>
-                    Showcasing Uganda's competitive advantages and strategic
+                    Showcasing Uganda&apos;s competitive advantages and strategic
                     position in the East African Community
                   </p>
                 </div>
@@ -565,10 +563,10 @@ function CTASection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Share Our Vision for Uganda's Future
+              Share Our Vision for Uganda&apos;s Future
             </h2>
             <p className="text-lg mb-8">
-              Join us at UNITE Expo 2025 and be part of Uganda's economic
+              Join us at UNITE Expo 2025 and be part of Uganda&apos;s economic
               transformation story. Together, we can build a more prosperous and
               globally integrated Uganda.
             </p>
@@ -580,7 +578,7 @@ function CTASection() {
                 variant="light"
                 buttonType="outline"
                 size="lg"
-                href="/about/organizers"
+                href="/about"
                 className="border-white text-white dark:border-black dark:text-black"
               >
                 Meet Our Team

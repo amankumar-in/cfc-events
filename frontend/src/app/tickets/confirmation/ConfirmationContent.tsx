@@ -122,6 +122,7 @@ export default function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderTrackingId = searchParams.get("OrderTrackingId");
   const orderMerchantReference = searchParams.get("OrderMerchantReference");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const orderNotificationType = searchParams.get("OrderNotificationType");
 
   const [loading, setLoading] = useState(true);
@@ -487,7 +488,8 @@ export default function ConfirmationContent() {
   };
 
   // Badge class based on payment status
-  const getStatusBadgeClass = (status: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getStatusBadgeClass = (_status: string) => {
     return "bg-yellow-500 text-black";
   };
 
@@ -587,9 +589,9 @@ export default function ConfirmationContent() {
           setError("Failed to retrieve payment details");
         }
         setLoading(false);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error checking payment status:", err);
-        setError(`Failed to check payment status: ${err.message}`);
+        setError(`Failed to check payment status: ${(err as Error).message}`);
         setLoading(false);
       }
     };
@@ -601,7 +603,8 @@ export default function ConfirmationContent() {
   // Ticket Generation for a Successful Purchase
   const generateTickets = async (
     purchase: PurchaseDetails,
-    transactionId: string
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _transactionId: string
   ) => {
     try {
       setIsGeneratingTickets(true);

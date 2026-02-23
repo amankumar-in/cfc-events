@@ -10,7 +10,8 @@ const PESAPAL_AUTH_URL = `${PESAPAL_BASE_URL}/api/Auth/RequestToken`;
 /**
  * Handles authentication with Pesapal API to obtain access token
  */
-export async function POST(request: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function POST(_request: NextRequest) {
   try {
     // Get consumer key and secret from environment variables
     const PESAPAL_CONSUMER_KEY = process.env.PESAPAL_CONSUMER_KEY;
@@ -63,14 +64,14 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors
     console.error("Error in Pesapal authentication:", error);
     return NextResponse.json(
       {
         success: false,
         message: `Failed to authenticate with Pesapal: ${
-          error.message || "Unknown error"
+          (error as Error).message || "Unknown error"
         }`,
       },
       { status: 500 }

@@ -7,7 +7,7 @@ export default function TestPesapalIPNPage() {
   const [url, setUrl] = useState("");
   const [ipnType, setIpnType] = useState("GET");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const testIPNRegistration = async () => {
@@ -35,9 +35,9 @@ export default function TestPesapalIPNPage() {
       console.log("IPN registration response:", data);
 
       setResult(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error testing IPN registration:", err);
-      setError(err.message || "Failed to test IPN registration");
+      setError(err instanceof Error ? err.message : "Failed to test IPN registration");
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function TestPesapalAuthPage() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const testAuth = async () => {
@@ -25,9 +25,9 @@ export default function TestPesapalAuthPage() {
       console.log("Auth response:", data);
 
       setResult(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error testing Pesapal auth:", err);
-      setError(err.message || "Failed to test authentication");
+      setError(err instanceof Error ? err.message : "Failed to test authentication");
     } finally {
       setLoading(false);
     }

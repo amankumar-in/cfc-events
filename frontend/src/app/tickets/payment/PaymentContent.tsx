@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { fetchAPI } from "@/lib/api/api-config";
 
@@ -21,7 +21,6 @@ interface TicketPurchase {
 }
 
 export default function PaymentContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference");
 

@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 /**
  * Simple test endpoint to verify Strapi connectivity
  */
-export async function GET(request: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_request: NextRequest) {
   try {
     // Get Strapi API URL from environment
     const STRAPI_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -42,19 +43,19 @@ export async function GET(request: NextRequest) {
       status: response.status,
       data: data,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error connecting to Strapi:", error);
-    console.log("Error message:", error.message);
-    console.log("Error name:", error.name);
-    console.log("Error cause:", error.cause);
+    console.log("Error message:", (error as Error).message);
+    console.log("Error name:", (error as Error).name);
+    console.log("Error cause:", (error as Record<string, unknown>).cause);
 
     return NextResponse.json(
       {
         success: false,
-        message: `Failed to connect to Strapi: ${error.message}`,
+        message: `Failed to connect to Strapi: ${(error as Error).message}`,
         error: {
-          name: error.name,
-          cause: error.cause ? String(error.cause) : "unknown",
+          name: (error as Error).name,
+          cause: (error as Record<string, unknown>).cause ? String((error as Record<string, unknown>).cause) : "unknown",
         },
       },
       { status: 500 }

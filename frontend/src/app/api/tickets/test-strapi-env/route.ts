@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         host: host,
         isLocalhost: isLocalhost,
       },
-      connectionTests: [] as any[],
+      connectionTests: [] as Record<string, unknown>[],
     };
 
     // Try connecting to different URLs
@@ -68,12 +68,12 @@ export async function GET(request: NextRequest) {
 
         results.connectionTests.push(connectionResult);
         console.log(`Test result for ${url}:`, connectionResult);
-      } catch (error: any) {
+      } catch (error: unknown) {
         results.connectionTests.push({
           url: url,
           success: false,
-          error: error.message,
-          cause: error.cause ? String(error.cause) : "unknown",
+          error: (error as Error).message,
+          cause: (error as Record<string, unknown>).cause ? String((error as Record<string, unknown>).cause) : "unknown",
         });
         console.error(`Error connecting to ${url}:`, error);
       }
@@ -84,16 +84,16 @@ export async function GET(request: NextRequest) {
       message: "Connectivity test completed",
       diagnosticResults: results,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in diagnostic test:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: `Diagnostic test failed: ${error.message}`,
+        message: `Diagnostic test failed: ${(error as Error).message}`,
         error: {
-          name: error.name,
-          cause: error.cause ? String(error.cause) : "unknown",
+          name: (error as Error).name,
+          cause: (error as Record<string, unknown>).cause ? String((error as Record<string, unknown>).cause) : "unknown",
         },
       },
       { status: 500 }

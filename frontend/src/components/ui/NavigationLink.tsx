@@ -18,8 +18,7 @@ export function NavigationLink({
   onClick,
 }: NavigationLinkProps) {
   const pathname = usePathname();
-  const isActive =
-    pathname === href || (href !== "/" && pathname?.startsWith(href));
+  const isActive = pathname === href;
 
   // Swiss design: flat colors, no rounded corners, bold typography
   const baseStyles = "block px-4 py-2 font-medium transition-colors";
@@ -35,14 +34,14 @@ export function NavigationLink({
   `
     : "";
 
-  // Mobile styles - full width for the Swiss block design
+  // Mobile styles
   const mobileStyles = isMobile
     ? `
-    w-full text-center text-lg py-4
+    w-full text-center text-lg py-4 border-b
     ${
       isActive
-        ? "bg-black text-white dark:bg-white dark:text-black"
-        : "text-black hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
+        ? "border-yellow-500 text-yellow-500"
+        : "border-gray-100 dark:border-gray-800 text-black dark:text-white hover:text-yellow-500"
     }
   `
     : "";

@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "entitlements",
+  "info": {
+    "singularName": "entitlement",
+    "pluralName": "entitlements",
+    "displayName": "Entitlement",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "source": {
+      "type": "enumeration",
+      "enum": [
+        "ticket_purchase",
+        "free_registration",
+        "manual_grant",
+        "speaker"
+      ]
+    },
+    "grantedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event"
+    },
+    "session": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::session.session"
+    },
+    "ticket": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ticket.ticket"
+    }
+  }
+}

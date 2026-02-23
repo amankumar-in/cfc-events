@@ -17,7 +17,7 @@ export default function TestPaymentPage() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
@@ -51,9 +51,9 @@ export default function TestPaymentPage() {
       console.log("Order submission response:", data);
 
       setResult(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error submitting order:", err);
-      setError(err.message || "Failed to submit order");
+      setError(err instanceof Error ? err.message : "Failed to submit order");
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export default function TestPaymentPage() {
 
   const goToPayment = () => {
     if (result?.redirectUrl) {
-      window.open(result.redirectUrl, "_blank");
+      window.open(result.redirectUrl as string, "_blank");
     }
   };
 

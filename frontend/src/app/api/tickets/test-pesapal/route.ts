@@ -114,7 +114,8 @@ export async function POST(request: NextRequest) {
     oauth["oauth_signature"] = signature;
 
     // Create OAuth header
-    const oauthHeader = Object.keys(oauth)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _oauthHeader = Object.keys(oauth)
       .map(
         (key) =>
           `${key}="${encodeURIComponent(oauth[key as keyof typeof oauth])}"`
@@ -138,13 +139,13 @@ export async function POST(request: NextRequest) {
       signature: signature,
       requestXml: xml,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in test-pesapal:", error);
     return NextResponse.json(
       {
         success: false,
         message: `Failed to test Pesapal integration: ${
-          error.message || "Unknown error"
+          (error as Error).message || "Unknown error"
         }`,
       },
       { status: 500 }

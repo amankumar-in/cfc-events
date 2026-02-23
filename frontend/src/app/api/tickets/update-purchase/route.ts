@@ -65,12 +65,12 @@ export async function POST(request: NextRequest) {
           },
         }
       );
-    } catch (findError: any) {
+    } catch (findError: unknown) {
       console.error("Error in find request:", findError);
-      console.log("Error message:", findError.message);
-      console.log("Error name:", findError.name);
-      console.log("Error cause:", findError.cause);
-      throw new Error(`Find request failed: ${findError.message}`);
+      console.log("Error message:", (findError as Error).message);
+      console.log("Error name:", (findError as Error).name);
+      console.log("Error cause:", (findError as Record<string, unknown>).cause);
+      throw new Error(`Find request failed: ${(findError as Error).message}`);
     }
 
     const findData = await findResponse.json();
@@ -158,20 +158,20 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors
     console.error("Error updating purchase:", error);
-    console.log("Error message:", error.message);
-    console.log("Error name:", error.name);
-    console.log("Error cause:", error.cause);
-    console.log("Error stack:", error.stack);
+    console.log("Error message:", (error as Error).message);
+    console.log("Error name:", (error as Error).name);
+    console.log("Error cause:", (error as Record<string, unknown>).cause);
+    console.log("Error stack:", (error as Error).stack);
     console.log("==== UPDATE PURCHASE BY REFERENCE FAILED WITH EXCEPTION ====");
 
     return NextResponse.json(
       {
         success: false,
         message: `Failed to update purchase: ${
-          error.message || "Unknown error"
+          (error as Error).message || "Unknown error"
         }`,
       },
       { status: 500 }

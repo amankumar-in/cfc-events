@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function TestCallbackContent() {
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<any>(null);
+  const [status, setStatus] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Extract parameters from URL

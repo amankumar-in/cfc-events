@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 
@@ -35,8 +32,8 @@ function HeroSection() {
               About UNITE Expo 2025
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Uganda's premier platform connecting international investors with
-              opportunities in one of Africa's most dynamic economies.
+              Uganda&apos;s premier platform connecting international investors with
+              opportunities in one of Africa&apos;s most dynamic economies.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" href="/about/mission-vision">
@@ -45,10 +42,10 @@ function HeroSection() {
               <Button
                 variant="dark"
                 buttonType="outline"
-                href="/about/organizers"
+                href="/about/mission-vision"
                 className="dark:border-white dark:text-white"
               >
-                Meet the Organizers
+                Our Vision
               </Button>
             </div>
           </div>
@@ -97,7 +94,7 @@ function MissionSection() {
             </h2>
             <p className="text-lg mb-8 text-gray-600 dark:text-gray-300">
               UNITE Expo 2025 aims to establish Uganda as a premier investment
-              destination by showcasing the country's economic potential and
+              destination by showcasing the country&apos;s economic potential and
               connecting international investors with local opportunities.
             </p>
             <Button
@@ -118,7 +115,7 @@ function MissionSection() {
                   Vision
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  To position Uganda as East Africa's leading investment hub,
+                  To position Uganda as East Africa&apos;s leading investment hub,
                   driving sustainable economic growth and creating prosperity
                   for all Ugandans.
                 </p>
@@ -131,7 +128,7 @@ function MissionSection() {
                   Mission
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  To showcase Uganda's investment opportunities, connect
+                  To showcase Uganda&apos;s investment opportunities, connect
                   international investors with local partners, and facilitate
                   meaningful business relationships.
                 </p>
@@ -179,13 +176,13 @@ function AboutExpoSection() {
           <div className="md:col-span-2">
             <span className="inline-block mb-3 h-1 w-16 bg-blue-600"></span>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-              Uganda's Premier Investment &amp; Trade Exhibition
+              Uganda&apos;s Premier Investment &amp; Trade Exhibition
             </h2>
             <div className="text-gray-600 dark:text-gray-300 space-y-4">
               <p>
                 UNITE (Uganda Next - Investment &amp; Trade Expo) 2025 is the
                 largest and most comprehensive investment and trade exhibition
-                in Uganda, showcasing the country's vast potential across
+                in Uganda, showcasing the country&apos;s vast potential across
                 various sectors of the economy.
               </p>
               <p>
@@ -199,11 +196,11 @@ function AboutExpoSection() {
                 The expo features exhibitions from key sectors including
                 agriculture, energy, manufacturing, ICT, tourism, and financial
                 services, as well as investment forums, B2B matchmaking
-                sessions, presentations on Uganda's investment incentives, and
+                sessions, presentations on Uganda&apos;s investment incentives, and
                 networking opportunities with government and business leaders.
               </p>
               <p>
-                UNITE Expo 2025 is part of Uganda's broader strategy to attract
+                UNITE Expo 2025 is part of Uganda&apos;s broader strategy to attract
                 $5 billion in foreign direct investment by 2026, diversify the
                 economy, and create sustainable jobs for its growing population.
               </p>
@@ -398,7 +395,7 @@ function ThematicAreasSection() {
             Thematic Investment Areas
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            UNITE Expo 2025 focuses on six key sectors that represent Uganda's
+            UNITE Expo 2025 focuses on six key sectors that represent Uganda&apos;s
             greatest investment potential and strategic development priorities.
           </p>
         </div>
@@ -471,7 +468,7 @@ function KeyFiguresSection() {
             UNITE Expo 2025 by the Numbers
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            The scale and scope of East Africa's premier investment and trade
+            The scale and scope of East Africa&apos;s premier investment and trade
             exhibition.
           </p>
         </div>
@@ -578,7 +575,7 @@ function OrganizersSection() {
           <Button
             variant="primary"
             buttonType="outline"
-            href="/about/organizers"
+            href="/about/mission-vision"
           >
             Learn More About Our Partners
           </Button>
@@ -669,11 +666,11 @@ function CTASection() {
     <section className="bg-black text-white dark:bg-white dark:text-black py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl md:text-5xl font-bold mb-6">
-          Be Part of Uganda's Economic Growth Story
+          Be Part of Uganda&apos;s Economic Growth Story
         </h2>
         <p className="text-xl max-w-3xl mx-auto mb-10">
           Join us at UNITE Expo 2025 and discover investment opportunities in
-          one of Africa's fastest-growing economies.
+          one of Africa&apos;s fastest-growing economies.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Button variant="primary" size="lg" href="/tickets">

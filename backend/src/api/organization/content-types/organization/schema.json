@@ -38,6 +38,12 @@
     "ShortDescription": {
       "type": "text",
       "required": true
+    },
+    "events": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::event.event",
+      "mappedBy": "organizations"
     }
   }
 }

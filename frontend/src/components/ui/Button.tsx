@@ -58,7 +58,7 @@ export function Button({
       "bg-transparent border border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20",
     dark: "bg-transparent border border-black text-black dark:border-white dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800",
     light:
-      "bg-transparent border border-white text-white hover:bg-white hover:bg-opacity-10",
+      "bg-transparent border border-white text-white hover:bg-white/20",
   };
 
   // Variant classes for text buttons
@@ -70,7 +70,7 @@ export function Button({
     danger:
       "text-red-600 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20",
     dark: "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800",
-    light: "text-white hover:bg-white hover:bg-opacity-10",
+    light: "text-white hover:bg-white/20",
   };
 
   // Select the correct variant class based on buttonType

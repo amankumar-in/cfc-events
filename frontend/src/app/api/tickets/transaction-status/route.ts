@@ -98,15 +98,16 @@ export async function GET(request: NextRequest) {
       });
       console.log("Auth response status:", authResponse.status);
       console.log("Auth response OK:", authResponse.ok);
-    } catch (authError: any) {
+    } catch (authError: unknown) {
+      const err = authError as Record<string, unknown>;
       console.error("Error fetching auth token:", {
-        message: authError.message,
-        cause: authError.cause
-          ? JSON.stringify(authError.cause)
+        message: (err as Error).message,
+        cause: err.cause
+          ? JSON.stringify(err.cause)
           : "No cause provided",
-        stack: authError.stack,
+        stack: (err as Error).stack,
       });
-      throw new Error(`Auth request failed: ${authError.message}`);
+      throw new Error(`Auth request failed: ${(err as Error).message}`);
     }
 
     const authData = await authResponse.json();
@@ -147,26 +148,28 @@ export async function GET(request: NextRequest) {
       });
       console.log("Status response status:", statusResponse.status);
       console.log("Status response OK:", statusResponse.ok);
-    } catch (statusError: any) {
+    } catch (statusError: unknown) {
+      const err = statusError as Record<string, unknown>;
       console.error("Pesapal status request failed:", {
-        message: statusError.message,
-        cause: statusError.cause
-          ? JSON.stringify(statusError.cause)
+        message: (err as Error).message,
+        cause: err.cause
+          ? JSON.stringify(err.cause)
           : "No cause provided",
-        code: statusError.code || "No error code",
-        stack: statusError.stack,
+        code: err.code || "No error code",
+        stack: (err as Error).stack,
       });
 
-      if (statusError.cause) {
+      if (err.cause) {
+        const cause = err.cause as Record<string, unknown>;
         console.error("Error cause details:", {
-          name: statusError.cause.name,
-          code: statusError.cause.code,
-          library: statusError.cause.library,
-          reason: statusError.cause.reason,
+          name: cause.name,
+          code: cause.code,
+          library: cause.library,
+          reason: cause.reason,
         });
       }
 
-      throw new Error(`Pesapal status request failed: ${statusError.message}`);
+      throw new Error(`Pesapal status request failed: ${(err as Error).message}`);
     }
 
     const statusData = await statusResponse.json();
@@ -206,17 +209,17 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors
     console.error("Error checking transaction status:", error);
-    console.log("Error stack:", error.stack);
+    console.log("Error stack:", (error as Error).stack);
     console.log("==== TRANSACTION STATUS CHECK FAILED WITH EXCEPTION ====");
 
     return NextResponse.json(
       {
         success: false,
         message: `Failed to check transaction status: ${
-          error.message || "Unknown error"
+          (error as Error).message || "Unknown error"
         }`,
       },
       { status: 500 }

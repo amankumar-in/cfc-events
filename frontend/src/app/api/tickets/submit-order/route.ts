@@ -129,12 +129,12 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error submitting order to Pesapal:", error);
     return NextResponse.json(
       {
         success: false,
-        message: `Failed to submit order: ${error.message || "Unknown error"}`,
+        message: `Failed to submit order: ${(error as Error).message || "Unknown error"}`,
       },
       { status: 500 }
     );
