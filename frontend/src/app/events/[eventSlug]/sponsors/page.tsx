@@ -47,7 +47,7 @@ export default function SponsorsPage() {
               {/* ── Platinum — horizontal cards, same pattern as featured sessions/speakers ── */}
               {platinumSponsors.length > 0 && (
                 <div>
-                  <TierHeader label="Platinum Sponsors" accent="bg-yellow-500" />
+                  <TierHeader label="Platinum Sponsors" accent="bg-blue-600" />
                   <div className="grid gap-6 md:grid-cols-2">
                     {platinumSponsors.map((sponsor) => (
                       <Link
@@ -69,22 +69,22 @@ export default function SponsorsPage() {
                               </span>
                             )}
                           </div>
-                          <div className="sm:w-3/5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 flex flex-col justify-between text-white">
+                          <div className="sm:w-3/5 bg-white dark:bg-gray-800 border-t-4 sm:border-t-0 sm:border-l-4 border-blue-600 p-6 flex flex-col justify-between">
                             <div>
-                              <span className="inline-flex items-center px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-yellow-500 text-black mb-3">
+                              <span className="inline-flex items-center px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-blue-600 text-white mb-3">
                                 Platinum
                               </span>
-                              <h3 className="text-xl font-bold mb-2 group-hover:text-yellow-500 transition-colors">
+                              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-yellow-500 transition-colors">
                                 {sponsor.Name}
                               </h3>
                               {sponsor.Description && (
-                                <p className="text-sm text-gray-300 line-clamp-3">
+                                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
                                   {sponsor.Description}
                                 </p>
                               )}
                             </div>
                             {sponsor.Website && (
-                              <p className="mt-4 text-xs text-gray-500 truncate">
+                              <p className="mt-4 text-xs text-gray-400 dark:text-gray-500 truncate">
                                 {sponsor.Website.replace(/^https?:\/\//, "")}
                               </p>
                             )}

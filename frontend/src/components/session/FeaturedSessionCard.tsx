@@ -71,15 +71,15 @@ export function FeaturedSessionCard({
           )}
         </div>
 
-        {/* Content with gradient */}
-        <div className="sm:w-3/5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-800 dark:via-gray-750 dark:to-gray-900 p-6 flex flex-col justify-between text-white">
+        {/* Content */}
+        <div className="sm:w-3/5 bg-white dark:bg-gray-800 border-t-4 sm:border-t-0 sm:border-l-4 border-blue-600 p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               <SessionStatusBadge
                 startDate={session.StartDate}
                 endDate={session.EndDate}
               />
-              <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-yellow-500 text-black">
+              <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-blue-600 text-white">
                 <svg
                   className="w-3 h-3 mr-1"
                   fill="currentColor"
@@ -96,21 +96,21 @@ export function FeaturedSessionCard({
               )}
             </div>
 
-            <h3 className="text-xl font-bold mb-2 group-hover:text-yellow-500 transition-colors">
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-yellow-500 transition-colors">
               {session.Title}
             </h3>
 
             {session.ShortDescription && (
-              <p className="text-sm text-gray-300 mb-4 line-clamp-2">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                 {session.ShortDescription}
               </p>
             )}
           </div>
 
           <div className="space-y-2 mt-auto">
-            <div className="flex items-center text-sm text-gray-300">
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
               <svg
-                className="h-4 w-4 mr-2 text-yellow-500 flex-shrink-0"
+                className="h-4 w-4 mr-2 text-blue-600 dark:text-yellow-500 flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -128,9 +128,9 @@ export function FeaturedSessionCard({
             </div>
 
             {session.venue?.Name && (
-              <div className="flex items-center text-sm text-gray-300">
+              <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                 <svg
-                  className="h-4 w-4 mr-2 text-yellow-500 flex-shrink-0"
+                  className="h-4 w-4 mr-2 text-blue-600 dark:text-yellow-500 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -153,9 +153,9 @@ export function FeaturedSessionCard({
             )}
 
             {session.speakers && session.speakers.length > 0 && (
-              <div className="flex items-center text-sm text-gray-300">
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                 <svg
-                  className="h-4 w-4 mr-2 text-yellow-500 flex-shrink-0"
+                  className="h-4 w-4 mr-2 text-blue-600 dark:text-yellow-500 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -172,7 +172,7 @@ export function FeaturedSessionCard({
             )}
 
             {session.format && (
-              <div className="flex items-center text-sm text-gray-400">
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                 <Chip variant="outline" size="sm">
                   {session.format}
                 </Chip>

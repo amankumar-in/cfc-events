@@ -118,10 +118,10 @@ function FeaturedSpeakerCard({
           )}
         </div>
 
-        {/* Content with gradient */}
-        <div className="sm:w-3/5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-800 dark:via-gray-750 dark:to-gray-900 p-6 flex flex-col justify-between text-white">
+        {/* Content */}
+        <div className="sm:w-3/5 bg-white dark:bg-gray-800 border-t-4 sm:border-t-0 sm:border-l-4 border-blue-600 p-6 flex flex-col justify-between">
           <div>
-            <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-yellow-500 text-black mb-3">
+            <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-blue-600 text-white mb-3">
               <svg
                 className="w-3 h-3 mr-1"
                 fill="currentColor"
@@ -132,22 +132,22 @@ function FeaturedSpeakerCard({
               Featured Speaker
             </span>
 
-            <h3 className="text-xl font-bold mb-1 group-hover:text-yellow-500 transition-colors">
+            <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-yellow-500 transition-colors">
               {speaker.Name}
             </h3>
 
             {speaker.Title && (
-              <p className="text-gray-300 text-sm mb-1">{speaker.Title}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-1">{speaker.Title}</p>
             )}
 
             {speaker.Organization && (
-              <p className="text-yellow-500 text-sm font-medium mb-4">
+              <p className="text-blue-600 dark:text-yellow-500 text-sm font-medium mb-4">
                 {speaker.Organization}
               </p>
             )}
 
             {(speaker.ShortBio || speaker.Bio) && (
-              <p className="text-sm text-gray-300 line-clamp-3">
+              <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
                 {speaker.ShortBio || speaker.Bio}
               </p>
             )}
@@ -157,7 +157,7 @@ function FeaturedSpeakerCard({
           {(speaker.LinkedIn || speaker.Twitter || speaker.Website) && (
             <div className="flex gap-3 mt-4">
               {speaker.LinkedIn && (
-                <span className="text-gray-400 hover:text-white">
+                <span className="text-gray-400 hover:text-blue-600 dark:hover:text-white">
                   <svg
                     className="w-4 h-4"
                     fill="currentColor"
@@ -168,7 +168,7 @@ function FeaturedSpeakerCard({
                 </span>
               )}
               {speaker.Twitter && (
-                <span className="text-gray-400 hover:text-white">
+                <span className="text-gray-400 hover:text-blue-600 dark:hover:text-white">
                   <svg
                     className="w-4 h-4"
                     fill="currentColor"
@@ -179,7 +179,7 @@ function FeaturedSpeakerCard({
                 </span>
               )}
               {speaker.Website && (
-                <span className="text-gray-400 hover:text-white">
+                <span className="text-gray-400 hover:text-blue-600 dark:hover:text-white">
                   <svg
                     className="w-4 h-4"
                     fill="none"

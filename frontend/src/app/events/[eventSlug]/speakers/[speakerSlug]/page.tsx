@@ -186,19 +186,47 @@ export default function SpeakerDetailPage({
                   {speaker.Bio || speaker.ShortBio || "Bio coming soon."}
                 </p>
               </div>
+
+              {/* Sessions — inside right column on desktop */}
+              {speakerSessions.length > 0 && (
+                <div className="mt-10 pt-10 border-t border-gray-200 dark:border-gray-700">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    Sessions
+                  </h2>
+                  <div className="grid gap-4">
+                    {speakerSessions.map((session) => (
+                      <SessionCard
+                        key={session.id}
+                        session={session}
+                        eventSlug={event.Slug}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-8">
+                <Button
+                  variant="primary"
+                  buttonType="outline"
+                  href={`/events/${event.Slug}/speakers`}
+                >
+                  Back to All Speakers
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sessions — shared between mobile and desktop */}
+      {/* Sessions — mobile only (below the profile section) */}
       {speakerSessions.length > 0 && (
-        <section className="py-10 border-t border-gray-200 dark:border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="md:hidden py-10 border-t border-gray-200 dark:border-gray-700">
+          <div className="px-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               Sessions
             </h2>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4">
               {speakerSessions.map((session) => (
                 <SessionCard
                   key={session.id}
@@ -211,7 +239,7 @@ export default function SpeakerDetailPage({
         </section>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="md:hidden px-4 py-8">
         <Button
           variant="primary"
           buttonType="outline"
