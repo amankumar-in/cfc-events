@@ -90,9 +90,12 @@ export default function Header() {
               <div className="flex items-center space-x-3 ml-4">
                 {isAuthenticated ? (
                   <>
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      {user?.email}
-                    </span>
+                    <Link
+                      href="/account"
+                      className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-yellow-500 dark:hover:text-yellow-500 transition-colors"
+                    >
+                      My Account
+                    </Link>
                     <Button variant="secondary" buttonType="outline" size="sm" onClick={logout}>
                       Sign Out
                     </Button>
@@ -196,6 +199,15 @@ export default function Header() {
                   })}
 
                   <div className="mt-4 pt-4">
+                    {isAuthenticated && (
+                      <Link
+                        href="/account"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full text-center text-lg py-4 font-medium text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                      >
+                        My Account
+                      </Link>
+                    )}
                     <Link
                       href="/events"
                       onClick={() => setMobileMenuOpen(false)}
@@ -210,9 +222,14 @@ export default function Header() {
               <>
                 <div className="py-6 space-y-4">
                   {isAuthenticated ? (
-                    <Button variant="primary" fullWidth onClick={logout}>
-                      Sign Out
-                    </Button>
+                    <>
+                      <Button variant="dark" fullWidth href="/account">
+                        My Account
+                      </Button>
+                      <Button variant="primary" fullWidth onClick={logout}>
+                        Sign Out
+                      </Button>
+                    </>
                   ) : (
                     <Button variant="primary" fullWidth href="/auth/login">
                       Sign In

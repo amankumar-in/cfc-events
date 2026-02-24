@@ -23,6 +23,7 @@ export default {
       path: "/auth/me",
       handler: "auth.me",
       config: {
+        auth: false,
         policies: [],
       },
     },

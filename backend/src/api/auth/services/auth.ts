@@ -133,12 +133,10 @@ export default () => ({
   },
 
   async getMe(userId: number) {
-    const user = await strapi
-      .query("plugin::users-permissions.user")
-      .findOne({
-        where: { id: userId },
-        populate: ["role"],
-      });
+    const user = await strapi.db.query("plugin::users-permissions.user").findOne({
+      where: { id: userId },
+      populate: ["role"],
+    });
 
     if (!user) {
       throw new Error("User not found.");
@@ -156,7 +154,7 @@ export default () => ({
       username: user.username,
       name: user.name || null,
       isEventAdmin: user.isEventAdmin || false,
-      role: user.role,
+      role: user.role || null,
       entitlements,
     };
   },

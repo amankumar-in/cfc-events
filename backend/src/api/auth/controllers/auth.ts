@@ -32,18 +32,24 @@ export default {
   },
 
   async me(ctx) {
-    const userId = ctx.state.user?.id;
+    const token = ctx.request.header.authorization?.replace("Bearer ", "");
 
-    if (!userId) {
-      return ctx.unauthorized("You must be logged in.");
+    if (!token) {
+      return ctx.unauthorized("No token provided.");
     }
 
     try {
-      const result = await strapi.service("api::auth.auth").getMe(userId);
+      const payload = await strapi.plugin("users-permissions").service("jwt").verify(token);
+
+      if (!payload?.id) {
+        return ctx.unauthorized("Invalid token.");
+      }
+
+      const result = await strapi.service("api::auth.auth").getMe(payload.id);
       ctx.body = result;
     } catch (error) {
       strapi.log.error("Get me error:", error);
-      return ctx.internalServerError(error.message);
+      return ctx.unauthorized("Invalid or expired token.");
     }
   },
 };

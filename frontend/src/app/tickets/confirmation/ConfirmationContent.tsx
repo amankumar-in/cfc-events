@@ -1,55 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import html2canvas from "html2canvas";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { fetchAPI } from "@/lib/api/api-config";
 import { generateQRCodeDataURL } from "@/lib/qrcode";
-
-// -------------------------------------------------------------------
-// ScaleWrapper Component
-// -------------------------------------------------------------------
-// Renders children at a fixed design width (default 800px) and scales the
-// entire block based on the container’s current width.
-// (Note: the ticket preview inside will have its own forced white/black styling)
-function ScaleWrapper({
-  children,
-  designWidth = 800,
-}: {
-  children: React.ReactNode;
-  designWidth?: number;
-}) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    function updateScale() {
-      if (wrapperRef.current) {
-        const currentWidth = wrapperRef.current.offsetWidth;
-        const newScale = currentWidth / designWidth;
-        setScale(newScale);
-      }
-    }
-    updateScale();
-    window.addEventListener("resize", updateScale);
-    return () => window.removeEventListener("resize", updateScale);
-  }, [designWidth]);
-
-  return (
-    <div ref={wrapperRef} style={{ width: "100%", overflow: "hidden" }}>
-      <div
-        style={{
-          width: designWidth,
-          transform: `scale(${scale})`,
-          transformOrigin: "top left",
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
+import { TicketPreview } from "@/components/tickets/TicketPreview";
+import type { Ticket, PurchaseDetails } from "@/lib/tickets/ticket-utils";
+import {
+  generateQRCodeImages as generateQRImages,
+  generateTicketPDF,
+  generateAllTicketPDFs,
+  formatDate,
+  formatCurrency,
+} from "@/lib/tickets/ticket-utils";
 
 // -------------------------------------------------------------------
 // Type Definitions
@@ -70,48 +34,11 @@ interface PaymentDetails {
   message: string;
 }
 
-interface PurchaseDetails {
-  id: number;
-  documentId: string;
-  referenceNumber: string;
-  buyerName: string;
-  buyerEmail: string;
-  buyerPhone: string;
-  totalAmount: number;
-  currency: string;
-  purchaseDate: string;
-  paymentStatus: string;
-}
-
 interface Attendee {
   name: string;
   email: string;
   phone: string;
   organization: string;
-}
-
-interface TicketCategory {
-  id: number;
-  documentId: string;
-  name: string;
-  price: number;
-  currency: string;
-  validFrom: string;
-  validUntil: string;
-}
-
-interface Ticket {
-  id: number;
-  documentId: string;
-  ticketNumber: string;
-  attendeeName: string;
-  attendeeEmail: string;
-  attendeePhone: string;
-  attendeeOrganization: string;
-  isCheckedIn: boolean;
-  qrCodeData: string;
-  qrCodeImage?: string;
-  ticketCategory?: TicketCategory;
 }
 
 // -------------------------------------------------------------------
@@ -134,7 +61,6 @@ export default function ConfirmationContent() {
     useState<PurchaseDetails | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isGeneratingTickets, setIsGeneratingTickets] = useState(false);
-  const [pdfMakeLoaded, setPdfMakeLoaded] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // Ref for scrolling to tickets section
@@ -144,174 +70,17 @@ export default function ConfirmationContent() {
   };
 
   // -------------------------------------------------------------------
-  // Load pdfmake library (client-side only)
-  useEffect(() => {
-    import("pdfmake/build/pdfmake").then((pdfMakeModule) => {
-      const pdfMake = pdfMakeModule.default || pdfMakeModule;
-      import("pdfmake/build/vfs_fonts").then((pdfFontsModule) => {
-        const pdfFonts = pdfFontsModule.default || pdfFontsModule;
-        pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts.vfs;
-        setPdfMakeLoaded(true);
-      });
-    });
-  }, []);
-
-  // -------------------------------------------------------------------
   // Generate QR code images for tickets
   const generateQRCodeImages = useCallback(async (ticketsData: Ticket[]) => {
-    const updatedTickets = [...ticketsData];
-    for (let i = 0; i < updatedTickets.length; i++) {
-      try {
-        const qrImage = await generateQRCodeDataURL(
-          updatedTickets[i].qrCodeData
-        );
-        updatedTickets[i].qrCodeImage = qrImage;
-      } catch (error) {
-        console.error(`Error generating QR code for ticket ${i}:`, error);
-      }
-    }
-    return updatedTickets;
+    return generateQRImages(ticketsData);
   }, []);
 
   // -------------------------------------------------------------------
-  // PDF Generation for a single ticket (using fixed design width)
+  // PDF Generation for a single ticket (using shared utility)
   const generatePDF = async (ticket: Ticket) => {
     try {
       setIsGeneratingPDF(true);
-      if (!ticket.qrCodeImage) {
-        const qrImage = await generateQRCodeDataURL(ticket.qrCodeData);
-        ticket.qrCodeImage = qrImage;
-      }
-
-      // Create a temporary hidden div for ticket rendering
-      const tempDiv = document.createElement("div");
-      tempDiv.style.position = "absolute";
-      tempDiv.style.left = "-9999px";
-      tempDiv.style.top = "-9999px";
-      tempDiv.style.width = "800px";
-
-      // Render the ticket with fixed styles (forcing white background & black text)
-      tempDiv.innerHTML = `
-      <div style="border: 1px solid #e5e7eb; width: 800px; box-sizing: border-box;">
-        <div style="display: flex;">
-          <!-- Main Ticket Content -->
-          <div style="width: 75%; background-color: white;">
-            <!-- Header -->
-            <div style="background-color: #2563eb; color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <h3 style="font-weight: bold; font-size: 20px; margin: 0;">UNITE EXPO 2025</h3>
-                <p style="font-size: 14px; margin: 0; color:rgb(255, 255, 255);">Uganda Next Investment & Trade Expo</p>
-              </div>
-              <div style="text-align: right;">
-                <p style="font-size: 14px; margin: 0; color:rgb(255, 255, 255);">${
-                  ticket.ticketCategory?.name || "Single Event Ticket"
-                }</p>
-              </div>
-            </div>
-            <!-- Attendee Info -->
-            <div style="padding: 16px;">
-              <h4 style="font-size: 20px; font-weight: bold; margin: 0 0 8px 0; color: #000;">${
-                ticket.attendeeName
-              }</h4>
-              <p style="margin: 0 0 4px 0; color: #000;">${
-                ticket.attendeeEmail
-              }</p>
-              ${
-                ticket.attendeePhone
-                  ? `<p style="margin: 0; color: #000;">${ticket.attendeePhone}</p>`
-                  : ""
-              }
-            </div>
-            <!-- Ticket Details -->
-            <div style="padding: 0 16px 16px 16px;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                <div>
-                  <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Ticket Type</p>
-                  <p style="font-weight: 500; margin: 0; color: #000">${
-                    ticket.ticketCategory?.name || "Single Event Ticket"
-                  }</p>
-                </div>
-                <div>
-                  <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Ticket #</p>
-                  <p style="font-weight: 500; font-size: 14px; word-break: break-all; margin: 0; color: #000">${
-                    ticket.ticketNumber
-                  }</p>
-                </div>
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div>
-                  <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Valid From</p>
-                  <p style="font-weight: 500; margin: 0; color: #000">${
-                    ticket.ticketCategory?.validFrom
-                      ? new Date(
-                          ticket.ticketCategory.validFrom
-                        ).toLocaleDateString(undefined, {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })
-                      : "12 April 2025"
-                  }</p>
-                </div>
-                <div>
-                  <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Valid Until</p>
-                  <p style="font-weight: 500; margin: 0; color: #000">${
-                    ticket.ticketCategory?.validUntil
-                      ? new Date(
-                          ticket.ticketCategory.validUntil
-                        ).toLocaleDateString(undefined, {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })
-                      : "30 April 2025"
-                  }</p>
-                </div>
-              </div>
-              <!-- Location -->
-              <div style="display: flex; align-items: center; margin-top: 16px;">
-                <svg style="height: 16px; width: 16px; margin-right: 8px; color: #6b7280;" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-                <span style="font-size: 14px; color: #000;">Kampala International Convention Centre, Uganda</span>
-              </div>
-            </div>
-          </div>
-          <!-- QR Code Section -->
-          <div style="width: 25%; background-color: #f9fafb; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px;">
-            <p style="font-weight: bold; text-align: center; margin: 0 0 12px 0; color: #000;">ADMIT ONE</p>
-            <div style="width: 100%; aspect-ratio: 1; margin-bottom: 12px;">
-              <img src="${
-                ticket.qrCodeImage
-              }" alt="Ticket QR Code" style="width: 100%; height: 100%; object-fit: contain;" />
-            </div>
-            <p style="font-size: 12px; text-align: center; color: #000; margin: 0 0 4px 0;">SCAN TO VERIFY</p>
-            <p style="font-size: 12px; text-align: center; font-weight: bold; margin: 0; color: #000;">UNITE EXPO 2025</p>
-          </div>
-        </div>
-      </div>
-      `;
-      document.body.appendChild(tempDiv);
-      const canvas = await html2canvas(tempDiv, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-      });
-      document.body.removeChild(tempDiv);
-      const imageData = canvas.toDataURL("image/png");
-
-      const pdfMakeModule = await import("pdfmake/build/pdfmake");
-      const pdfMake = pdfMakeModule.default || pdfMakeModule;
-      const docDefinition = {
-        pageSize: "A4",
-        pageOrientation: "landscape",
-        content: [{ image: imageData, width: 750 }],
-        pageMargins: [30, 30, 30, 30],
-      };
-      pdfMake
-        .createPdf(docDefinition)
-        .download(`UNITE-Expo-Ticket-${ticket.ticketNumber}.pdf`);
+      await generateTicketPDF(ticket);
     } catch (error) {
       console.error("Error generating PDF:", error);
       alert("Error generating PDF. Please try again.");
@@ -325,138 +94,7 @@ export default function ConfirmationContent() {
   const generateAllPDFs = async () => {
     try {
       setIsGeneratingPDF(true);
-      const ticketsWithQR = await generateQRCodeImages(tickets);
-      const ticketImages: string[] = [];
-
-      for (const ticket of ticketsWithQR) {
-        const tempDiv = document.createElement("div");
-        tempDiv.style.position = "absolute";
-        tempDiv.style.left = "-9999px";
-        tempDiv.style.top = "-9999px";
-        tempDiv.style.width = "800px";
-        tempDiv.innerHTML = `
-        <div style="border: 1px solid #e5e7eb; width: 800px; box-sizing: border-box;">
-          <div style="display: flex;">
-            <div style="width: 75%; background-color: white;">
-              <div style="background-color: #2563eb; color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <h3 style="font-weight: bold; font-size: 20px; margin: 0;">UNITE EXPO 2025</h3>
-                  <p style="font-size: 14px; margin: 0; color: #fff;">Uganda Next Investment & Trade Expo</p>
-                </div>
-                <div style="text-align: right;">
-                  <p style="font-size: 14px; margin: 0; color: #fff;">${
-                    ticket.ticketCategory?.name || "Single Event Ticket"
-                  }</p>
-                </div>
-              </div>
-              <div style="padding: 16px;">
-                <h4 style="font-size: 20px; font-weight: bold; margin: 0 0 8px 0; color: #000;">${
-                  ticket.attendeeName
-                }</h4>
-                <p style="margin: 0 0 4px 0; color: #000;">${
-                  ticket.attendeeEmail
-                }</p>
-                ${
-                  ticket.attendeePhone
-                    ? `<p style="margin: 0; color: #000;">${ticket.attendeePhone}</p>`
-                    : ""
-                }
-              </div>
-              <div style="padding: 0 16px 16px 16px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                  <div>
-                    <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Ticket Type</p>
-                    <p style="font-weight: 500; margin: 0; color:#000">${
-                      ticket.ticketCategory?.name || "Single Event Ticket"
-                    }</p>
-                  </div>
-                  <div>
-                    <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Ticket #</p>
-                    <p style="font-weight: 500; font-size: 14px; word-break: break-all; margin: 0; color:#000">${
-                      ticket.ticketNumber
-                    }</p>
-                  </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                  <div>
-                    <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Valid From</p>
-                    <p style="font-weight: 500; margin: 0; color:#000">${
-                      ticket.ticketCategory?.validFrom
-                        ? new Date(
-                            ticket.ticketCategory.validFrom
-                          ).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "12 April 2025"
-                    }</p>
-                  </div>
-                  <div>
-                    <p style="font-size: 12px; text-transform: uppercase; color: #6b7280; margin: 0 0 4px 0;">Valid Until</p>
-                    <p style="font-weight: 500; margin: 0; color:#000">${
-                      ticket.ticketCategory?.validUntil
-                        ? new Date(
-                            ticket.ticketCategory.validUntil
-                          ).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "30 April 2025"
-                    }</p>
-                  </div>
-                </div>
-                <div style="display: flex; align-items: center; margin-top: 16px;">
-                  <svg style="height: 16px; width: 16px; margin-right: 8px; color: #6b7280;" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                  </svg>
-                  <span style="font-size: 14px; color: #000;">Kampala International Convention Centre, Uganda</span>
-                </div>
-              </div>
-            </div>
-            <div style="border-left: 1px solid #e5e7eb;"></div>
-            <div style="width: 25%; background-color: #f9fafb; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px;">
-              <p style="font-weight: bold; text-align: center; margin: 0 0 12px 0; color: #000;">ADMIT ONE</p>
-              <div style="width: 100%; aspect-ratio: 1; margin-bottom: 12px;">
-                <img src="${
-                  ticket.qrCodeImage
-                }" alt="Ticket QR Code" style="width: 100%; height: 100%; object-fit: contain;" />
-              </div>
-              <p style="font-size: 12px; text-align: center; color: #000; margin: 0 0 4px 0;">SCAN TO VERIFY</p>
-              <p style="font-size: 12px; text-align: center; font-weight: bold; margin: 0; color: #000;">UNITE EXPO 2025</p>
-            </div>
-          </div>
-        </div>
-        `;
-        document.body.appendChild(tempDiv);
-        const canvas = await html2canvas(tempDiv, {
-          scale: 2,
-          logging: false,
-          useCORS: true,
-          allowTaint: true,
-        });
-        document.body.removeChild(tempDiv);
-        const imageData = canvas.toDataURL("image/png");
-        ticketImages.push(imageData);
-      }
-
-      const pdfMakeModule = await import("pdfmake/build/pdfmake");
-      const pdfMake = pdfMakeModule.default || pdfMakeModule;
-      const content = [];
-      ticketImages.forEach((imageData, index) => {
-        content.push({ image: imageData, width: 750 });
-        if (index < ticketImages.length - 1) {
-          content.push({ text: "", pageBreak: "after" });
-        }
-      });
-      const docDefinition = {
-        pageSize: "A4",
-        pageOrientation: "landscape",
-        content,
-        pageMargins: [30, 30, 30, 30],
-      };
-      pdfMake.createPdf(docDefinition).download("UNITE-Expo-All-Tickets.pdf");
+      await generateAllTicketPDFs(tickets);
     } catch (error) {
       console.error("Error generating PDFs:", error);
       alert("Error generating PDFs. Please try again.");
@@ -466,35 +104,12 @@ export default function ConfirmationContent() {
   };
 
   // -------------------------------------------------------------------
-  // Format helpers
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-UG", {
-      style: "currency",
-      currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  // Badge class based on payment status
+  // Data fetching and ticket generation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getStatusBadgeClass = (_status: string) => {
     return "bg-yellow-500 text-black";
   };
 
-  // -------------------------------------------------------------------
-  // Data fetching and ticket generation
   useEffect(() => {
     if (!orderTrackingId) {
       setError("No order tracking ID found in URL");
@@ -1035,7 +650,7 @@ export default function ConfirmationContent() {
                   {tickets.length > 0 && (
                     <button
                       onClick={generateAllPDFs}
-                      disabled={isGeneratingPDF || !pdfMakeLoaded}
+                      disabled={isGeneratingPDF}
                       className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-blue-600 text-white"
                     >
                       {isGeneratingPDF ? (
@@ -1098,7 +713,7 @@ export default function ConfirmationContent() {
                         <div className="flex justify-end mb-2">
                           <button
                             onClick={() => generatePDF(ticket)}
-                            disabled={isGeneratingPDF || !pdfMakeLoaded}
+                            disabled={isGeneratingPDF}
                             className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-blue-600 text-white"
                           >
                             {isGeneratingPDF ? (
@@ -1145,157 +760,8 @@ export default function ConfirmationContent() {
                             )}
                           </button>
                         </div>
-                        {/* Ticket Preview - Force White Background and Black Text */}
-                        <ScaleWrapper designWidth={800}>
-                          <div
-                            className="border border-gray-300 bg-white dark:bg-white"
-                            style={{ width: "800px", boxSizing: "border-box" }}
-                          >
-                            <div className="flex">
-                              {/* Main Ticket Content */}
-                              <div className="w-3/4 bg-white dark:bg-white">
-                                <div className="bg-blue-600 dark:bg-blue-600 text-white dark:text-white py-3 px-5 flex justify-between items-center">
-                                  <div>
-                                    <h3 className="font-bold text-2xl m-0">
-                                      UNITE EXPO 2025
-                                    </h3>
-                                    <p
-                                      className="text-xs m-0"
-                                      style={{ color: "#ffffff" }}
-                                    >
-                                      Uganda Next Investment & Trade Expo
-                                    </p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p
-                                      className="text-xs m-0"
-                                      style={{ color: "#ffffff" }}
-                                    >
-                                      {ticket.ticketCategory?.name ||
-                                        "Single Event Ticket"}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="p-4">
-                                  <h4 className="text-2xl font-bold m-0 text-black dark:text-black">
-                                    {ticket.attendeeName}
-                                  </h4>
-                                  <p className="m-0 text-black dark:text-black">
-                                    {ticket.attendeeEmail}
-                                  </p>
-                                </div>
-                                <div className="px-4 pb-4">
-                                  <div className="grid grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                      <p
-                                        className="text-xs uppercase m-0"
-                                        style={{ color: "#6b7280" }}
-                                      >
-                                        Ticket Type
-                                      </p>
-                                      <p className="font-medium m-0 text-black dark:text-black">
-                                        {ticket.ticketCategory?.name ||
-                                          "Single Event Ticket"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p
-                                        className="text-xs uppercase m-0"
-                                        style={{ color: "#6b7280" }}
-                                      >
-                                        Ticket #
-                                      </p>
-                                      <p className="font-medium text-sm break-all m-0 text-black dark:text-black">
-                                        {ticket.ticketNumber}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                      <p
-                                        className="text-xs uppercase m-0"
-                                        style={{ color: "#6b7280" }}
-                                      >
-                                        Valid From
-                                      </p>
-                                      <p className="font-medium m-0 text-black dark:text-black">
-                                        {ticket.ticketCategory?.validFrom
-                                          ? new Date(
-                                              ticket.ticketCategory.validFrom
-                                            ).toLocaleDateString(undefined, {
-                                              year: "numeric",
-                                              month: "long",
-                                              day: "numeric",
-                                            })
-                                          : "12 April 2025"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p
-                                        className="text-xs uppercase m-0"
-                                        style={{ color: "#6b7280" }}
-                                      >
-                                        Valid Until
-                                      </p>
-                                      <p className="font-medium m-0 text-black dark:text-black">
-                                        {ticket.ticketCategory?.validUntil
-                                          ? new Date(
-                                              ticket.ticketCategory.validUntil
-                                            ).toLocaleDateString(undefined, {
-                                              year: "numeric",
-                                              month: "long",
-                                              day: "numeric",
-                                            })
-                                          : "30 April 2025"}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center mt-4">
-                                    <svg
-                                      className="h-4 w-4 mr-2"
-                                      viewBox="0 0 24 24"
-                                      fill="currentColor"
-                                      style={{ color: "#6b7280" }}
-                                    >
-                                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                    </svg>
-                                    <span className="text-sm text-black dark:text-black">
-                                      Kampala International Convention Centre,
-                                      Uganda
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="border-l border-gray-300"></div>
-                              <div className="w-1/4 bg-gray-50 flex flex-col items-center justify-center p-4">
-                                <p className="font-bold text-center mb-3 text-black">
-                                  ADMIT ONE
-                                </p>
-                                <div className="w-full aspect-square mb-3">
-                                  {ticket.qrCodeImage ? (
-                                    <img
-                                      src={ticket.qrCodeImage}
-                                      alt="Ticket QR Code"
-                                      className="w-full h-full object-contain"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gray-200 animate-pulse">
-                                      <span className="text-gray-400 text-xs">
-                                        Loading...
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                                <p className="text-xs text-center mb-1 text-black">
-                                  SCAN TO VERIFY
-                                </p>
-                                <p className="text-xs text-center font-bold text-black">
-                                  UNITE EXPO 2025
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </ScaleWrapper>
+                        {/* Ticket Preview */}
+                        <TicketPreview ticket={ticket} />
                       </div>
                     ))}
                   </div>
