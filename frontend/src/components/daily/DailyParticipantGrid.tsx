@@ -1,29 +1,16 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { MicOff } from "lucide-react";
+import { useState, useCallback, useMemo } from "react";
+import { MicOff, User } from "lucide-react";
 import {
   useActiveSpeakerId,
   useParticipantIds,
   useParticipantProperty,
+  useParticipantCounts,
   useScreenShare,
+  useDailyEvent,
   DailyVideo,
 } from "@daily-co/daily-react";
-
-// Reports video state for a participant
-function VideoStateChecker({
-  sessionId,
-  onReport,
-}: {
-  sessionId: string;
-  onReport: (id: string, hasVideo: boolean) => void;
-}) {
-  const [videoState] = useParticipantProperty(sessionId, ["tracks.video.state"]);
-  useEffect(() => {
-    onReport(sessionId, videoState === "playable");
-  }, [sessionId, videoState, onReport]);
-  return null;
-}
 
 const MAX_TILES = 9;
 
@@ -96,42 +83,55 @@ function ParticipantTile({
 }
 
 export default function DailyParticipantGrid() {
-  const allIds = useParticipantIds();
   const activeSpeakerId = useActiveSpeakerId();
   const { screens } = useScreenShare();
+  const participantCounts = useParticipantCounts();
   const [layout, setLayout] = useState<LayoutMode>("gallery");
   const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [hideNoVideo, setHideNoVideo] = useState(false);
-  const [videoStates, setVideoStates] = useState<Map<string, boolean>>(new Map());
 
-  const handleVideoReport = useCallback((id: string, hasVideo: boolean) => {
-    setVideoStates((prev) => {
-      if (prev.get(id) === hasVideo) return prev;
-      const next = new Map(prev);
-      next.set(id, hasVideo);
-      return next;
-    });
-  }, []);
+  // Native filtered IDs — only applies hideNoVideo filter in gallery view
+  const participantFilter = useMemo(() => {
+    if (layout !== "gallery" || !hideNoVideo) return undefined;
+    return (p: any) => p.tracks?.video?.state === "playable";
+  }, [hideNoVideo, layout]);
 
-  // Clear pin if participant left
-  if (pinnedId && !allIds.includes(pinnedId)) {
-    setPinnedId(null);
-  }
+  const filteredIds = useParticipantIds({ filter: participantFilter });
+
+  // Clear pinned participant when they leave (event-driven, not render-time check)
+  useDailyEvent(
+    "participant-left",
+    useCallback((ev: any) => {
+      const leftId = ev?.participant?.session_id;
+      if (leftId) {
+        setPinnedId((prev) => (prev === leftId ? null : prev));
+      }
+    }, [])
+  );
 
   const handlePin = (id: string) => {
     setPinnedId((prev) => (prev === id ? null : id));
   };
 
-  // Prioritize pinned > active speaker first
-  const sortedIds = [...allIds].sort((a, b) => {
-    if (pinnedId) {
-      if (a === pinnedId) return -1;
-      if (b === pinnedId) return 1;
+  // Sort: pinned first, then active speaker. Ensure both are always in visible set.
+  const sortedIds = useMemo(() => {
+    const ids = [...filteredIds];
+    if (activeSpeakerId && !ids.includes(activeSpeakerId)) {
+      ids.push(activeSpeakerId);
     }
-    if (a === activeSpeakerId) return -1;
-    if (b === activeSpeakerId) return 1;
-    return 0;
-  });
+    if (pinnedId && !ids.includes(pinnedId)) {
+      ids.push(pinnedId);
+    }
+    return ids.sort((a, b) => {
+      if (pinnedId) {
+        if (a === pinnedId) return -1;
+        if (b === pinnedId) return 1;
+      }
+      if (a === activeSpeakerId) return -1;
+      if (b === activeSpeakerId) return 1;
+      return 0;
+    });
+  }, [filteredIds, pinnedId, activeSpeakerId]);
 
   const hasScreenShare = screens.length > 0;
 
@@ -217,12 +217,9 @@ export default function DailyParticipantGrid() {
     );
   }
 
-  // Gallery view
-  const filteredIds = hideNoVideo
-    ? sortedIds.filter((id) => videoStates.get(id) !== false)
-    : sortedIds;
-  const visibleIds = filteredIds.slice(0, MAX_TILES);
-  const overflow = filteredIds.length - visibleIds.length;
+  // Gallery view — sortedIds already filtered by useParticipantIds native filter
+  const visibleIds = sortedIds.slice(0, MAX_TILES);
+  const overflow = sortedIds.length - visibleIds.length;
 
   const tileCount = visibleIds.length + screens.length;
   const gridCols =
@@ -234,11 +231,6 @@ export default function DailyParticipantGrid() {
 
   return (
     <div className="relative w-full h-full bg-gray-900">
-      {/* Hidden video state checkers */}
-      {allIds.map((id) => (
-        <VideoStateChecker key={`vsc-${id}`} sessionId={id} onReport={handleVideoReport} />
-      ))}
-
       {/* Layout toggle + hide no-video toggle */}
       <LayoutToggle layout={layout} onToggle={setLayout} hideNoVideo={hideNoVideo} onToggleHide={setHideNoVideo} />
 
@@ -274,7 +266,7 @@ export default function DailyParticipantGrid() {
           </div>
         )}
 
-        {allIds.length === 0 && screens.length === 0 && (
+        {participantCounts.present === 0 && screens.length === 0 && (
           <div className="flex items-center justify-center h-full text-gray-400">
             Waiting for participants...
           </div>
@@ -300,7 +292,7 @@ function LayoutToggle({
       {onToggleHide !== undefined && (
         <button
           onClick={() => onToggleHide?.(!hideNoVideo)}
-          className={`px-2 py-1 text-xs bg-gray-800/80 border border-gray-700 ${
+          className={`px-2 py-1 text-xs cursor-pointer bg-gray-800/80 border border-gray-700 ${
             hideNoVideo ? "text-yellow-400" : "text-gray-400 hover:text-gray-300"
           }`}
           title={hideNoVideo ? "Show all participants" : "Hide participants without video"}
@@ -319,7 +311,7 @@ function LayoutToggle({
       <div className="flex bg-gray-800/80 border border-gray-700 text-xs">
         <button
           onClick={() => onToggle("gallery")}
-          className={`px-2 py-1 ${layout === "gallery" ? "bg-yellow-500 text-black" : "text-gray-300 hover:bg-gray-700"}`}
+          className={`px-2 py-1 cursor-pointer ${layout === "gallery" ? "bg-yellow-500 text-black" : "text-gray-300 hover:bg-gray-700"}`}
           title="Gallery view"
           aria-label="Gallery view"
           aria-pressed={layout === "gallery"}
@@ -330,14 +322,12 @@ function LayoutToggle({
         </button>
         <button
           onClick={() => onToggle("speaker")}
-          className={`px-2 py-1 ${layout === "speaker" ? "bg-yellow-500 text-black" : "text-gray-300 hover:bg-gray-700"}`}
+          className={`px-2 py-1 cursor-pointer ${layout === "speaker" ? "bg-yellow-500 text-black" : "text-gray-300 hover:bg-gray-700"}`}
           title="Speaker view"
           aria-label="Speaker view"
           aria-pressed={layout === "speaker"}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
+          <User className="w-4 h-4" />
         </button>
       </div>
     </div>

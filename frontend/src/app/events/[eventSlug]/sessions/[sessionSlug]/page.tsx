@@ -173,54 +173,29 @@ function SessionContent({
   // Full-screen call overlay
   if (inCall && canJoin) {
     return (
-      <div className="fixed inset-0 z-50 bg-gray-900 flex flex-col">
-        {/* Call header */}
-        <div className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              onClick={handleLeave}
-              className="text-gray-400 hover:text-white flex-shrink-0"
-              title="Leave call"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-            </button>
-            <div className="min-w-0">
-              <h1 className="text-white font-bold text-sm truncate">{session.Title as string}</h1>
-              <p className="text-gray-500 text-xs">{sessionType === "livestream" ? "Livestream" : "Video Call"}</p>
-            </div>
+      <div className="fixed inset-0 z-50 bg-gray-900">
+        <AccessGate eventId={event.id} eventSlug={event.Slug} sessionId={session.documentId as string} eventAccessMode={eventAccessMode} sessionAccessOverride={accessOverride} guestName={guestName} onGuestJoin={(name) => setGuestName(name)}>
+          <div className="w-full h-full">
+            <DailyErrorBoundary>
+              <DailyRoom
+                sessionId={session.documentId as string}
+                roomUrl={roomUrl!}
+                userName={preJoinSettings?.userName || guestName || user?.name || user?.email}
+                audioEnabled={preJoinSettings?.audioEnabled}
+                videoEnabled={preJoinSettings?.videoEnabled}
+                audioDeviceId={preJoinSettings?.audioDeviceId}
+                videoDeviceId={preJoinSettings?.videoDeviceId}
+                onLeave={handleLeave}
+              >
+                {sessionType === "livestream" ? (
+                  <DailyLivestream onLeave={handleLeave} sessionId={session.documentId as string} isAdmin={isAdmin} sessionTitle={session.Title as string} sessionType={sessionType} />
+                ) : (
+                  <DailyCall onLeave={handleLeave} sessionId={session.documentId as string} isAdmin={isAdmin} />
+                )}
+              </DailyRoom>
+            </DailyErrorBoundary>
           </div>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-red-400 text-xs font-medium">LIVE</span>
-          </div>
-        </div>
-
-        {/* Access gate + call content */}
-        <div className="flex-1 overflow-hidden flex items-center justify-center">
-          <AccessGate eventId={event.id} eventSlug={event.Slug} sessionId={session.documentId as string} eventAccessMode={eventAccessMode} sessionAccessOverride={accessOverride} guestName={guestName} onGuestJoin={(name) => setGuestName(name)}>
-            <div className="w-full h-full">
-              <DailyErrorBoundary>
-                <DailyRoom
-                  sessionId={session.documentId as string}
-                  roomUrl={roomUrl!}
-                  userName={preJoinSettings?.userName || guestName || user?.name || user?.email}
-                  audioEnabled={preJoinSettings?.audioEnabled}
-                  videoEnabled={preJoinSettings?.videoEnabled}
-                  audioDeviceId={preJoinSettings?.audioDeviceId}
-                  videoDeviceId={preJoinSettings?.videoDeviceId}
-                >
-                  {sessionType === "livestream" ? (
-                    <DailyLivestream onLeave={handleLeave} sessionId={session.documentId as string} isAdmin={isAdmin} />
-                  ) : (
-                    <DailyCall onLeave={handleLeave} sessionId={session.documentId as string} isAdmin={isAdmin} />
-                  )}
-                </DailyRoom>
-              </DailyErrorBoundary>
-            </div>
-          </AccessGate>
-        </div>
+        </AccessGate>
       </div>
     );
   }
@@ -414,33 +389,18 @@ function SessionContent({
         </section>
       )}
 
-      {/* Session details — always visible */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {session.ShortDescription ? (
-            <div className="prose dark:prose-invert max-w-3xl mb-10">
+      {/* Session description */}
+      {session.ShortDescription && (
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="prose dark:prose-invert max-w-3xl">
               <p className="text-lg text-gray-600 dark:text-gray-300">
                 {String(session.ShortDescription)}
               </p>
             </div>
-          ) : null}
-
-          <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-300">
-            <div className="flex items-center gap-2">
-              <svg className="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{formattedStart} - {formattedEnd}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <span className="capitalize">{format}</span>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Venue — only for in-person and hybrid sessions */}
       {format !== "virtual" && venue?.Name && (

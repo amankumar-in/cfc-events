@@ -125,6 +125,30 @@ export default function DailyActionOverlay({ sessionId }: DailyActionOverlayProp
   useAppMessage({
     onAppMessage: useCallback(
       (ev: { data: Record<string, unknown> }) => {
+        // Co-host assignment/removal
+        if (ev.data.type === "co-host-assigned") {
+          setAnnouncements((prev) => [
+            ...prev,
+            {
+              type: "announcement",
+              message: (ev.data.message as string) || "You have been made a co-host",
+            },
+          ]);
+          setTimeout(() => setAnnouncements((p) => p.slice(1)), 5000);
+          return;
+        }
+        if (ev.data.type === "co-host-removed") {
+          setAnnouncements((prev) => [
+            ...prev,
+            {
+              type: "announcement",
+              message: (ev.data.message as string) || "Your co-host role has been removed",
+            },
+          ]);
+          setTimeout(() => setAnnouncements((p) => p.slice(1)), 5000);
+          return;
+        }
+
         // Promote/demote
         if (ev.data.type === "promote") {
           setPromotionPrompt(true);

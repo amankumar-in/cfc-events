@@ -8,12 +8,17 @@ import DailyControls from "@/components/daily/DailyControls";
 import DailyActionOverlay from "@/components/daily/DailyActionOverlay";
 import ParticipantNotifications from "@/components/daily/ParticipantNotifications";
 import ActionsSidebar from "./ActionsSidebar";
-import { useDaily, useParticipantIds } from "@daily-co/daily-react";
+import { useDaily, useParticipantIds, useAppMessage, useDailyEvent } from "@daily-co/daily-react";
 import type { LiveStatus } from "@/lib/hooks/useSessionStatus";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+
+interface HandRaise {
+  participantId: string;
+  userName: string;
+}
 
 interface LiveControlPanelInnerProps {
   sessionId: string;
@@ -22,6 +27,8 @@ interface LiveControlPanelInnerProps {
   onSendAction: (action: Record<string, unknown>) => void;
   onGoLive: () => Promise<void>;
   onEndSession: () => Promise<void>;
+  sessionTitle?: string;
+  backHref?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -47,6 +54,8 @@ function LiveControlPanelInner({
   onSendAction,
   onGoLive,
   onEndSession,
+  sessionTitle,
+  backHref,
 }: LiveControlPanelInnerProps) {
   const daily = useDaily();
   const participantIds = useParticipantIds();
@@ -61,6 +70,51 @@ function LiveControlPanelInner({
   const [goLiveLoading, setGoLiveLoading] = useState(false);
   const [endLoading, setEndLoading] = useState(false);
   const [confirmEnd, setConfirmEnd] = useState(false);
+
+  // Hand raise tracking — lifted here so it persists across sidebar tab switches
+  const [raisedHands, setRaisedHands] = useState<Map<string, HandRaise>>(new Map());
+
+  useAppMessage({
+    onAppMessage: useCallback(
+      (ev: { data: Record<string, unknown>; fromId: string }) => {
+        if (ev.data.type === "hand-raise") {
+          const userName = (ev.data.userName as string) || "Guest";
+          setRaisedHands((prev) => {
+            const next = new Map(prev);
+            if (ev.data.raised !== false) {
+              next.set(ev.fromId, { participantId: ev.fromId, userName });
+            } else {
+              next.delete(ev.fromId);
+            }
+            return next;
+          });
+        }
+        if (ev.data.type === "hand-lower") {
+          setRaisedHands((prev) => {
+            const next = new Map(prev);
+            next.delete(ev.fromId);
+            return next;
+          });
+        }
+      },
+      []
+    ),
+  });
+
+  useDailyEvent(
+    "participant-left",
+    useCallback((ev: any) => {
+      const leftId = ev?.participant?.session_id;
+      if (leftId) {
+        setRaisedHands((prev) => {
+          if (!prev.has(leftId)) return prev;
+          const next = new Map(prev);
+          next.delete(leftId);
+          return next;
+        });
+      }
+    }, [])
+  );
 
   // ── Listen for recording events from Daily.co ─────────────────────────
 
@@ -190,7 +244,28 @@ function LiveControlPanelInner({
   if (liveStatus === "idle") {
     return (
       <div className="flex h-full">
-        <div className="flex-1 flex flex-col items-center justify-center bg-gray-900 min-w-0">
+        <div className="flex-1 flex flex-col bg-gray-900 min-w-0">
+          {/* Header */}
+          <div className="flex items-center gap-3 px-4 py-2 bg-gray-800 border-b border-gray-700 flex-shrink-0">
+            {backHref && (
+              <a href={backHref} className="text-gray-400 hover:text-white flex-shrink-0 cursor-pointer" title="Back to session">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </a>
+            )}
+            {sessionTitle && (
+              <div className="min-w-0">
+                <h1 className="text-white font-bold text-sm truncate">{sessionTitle}</h1>
+                <p className="text-gray-500 text-xs">Host Controls</p>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 bg-gray-500" />
+              <span className="text-gray-400 text-xs font-bold tracking-wider">IDLE</span>
+            </div>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-md px-6">
             <div className="mb-4 flex justify-center">
               <span className="h-4 w-4 bg-gray-500" />
@@ -202,45 +277,16 @@ function LiveControlPanelInner({
             <button
               onClick={handleGoLive}
               disabled={goLiveLoading}
-              className="px-8 py-3 bg-yellow-500 text-black font-bold text-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-3 bg-yellow-500 text-black font-bold text-lg hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {goLiveLoading ? "Going Live..." : "Go Live"}
             </button>
           </div>
+          </div>
         </div>
         {/* Sidebar still available for chat / setup */}
         <div className="w-80 xl:w-96 hidden lg:block flex-shrink-0">
-          <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} />
-        </div>
-      </div>
-    );
-  }
-
-  // ── Ended overlay ─────────────────────────────────────────────────────
-
-  if (liveStatus === "ended") {
-    return (
-      <div className="flex h-full">
-        <div className="flex-1 flex flex-col items-center justify-center bg-gray-900 min-w-0">
-          <div className="text-center max-w-md px-6">
-            <div className="mb-4 flex justify-center">
-              <span className="h-4 w-4 bg-amber-500" />
-            </div>
-            <h2 className="text-white text-xl font-bold mb-2">Session Has Ended</h2>
-            <p className="text-gray-400 text-sm mb-8">
-              This session has concluded. You can restart it if needed.
-            </p>
-            <button
-              onClick={handleGoLive}
-              disabled={goLiveLoading}
-              className="px-8 py-3 border border-yellow-500 text-yellow-500 font-bold hover:bg-yellow-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {goLiveLoading ? "Restarting..." : "Restart Session"}
-            </button>
-          </div>
-        </div>
-        <div className="w-80 xl:w-96 hidden lg:block flex-shrink-0">
-          <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} />
+          <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} raisedHands={raisedHands} onUpdateRaisedHands={setRaisedHands} />
         </div>
       </div>
     );
@@ -251,20 +297,48 @@ function LiveControlPanelInner({
   return (
     <div className="flex h-full">
       {/* Video area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Sub-header: status + viewer count + recording + end */}
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-800/50 border-b border-gray-700/50 flex-shrink-0">
-          <div className="flex items-center gap-4">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
+        {/* Sub-header: back + title + status + viewer count + recording + end */}
+        <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700 flex-shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            {backHref && (
+              <a
+                href={backHref}
+                className="text-gray-400 hover:text-white flex-shrink-0 cursor-pointer"
+                title="Back to session"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </a>
+            )}
+            {sessionTitle && (
+              <div className="min-w-0">
+                <h1 className="text-white font-bold text-sm truncate">{sessionTitle}</h1>
+                <p className="text-gray-500 text-xs">Host Controls</p>
+              </div>
+            )}
             {statusBadge}
             <span className="text-gray-500 text-xs">
               {participantIds.length} viewer{participantIds.length !== 1 ? "s" : ""}
             </span>
+            {raisedHands.size > 0 && (
+              <div
+                className="flex items-center gap-1 text-yellow-400 text-xs"
+                title={Array.from(raisedHands.values()).map((h) => h.userName).join(", ")}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                </svg>
+                {raisedHands.size} raised
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {/* Recording toggle */}
             <button
               onClick={toggleRecording}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium cursor-pointer ${
                 isRecording
                   ? "bg-red-600 text-white hover:bg-red-500"
                   : "border border-gray-600 text-gray-300 hover:bg-gray-700"
@@ -294,7 +368,7 @@ function LiveControlPanelInner({
                   "*"
                 );
               }}
-              className="px-3 py-1.5 text-xs font-medium border border-amber-500/50 text-amber-400 hover:bg-amber-900/20"
+              className="px-3 py-1.5 text-xs font-medium border border-amber-500/50 text-amber-400 hover:bg-amber-900/20 cursor-pointer"
               title="Broadcast a warning that the session is ending soon"
             >
               Warn Ending
@@ -304,7 +378,7 @@ function LiveControlPanelInner({
             {!confirmEnd ? (
               <button
                 onClick={() => setConfirmEnd(true)}
-                className="px-3 py-1.5 text-xs font-medium border border-red-500/50 text-red-400 hover:bg-red-900/20"
+                className="px-3 py-1.5 text-xs font-medium border border-red-500/50 text-red-400 hover:bg-red-900/20 cursor-pointer"
               >
                 End Session
               </button>
@@ -313,13 +387,13 @@ function LiveControlPanelInner({
                 <button
                   onClick={handleEndSession}
                   disabled={endLoading}
-                  className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white hover:bg-red-500 disabled:opacity-50"
+                  className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white hover:bg-red-500 disabled:opacity-50 cursor-pointer"
                 >
                   {endLoading ? "Ending..." : "Confirm End"}
                 </button>
                 <button
                   onClick={() => setConfirmEnd(false)}
-                  className="px-2 py-1.5 text-xs text-gray-400 hover:text-white"
+                  className="px-2 py-1.5 text-xs text-gray-400 hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -329,20 +403,20 @@ function LiveControlPanelInner({
         </div>
 
         {/* Video grid */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-0">
           <DailyParticipantGrid />
           <ParticipantNotifications />
         </div>
 
         {/* Controls bar */}
-        <div className="flex items-center bg-gray-900">
+        <div className="flex items-center bg-gray-900 flex-shrink-0">
           <div className="flex-1">
-            <DailyControls isRecording={isRecording} />
+            <DailyControls isRecording={isRecording} mode="host" />
           </div>
           {/* Mobile sidebar toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-3 text-white hover:bg-gray-700 mr-2"
+            className="lg:hidden p-3 text-white hover:bg-gray-700 mr-2 cursor-pointer"
             title="Toggle panel"
           >
             <svg
@@ -364,7 +438,7 @@ function LiveControlPanelInner({
 
       {/* Sidebar - desktop: always visible, mobile: overlay */}
       <div className="w-80 xl:w-96 hidden lg:block flex-shrink-0">
-        <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} />
+        <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} raisedHands={raisedHands} onUpdateRaisedHands={setRaisedHands} />
       </div>
 
       {/* Mobile sidebar overlay */}
@@ -380,7 +454,7 @@ function LiveControlPanelInner({
                 <span className="text-white font-medium text-sm">Panel</span>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-white cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -398,7 +472,7 @@ function LiveControlPanelInner({
                 </button>
               </div>
               <div className="flex-1">
-                <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} />
+                <ActionsSidebar onSendAction={handleSendAction} sessionId={sessionId} roomName={roomName} raisedHands={raisedHands} onUpdateRaisedHands={setRaisedHands} />
               </div>
             </div>
           </div>
@@ -422,6 +496,8 @@ interface LiveControlPanelProps {
   onSendAction: (action: Record<string, unknown>) => void;
   onGoLive: () => Promise<void>;
   onEndSession: () => Promise<void>;
+  sessionTitle?: string;
+  backHref?: string;
 }
 
 export default function LiveControlPanel({
@@ -432,6 +508,8 @@ export default function LiveControlPanel({
   onSendAction,
   onGoLive,
   onEndSession,
+  sessionTitle,
+  backHref,
 }: LiveControlPanelProps) {
   // Extract room name from the Daily.co URL (e.g. https://xxx.daily.co/room-name)
   let roomName: string | undefined;
@@ -441,9 +519,71 @@ export default function LiveControlPanel({
     // invalid URL, leave undefined
   }
 
+  const [goLiveLoading, setGoLiveLoading] = useState(false);
+
+  // When session has ended, unmount DailyRoom to release camera/mic
+  if (liveStatus === "ended") {
+    return (
+      <div className="flex h-full">
+        <div className="flex-1 flex flex-col bg-gray-900 min-w-0">
+          {/* Header */}
+          <div className="flex items-center gap-3 px-4 py-2 bg-gray-800 border-b border-gray-700 flex-shrink-0">
+            {backHref && (
+              <a href={backHref} className="text-gray-400 hover:text-white flex-shrink-0 cursor-pointer" title="Back to session">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </a>
+            )}
+            {sessionTitle && (
+              <div className="min-w-0">
+                <h1 className="text-white font-bold text-sm truncate">{sessionTitle}</h1>
+                <p className="text-gray-500 text-xs">Host Controls</p>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 bg-amber-500" />
+              <span className="text-amber-400 text-xs font-bold tracking-wider">ENDED</span>
+            </div>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center max-w-md px-6">
+              <div className="mb-4 flex justify-center">
+                <span className="h-4 w-4 bg-amber-500" />
+              </div>
+              <h2 className="text-white text-xl font-bold mb-2">Session Has Ended</h2>
+              <p className="text-gray-400 text-sm mb-8">
+                This session has concluded. You can restart it if needed.
+              </p>
+              <button
+                onClick={async () => {
+                  setGoLiveLoading(true);
+                  try { await onGoLive(); } finally { setGoLiveLoading(false); }
+                }}
+                disabled={goLiveLoading}
+                className="px-8 py-3 border border-yellow-500 text-yellow-500 font-bold hover:bg-yellow-500/10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {goLiveLoading ? "Restarting..." : "Restart Session"}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="w-80 xl:w-96 hidden lg:block flex-shrink-0">
+          <ActionsSidebar onSendAction={onSendAction} sessionId={sessionId} roomName={roomName} raisedHands={new Map()} />
+        </div>
+      </div>
+    );
+  }
+
+  const handleLeave = () => {
+    if (backHref) {
+      window.location.href = backHref;
+    }
+  };
+
   return (
     <DailyErrorBoundary>
-      <DailyRoom sessionId={sessionId} roomUrl={roomUrl} token={token} userName="Admin">
+      <DailyRoom sessionId={sessionId} roomUrl={roomUrl} token={token} userName="Host" onLeave={handleLeave}>
         <LiveControlPanelInner
           sessionId={sessionId}
           roomName={roomName}
@@ -451,6 +591,8 @@ export default function LiveControlPanel({
           onSendAction={onSendAction}
           onGoLive={onGoLive}
           onEndSession={onEndSession}
+          sessionTitle={sessionTitle}
+          backHref={backHref}
         />
       </DailyRoom>
     </DailyErrorBoundary>

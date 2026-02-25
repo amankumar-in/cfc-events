@@ -6,11 +6,14 @@ import { Video, VideoOff, Mic, MicOff } from "lucide-react";
 import DeviceSettings from "./DeviceSettings";
 import NetworkQuality from "./NetworkQuality";
 
+type DailyControlsMode = "speaker" | "viewer" | "host";
+
 interface DailyControlsProps {
   onLeave?: () => void;
   showScreenShare?: boolean;
   compact?: boolean;
   isRecording?: boolean;
+  mode?: DailyControlsMode;
 }
 
 export default function DailyControls({
@@ -18,6 +21,7 @@ export default function DailyControls({
   showScreenShare = true,
   compact = false,
   isRecording = false,
+  mode = "speaker",
 }: DailyControlsProps) {
   const daily = useDaily();
   const localParticipant = useLocalParticipant();
@@ -39,8 +43,20 @@ export default function DailyControls({
     localParticipant?.user_name || localParticipant?.user_id || "Guest";
 
   // Touch-friendly sizing: bigger on mobile
-  const btnSize = compact ? "p-2" : "p-3 sm:p-3";
+  const btnSize = compact ? "p-2 cursor-pointer" : "p-3 sm:p-3 cursor-pointer";
   const iconSize = compact ? "w-4 h-4" : "w-5 h-5";
+
+  // ── Mode-based visibility ───────────────────────────────────────────
+  const showMic = mode !== "viewer";
+  const showCam = mode !== "viewer";
+  const showScreen = showScreenShare && mode !== "viewer";
+  const showHandRaise = mode !== "host";
+  const showReactions = mode !== "host";
+  const showCaptions = mode !== "viewer";
+  const showSettings = mode !== "viewer";
+  const showLeave = mode !== "viewer";
+  const showNetworkQuality = mode !== "viewer";
+  const showRecording = mode !== "viewer";
 
   // ── Toggle helpers ──────────────────────────────────────────────────
 
@@ -148,20 +164,24 @@ export default function DailyControls({
       switch (e.key) {
         case "m":
         case "M":
+          if (!showMic) break;
           e.preventDefault();
           toggleMic();
           break;
         case "v":
         case "V":
+          if (!showCam) break;
           e.preventDefault();
           toggleCam();
           break;
         case "h":
         case "H":
+          if (!showHandRaise) break;
           e.preventDefault();
           toggleHandRaise();
           break;
         case " ":
+          if (!showMic) break;
           e.preventDefault();
           if (pushToTalkPrevState.current === null) {
             pushToTalkPrevState.current = !!localParticipant?.audio;
@@ -173,6 +193,7 @@ export default function DailyControls({
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (isInputFocused()) return;
+      if (!showMic) return;
       if (e.key === " " && pushToTalkPrevState.current !== null) {
         e.preventDefault();
         daily?.setLocalAudio(pushToTalkPrevState.current);
@@ -186,62 +207,68 @@ export default function DailyControls({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [daily, localParticipant?.audio, toggleMic, toggleCam, toggleHandRaise]);
+  }, [daily, localParticipant?.audio, toggleMic, toggleCam, toggleHandRaise, showMic, showCam, showHandRaise]);
 
   // ── Render ─────────────────────────────────────────────────────────
 
   return (
-    <div className="flex items-center justify-between gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-900">
+    <div className={`flex items-center ${mode === "viewer" ? "justify-center" : "justify-between"} gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-900`}>
       {/* Left: recording indicator + network quality */}
-      <div className="flex items-center gap-2 min-w-[60px] sm:min-w-[80px]">
-        <NetworkQuality />
-        {isRecording && (
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 text-xs sm:text-sm text-white select-none">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
-            </span>
-            <span className="font-semibold tracking-wide text-red-400">
-              REC
-            </span>
-          </div>
-        )}
-      </div>
+      {mode !== "viewer" && (
+        <div className="flex items-center gap-2 min-w-[60px] sm:min-w-[80px]">
+          {showNetworkQuality && <NetworkQuality />}
+          {showRecording && isRecording && (
+            <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 text-xs sm:text-sm text-white select-none">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
+              </span>
+              <span className="font-semibold tracking-wide text-red-400">
+                REC
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Center: controls */}
       <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Mic */}
-        <button
-          onClick={toggleMic}
-          className={`${btnSize} ${
-            isMuted
-              ? "bg-red-600 hover:bg-red-500"
-              : "bg-gray-700 hover:bg-gray-600"
-          } text-white transition-colors`}
-          title={isMuted ? "Unmute (M)" : "Mute (M)"}
-          aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
-          aria-pressed={!isMuted}
-        >
-          {isMuted ? <MicOff className={iconSize} /> : <Mic className={iconSize} />}
-        </button>
+        {showMic && (
+          <button
+            onClick={toggleMic}
+            className={`${btnSize} ${
+              isMuted
+                ? "bg-red-600 hover:bg-red-500"
+                : "bg-gray-700 hover:bg-gray-600"
+            } text-white transition-colors`}
+            title={isMuted ? "Unmute (M)" : "Mute (M)"}
+            aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
+            aria-pressed={!isMuted}
+          >
+            {isMuted ? <MicOff className={iconSize} /> : <Mic className={iconSize} />}
+          </button>
+        )}
 
         {/* Camera */}
-        <button
-          onClick={toggleCam}
-          className={`${btnSize} ${
-            isCamOff
-              ? "bg-red-600 hover:bg-red-500"
-              : "bg-gray-700 hover:bg-gray-600"
-          } text-white transition-colors`}
-          title={isCamOff ? "Turn on camera (V)" : "Turn off camera (V)"}
-          aria-label={isCamOff ? "Turn on camera" : "Turn off camera"}
-          aria-pressed={!isCamOff}
-        >
-          {isCamOff ? <VideoOff className={iconSize} /> : <Video className={iconSize} />}
-        </button>
+        {showCam && (
+          <button
+            onClick={toggleCam}
+            className={`${btnSize} ${
+              isCamOff
+                ? "bg-red-600 hover:bg-red-500"
+                : "bg-gray-700 hover:bg-gray-600"
+            } text-white transition-colors`}
+            title={isCamOff ? "Turn on camera (V)" : "Turn off camera (V)"}
+            aria-label={isCamOff ? "Turn on camera" : "Turn off camera"}
+            aria-pressed={!isCamOff}
+          >
+            {isCamOff ? <VideoOff className={iconSize} /> : <Video className={iconSize} />}
+          </button>
+        )}
 
         {/* Screen share */}
-        {showScreenShare && (
+        {showScreen && (
           <button
             onClick={toggleScreen}
             className={`${btnSize} ${
@@ -270,129 +297,137 @@ export default function DailyControls({
         )}
 
         {/* Hand raise */}
-        <button
-          onClick={toggleHandRaise}
-          className={`${btnSize} ${
-            handRaised
-              ? "bg-yellow-500 hover:bg-yellow-400 text-gray-900"
-              : "bg-gray-700 hover:bg-gray-600 text-white"
-          } transition-colors`}
-          title={handRaised ? "Lower hand (H)" : "Raise hand (H)"}
-          aria-label={handRaised ? "Lower hand" : "Raise hand"}
-          aria-pressed={handRaised}
-        >
-          <svg
-            className={iconSize}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+        {showHandRaise && (
+          <button
+            onClick={toggleHandRaise}
+            className={`${btnSize} ${
+              handRaised
+                ? "bg-yellow-500 hover:bg-yellow-400 text-gray-900"
+                : "bg-gray-700 hover:bg-gray-600 text-white"
+            } transition-colors`}
+            title={handRaised ? "Lower hand (H)" : "Raise hand (H)"}
+            aria-label={handRaised ? "Lower hand" : "Raise hand"}
+            aria-pressed={handRaised}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
-            />
-          </svg>
-        </button>
+            <svg
+              className={iconSize}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
+              />
+            </svg>
+          </button>
+        )}
 
         {/* Captions */}
-        <button
-          onClick={toggleCaptions}
-          className={`${btnSize} ${
-            captionsOn
-              ? "bg-blue-600 hover:bg-blue-500"
-              : "bg-gray-700 hover:bg-gray-600"
-          } text-white transition-colors hidden sm:block`}
-          title={captionsOn ? "Turn off captions" : "Turn on captions"}
-          aria-label={captionsOn ? "Turn off captions" : "Turn on captions"}
-          aria-pressed={captionsOn}
-        >
-          <svg className={iconSize} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-          </svg>
-        </button>
+        {showCaptions && (
+          <button
+            onClick={toggleCaptions}
+            className={`${btnSize} ${
+              captionsOn
+                ? "bg-blue-600 hover:bg-blue-500"
+                : "bg-gray-700 hover:bg-gray-600"
+            } text-white transition-colors hidden sm:block`}
+            title={captionsOn ? "Turn off captions" : "Turn on captions"}
+            aria-label={captionsOn ? "Turn off captions" : "Turn on captions"}
+            aria-pressed={captionsOn}
+          >
+            <svg className={iconSize} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+          </button>
+        )}
 
         {/* Reactions */}
-        <div className="relative hidden sm:block" ref={reactionsRef}>
-          <button
-            onClick={() => setReactionsOpen((prev) => !prev)}
-            className={`${btnSize} ${
-              reactionsOpen
-                ? "bg-gray-600"
-                : "bg-gray-700 hover:bg-gray-600"
-            } text-white transition-colors`}
-            title="Reactions"
-            aria-label="Send a reaction"
-            aria-expanded={reactionsOpen}
-          >
-            <svg
-              className={iconSize}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+        {showReactions && (
+          <div className={`relative ${mode === "viewer" ? "" : "hidden sm:block"}`} ref={reactionsRef}>
+            <button
+              onClick={() => setReactionsOpen((prev) => !prev)}
+              className={`${btnSize} ${
+                reactionsOpen
+                  ? "bg-gray-600"
+                  : "bg-gray-700 hover:bg-gray-600"
+              } text-white transition-colors`}
+              title="Reactions"
+              aria-label="Send a reaction"
+              aria-expanded={reactionsOpen}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </button>
+              <svg
+                className={iconSize}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </button>
 
-          {reactionsOpen && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 flex gap-1 bg-gray-800 border border-gray-700 p-2 shadow-lg" role="menu">
-              {["👍", "👏", "❤️", "😂", "🎉"].map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => sendReaction(emoji)}
-                  className="text-xl hover:bg-gray-700 p-1.5 transition-colors leading-none"
-                  title={emoji}
-                  role="menuitem"
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+            {reactionsOpen && (
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 flex gap-1 bg-gray-800 border border-gray-700 p-2 shadow-lg" role="menu">
+                {["👍", "👏", "❤️", "😂", "🎉"].map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => sendReaction(emoji)}
+                    className="text-xl hover:bg-gray-700 p-1.5 transition-colors leading-none cursor-pointer"
+                    title={emoji}
+                    role="menuitem"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Device Settings */}
-        <div className="relative hidden sm:block">
-          <button
-            onClick={() => setSettingsOpen((prev) => !prev)}
-            className={`${btnSize} ${
-              settingsOpen ? "bg-gray-600" : "bg-gray-700 hover:bg-gray-600"
-            } text-white transition-colors`}
-            title="Settings"
-            aria-label="Device settings"
-            aria-expanded={settingsOpen}
-          >
-            <svg
-              className={iconSize}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+        {showSettings && (
+          <div className="relative hidden sm:block">
+            <button
+              onClick={() => setSettingsOpen((prev) => !prev)}
+              className={`${btnSize} ${
+                settingsOpen ? "bg-gray-600" : "bg-gray-700 hover:bg-gray-600"
+              } text-white transition-colors`}
+              title="Settings"
+              aria-label="Device settings"
+              aria-expanded={settingsOpen}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-          </button>
-          <DeviceSettings
-            open={settingsOpen}
-            onClose={() => setSettingsOpen(false)}
-          />
-        </div>
+              <svg
+                className={iconSize}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </button>
+            <DeviceSettings
+              open={settingsOpen}
+              onClose={() => setSettingsOpen(false)}
+            />
+          </div>
+        )}
 
         {/* Picture-in-Picture */}
         <button
@@ -448,31 +483,33 @@ export default function DailyControls({
       </div>
 
       {/* Right: leave button */}
-      <div className="flex items-center min-w-[60px] sm:min-w-[80px] justify-end">
-        <button
-          onClick={leaveCall}
-          className={`${btnSize} px-3 sm:px-4 bg-red-600 hover:bg-red-500 text-white flex items-center gap-1.5 sm:gap-2 transition-colors`}
-          title="Leave call"
-          aria-label="Leave call"
-        >
-          <svg
-            className={iconSize}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+      {showLeave && (
+        <div className="flex items-center min-w-[60px] sm:min-w-[80px] justify-end">
+          <button
+            onClick={leaveCall}
+            className={`${btnSize} px-3 sm:px-4 bg-red-600 hover:bg-red-500 text-white flex items-center gap-1.5 sm:gap-2 transition-colors cursor-pointer`}
+            title="Leave call"
+            aria-label="Leave call"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"
-            />
-          </svg>
-          <span className={`font-medium ${compact ? "text-xs" : "text-xs sm:text-sm"}`}>
-            Leave
-          </span>
-        </button>
-      </div>
+            <svg
+              className={iconSize}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"
+              />
+            </svg>
+            <span className={`font-medium ${compact ? "text-xs" : "text-xs sm:text-sm"}`}>
+              Leave
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

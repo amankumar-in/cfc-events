@@ -35,10 +35,17 @@ export default () => ({
       };
     }
 
+    // Room expires 2 hours after session EndDate, with a minimum of 24h from now
+    const minExp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
+    const endDateExp = session.EndDate
+      ? Math.floor(new Date(session.EndDate as string).getTime() / 1000) + 2 * 60 * 60
+      : 0;
+    const exp = Math.max(minExp, endDateExp);
+
     const roomProperties: Record<string, any> = {
       privacy: "private",
       properties: {
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
+        exp,
         enable_chat: true,
         enable_screenshare: true,
         enable_knocking: false,
@@ -47,7 +54,10 @@ export default () => ({
 
     // Configure based on stream type
     if (session.streamType === "livestream") {
-      roomProperties.properties.owner_only_broadcast = true;
+      // Broadcasting is controlled per-participant via token permissions
+      // (canSend: false for viewers). Do NOT set owner_only_broadcast —
+      // it overrides updateParticipant() permission grants and breaks
+      // the promote-viewer-to-speaker flow.
       roomProperties.properties.enable_recording = "cloud";
     } else if (session.streamType === "call") {
       roomProperties.properties.owner_only_broadcast = false;
@@ -95,11 +105,6 @@ export default () => ({
 
     if (!session.dailyRoomName) {
       throw new Error("No Daily.co room configured for this session.");
-    }
-
-    // Reject token requests for ended sessions (prevents late joins)
-    if ((session as any).liveStatus === "ended") {
-      throw new Error("This session has ended.");
     }
 
     // Resolve effective access mode: session override > event default
@@ -153,6 +158,11 @@ export default () => ({
         }
       }
       // "open" mode: anyone can join, no checks needed
+
+      // Block viewers from joining ended sessions
+      if ((session as any).liveStatus === "ended") {
+        throw new Error("This session has ended.");
+      }
     }
 
     const isLivestream = session.streamType === "livestream";
@@ -170,7 +180,7 @@ export default () => ({
       tokenProperties.properties.enable_screenshare = false;
       tokenProperties.properties.start_video_off = true;
       tokenProperties.properties.start_audio_off = true;
-      tokenProperties.properties.canSend = false;
+      tokenProperties.properties.permissions = { canSend: false };
     }
 
     if (userName) {

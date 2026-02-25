@@ -6,7 +6,8 @@ import {
   useParticipantProperty,
   useAppMessage,
 } from "@daily-co/daily-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Search, MoreVertical } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,7 +54,7 @@ function roleBadgeClasses(role: ParticipantRole): string {
     case "Speaker":
       return "bg-yellow-500/20 text-yellow-500 border border-yellow-500/40";
     case "Promoted":
-      return "bg-green-500/20 text-green-400 border border-green-500/40";
+      return "bg-yellow-500/20 text-yellow-500 border border-yellow-500/40";
     case "Viewer":
       return "bg-gray-600 text-gray-300";
   }
@@ -144,7 +145,6 @@ function ParticipantRow({
   onMuteChat,
   onMakeCoHost,
   onRemoveCoHost,
-  onTransferHost,
   onFeedback,
 }: {
   sessionId: string;
@@ -159,7 +159,6 @@ function ParticipantRow({
   onMuteChat: (id: string, muted: boolean) => void;
   onMakeCoHost: (id: string) => void;
   onRemoveCoHost: (id: string) => void;
-  onTransferHost: (id: string) => void;
   onFeedback: (message: string) => void;
 }) {
   const [userName, audioState, videoState, isLocal, isOwner, permissions] =
@@ -176,7 +175,7 @@ function ParticipantRow({
   const hasVideo = videoState === "playable";
   const canSend = permissions?.canSend;
   const role = getRole(isLocal, isOwner, canSend, isCoHost);
-  const displayName = userName || (isLocal ? "Admin" : "Guest");
+  const displayName = userName || (isLocal ? "Host" : "Guest");
 
   const handleMute = () => {
     onMute(sessionId);
@@ -185,18 +184,60 @@ function ParticipantRow({
 
   const handlePromote = () => {
     onPromote(sessionId);
-    onFeedback(`Promoted ${displayName} to speaker`);
+    onFeedback(`Made ${displayName} a speaker`);
   };
 
   const handleDemote = () => {
     onDemote(sessionId);
-    onFeedback(`Demoted ${displayName} to viewer`);
+    onFeedback(`Made ${displayName} a viewer`);
   };
 
   const handleToggleChatMute = () => {
     const next = !chatMuted;
     onMuteChat(sessionId, next);
     onFeedback(next ? `Muted ${displayName}'s chat` : `Unmuted ${displayName}'s chat`);
+  };
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu on click outside or scroll
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    const handleClick = (e: MouseEvent) => {
+      if (
+        menuRef.current && !menuRef.current.contains(e.target as Node) &&
+        btnRef.current && !btnRef.current.contains(e.target as Node)
+      ) {
+        close();
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("scroll", close, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("scroll", close, true);
+    };
+  }, [menuOpen]);
+
+  const toggleMenu = () => {
+    if (menuOpen) {
+      setMenuOpen(false);
+      return;
+    }
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setMenuPos({ top: rect.bottom + 4, left: rect.right - 160 });
+    }
+    setMenuOpen(true);
+  };
+
+  const menuAction = (fn: () => void) => {
+    fn();
+    setMenuOpen(false);
   };
 
   return (
@@ -212,12 +253,12 @@ function ParticipantRow({
         <span
           className={`text-[10px] font-bold uppercase px-1.5 py-0.5 leading-none ${roleBadgeClasses(role)}`}
         >
-          {role}
+          {role === "Promoted" ? "Speaker" : role}
         </span>
         {handRaised && (
           <button
             onClick={() => onLowerHand(sessionId)}
-            className="text-yellow-400 hover:text-yellow-300 flex-shrink-0"
+            className="text-yellow-400 hover:text-yellow-300 flex-shrink-0 cursor-pointer"
             title="Lower hand"
           >
             <span className="text-sm">&#9995;</span>
@@ -226,81 +267,83 @@ function ParticipantRow({
       </div>
 
       {!isLocal && (
-        <div className="flex gap-1 flex-shrink-0">
-          {hasAudio && (
-            <button
-              onClick={handleMute}
-              className="px-2 py-1 text-xs border border-gray-600 hover:bg-gray-600 text-gray-300"
-              title="Mute"
-            >
-              Mute
-            </button>
-          )}
-          {role === "Promoted" ? (
-            <button
-              onClick={handleDemote}
-              className="px-2 py-1 text-xs border border-orange-400 text-orange-400 hover:bg-orange-900/20"
-              title="Remove from stage"
-            >
-              Demote
-            </button>
-          ) : role === "Viewer" ? (
-            <button
-              onClick={handlePromote}
-              className="px-2 py-1 text-xs border border-green-400 text-green-400 hover:bg-green-900/20"
-              title="Bring to stage"
-            >
-              Promote
-            </button>
-          ) : null}
-          {/* Co-host toggle */}
-          {!isOwner && role !== "Host" && (
-            isCoHost ? (
-              <button
-                onClick={() => { onRemoveCoHost(sessionId); onFeedback(`Removed co-host role from ${displayName}`); }}
-                className="px-2 py-1 text-xs border border-purple-400 text-purple-400 hover:bg-purple-900/20"
-                title="Remove co-host"
-              >
-                Remove Co-host
-              </button>
-            ) : (
-              <button
-                onClick={() => { onMakeCoHost(sessionId); onFeedback(`Made ${displayName} a co-host`); }}
-                className="px-2 py-1 text-xs border border-purple-400 text-purple-400 hover:bg-purple-900/20"
-                title="Make co-host"
-              >
-                Co-host
-              </button>
-            )
-          )}
+        <div className="flex-shrink-0">
           <button
-            onClick={handleToggleChatMute}
-            className={`px-2 py-1 text-xs border ${
-              chatMuted
-                ? "border-yellow-400 text-yellow-400 hover:bg-yellow-900/20"
-                : "border-gray-600 hover:bg-gray-600 text-gray-300"
-            }`}
-            title={chatMuted ? "Unmute chat" : "Mute chat"}
+            ref={btnRef}
+            onClick={toggleMenu}
+            className="p-1 text-gray-400 hover:text-white hover:bg-gray-600 cursor-pointer"
+            title="Actions"
           >
-            {chatMuted ? "Unmute Chat" : "Mute Chat"}
+            <MoreVertical className="w-4 h-4" />
           </button>
-          {!isOwner && (
-            <>
+
+          {menuOpen && menuPos && (
+            <div
+              ref={menuRef}
+              className="fixed z-50 w-40 bg-gray-800 border border-gray-600 shadow-lg py-1"
+              style={{ top: menuPos.top, left: menuPos.left }}
+            >
+              {hasAudio && (
+                <button
+                  onClick={() => menuAction(handleMute)}
+                  className="w-full text-left px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700 cursor-pointer"
+                >
+                  Mute
+                </button>
+              )}
+              {role === "Promoted" && (
+                <button
+                  onClick={() => menuAction(handleDemote)}
+                  className="w-full text-left px-3 py-1.5 text-xs text-orange-400 hover:bg-gray-700 cursor-pointer"
+                >
+                  Make Viewer
+                </button>
+              )}
+              {role === "Viewer" && (
+                <button
+                  onClick={() => menuAction(handlePromote)}
+                  className="w-full text-left px-3 py-1.5 text-xs text-green-400 hover:bg-gray-700 cursor-pointer"
+                >
+                  Make Speaker
+                </button>
+              )}
+              {!isOwner && role !== "Host" && (
+                isCoHost ? (
+                  <button
+                    onClick={() => menuAction(() => { onRemoveCoHost(sessionId); onFeedback(`Removed co-host role from ${displayName}`); })}
+                    className="w-full text-left px-3 py-1.5 text-xs text-purple-400 hover:bg-gray-700 cursor-pointer"
+                  >
+                    Remove Co-host
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => menuAction(() => { onMakeCoHost(sessionId); onFeedback(`Made ${displayName} a co-host`); })}
+                    className="w-full text-left px-3 py-1.5 text-xs text-purple-400 hover:bg-gray-700 cursor-pointer"
+                  >
+                    Make Co-host
+                  </button>
+                )
+              )}
               <button
-                onClick={() => { onTransferHost(sessionId); onFeedback(`Transferred host to ${displayName}`); }}
-                className="px-2 py-1 text-xs border border-blue-400 text-blue-400 hover:bg-blue-900/20"
-                title="Transfer host role"
+                onClick={() => menuAction(handleToggleChatMute)}
+                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-700 cursor-pointer ${
+                  chatMuted ? "text-yellow-400" : "text-gray-300"
+                }`}
               >
-                Transfer
+                {chatMuted ? "Unmute Chat" : "Mute Chat"}
               </button>
-              <button
-                onClick={() => onEject(sessionId, displayName)}
-                className="px-2 py-1 text-xs border border-red-400 text-red-400 hover:bg-red-900/20"
-                title="Remove from call"
-              >
-                Eject
-              </button>
-            </>
+              {!isOwner && (
+                <>
+                  <div className="border-t border-gray-700 my-1" />
+                  <button
+                    onClick={() => menuAction(() => onEject(sessionId, displayName))}
+                    className="w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-gray-700 cursor-pointer"
+                  >
+                    Eject
+                  </button>
+                </>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -332,12 +375,21 @@ function FeedbackToast({ items }: { items: ActionFeedback[] }) {
 // ParticipantManager (default export)
 // ---------------------------------------------------------------------------
 
-export default function ParticipantManager() {
+interface ParticipantManagerProps {
+  raisedHands?: Map<string, HandRaise>;
+  onUpdateRaisedHands?: React.Dispatch<React.SetStateAction<Map<string, HandRaise>>>;
+}
+
+export default function ParticipantManager({ raisedHands: externalRaisedHands, onUpdateRaisedHands }: ParticipantManagerProps) {
   const daily = useDaily();
   const participantIds = useParticipantIds();
-  const [raisedHands, setRaisedHands] = useState<Map<string, HandRaise>>(
-    new Map()
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Use lifted state from parent if provided, otherwise fall back to local state
+  const [localRaisedHands, setLocalRaisedHands] = useState<Map<string, HandRaise>>(new Map());
+  const raisedHands = externalRaisedHands ?? localRaisedHands;
+  const setRaisedHands = onUpdateRaisedHands ?? setLocalRaisedHands;
+
   const [chatMutedUsers, setChatMutedUsers] = useState<Set<string>>(new Set());
   const [coHosts, setCoHosts] = useState<Set<string>>(new Set());
   const [ejectTarget, setEjectTarget] = useState<{
@@ -346,7 +398,7 @@ export default function ParticipantManager() {
   } | null>(null);
   const [feedbackItems, setFeedbackItems] = useState<ActionFeedback[]>([]);
 
-  // Listen for hand-raise / hand-lower app messages
+  // Listen for re-promote requests (hand raises are tracked by parent)
   useAppMessage({
     onAppMessage: useCallback(
       (ev: {
@@ -357,26 +409,8 @@ export default function ParticipantManager() {
         };
         fromId: string;
       }) => {
-        const participantId = ev.fromId;
-        const userName = ev.data.userName || "Guest";
-
-        if (ev.data.type === "hand-raise") {
-          setRaisedHands((prev) => {
-            const next = new Map(prev);
-            if (ev.data.raised) {
-              next.set(participantId, { participantId, userName });
-            } else {
-              next.delete(participantId);
-            }
-            return next;
-          });
-        } else if (ev.data.type === "hand-lower") {
-          setRaisedHands((prev) => {
-            const next = new Map(prev);
-            next.delete(participantId);
-            return next;
-          });
-        } else if (ev.data.type === "re-promote-request") {
+        if (ev.data.type === "re-promote-request") {
+          const participantId = ev.fromId;
           // Auto-promote previously promoted viewer on reconnect
           try {
             daily?.updateParticipant(participantId, {
@@ -397,22 +431,6 @@ export default function ParticipantManager() {
       [daily]
     ),
   });
-
-  // Clean up raised hands when participants leave
-  useEffect(() => {
-    const idsSet = new Set(participantIds);
-    setRaisedHands((prev) => {
-      let changed = false;
-      const next = new Map(prev);
-      for (const key of next.keys()) {
-        if (!idsSet.has(key)) {
-          next.delete(key);
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-  }, [participantIds]);
 
   // Auto-dismiss feedback after 2.5s
   useEffect(() => {
@@ -607,49 +625,16 @@ export default function ParticipantManager() {
     [daily]
   );
 
-  // ── Transfer Host Role ──────────────────────────────────────────────────
-
-  const handleTransferHost = useCallback(
-    (sessionId: string) => {
-      try {
-        // Grant full owner-like permissions
-        daily?.updateParticipant(sessionId, {
-          updatePermissions: {
-            canSend: new Set(["video", "audio", "screenVideo", "screenAudio"]),
-            hasPresence: true,
-            canAdmin: new Set(["participants"]),
-          },
-        } as Parameters<NonNullable<typeof daily>["updateParticipant"]>[1]);
-
-        daily?.sendAppMessage(
-          { type: "host-transfer", message: "You are now the session host" },
-          sessionId
-        );
-
-        setCoHosts((prev) => {
-          const next = new Set(prev);
-          next.add(sessionId);
-          return next;
-        });
-
-        addFeedback("Host role transferred");
-      } catch (err) {
-        console.error("Failed to transfer host:", err);
-      }
-    },
-    [daily, addFeedback]
-  );
-
   // ── Lower Hand (admin action) ─────────────────────────────────────────
 
   const handleLowerHand = useCallback(
     (participantId: string) => {
       // Send a message to the participant telling them hand is lowered
       daily?.sendAppMessage(
-        { type: "hand-raise", raised: false, userName: "Admin" },
+        { type: "hand-raise", raised: false, userName: "Host" },
         participantId
       );
-      // Remove locally
+      // Remove from state (updates parent if lifted)
       setRaisedHands((prev) => {
         const next = new Map(prev);
         next.delete(participantId);
@@ -657,8 +642,23 @@ export default function ParticipantManager() {
       });
       addFeedback("Lowered hand");
     },
-    [daily, addFeedback]
+    [daily, addFeedback, setRaisedHands]
   );
+
+  // ── Filter participants by search query ──────────────────────────────
+
+  const filteredIds = useMemo(() => {
+    if (!searchQuery.trim()) return participantIds;
+    const q = searchQuery.toLowerCase();
+    const participants = daily?.participants();
+    if (!participants) return participantIds;
+    return participantIds.filter((id) => {
+      const p = id === "local" ? participants.local : participants[id];
+      const name = (p?.user_name || "").toLowerCase();
+      const odataUserId = (p?.user_id || "").toLowerCase();
+      return name.includes(q) || odataUserId.includes(q);
+    });
+  }, [participantIds, searchQuery, daily]);
 
   // ── Render ────────────────────────────────────────────────────────────
 
@@ -679,6 +679,20 @@ export default function ParticipantManager() {
         )}
       </div>
 
+      {/* Search */}
+      {participantIds.length > 3 && (
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name..."
+            className="w-full pl-8 pr-3 py-1.5 bg-gray-800 border border-gray-700 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-yellow-500"
+          />
+        </div>
+      )}
+
       {/* Raised hands banner */}
       {raisedHands.size > 0 && (
         <div className="px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs">
@@ -691,8 +705,8 @@ export default function ParticipantManager() {
       <FeedbackToast items={feedbackItems} />
 
       {/* Participant list */}
-      <div className="max-h-96 overflow-y-auto space-y-1">
-        {participantIds.map((id) => (
+      <div className="space-y-1">
+        {filteredIds.map((id) => (
           <ParticipantRow
             key={id}
             sessionId={id}
@@ -707,13 +721,15 @@ export default function ParticipantManager() {
             onMuteChat={handleMuteChat}
             onMakeCoHost={handleMakeCoHost}
             onRemoveCoHost={handleRemoveCoHost}
-            onTransferHost={handleTransferHost}
             onFeedback={addFeedback}
           />
         ))}
 
         {participantIds.length === 0 && (
           <p className="text-gray-400 text-sm">No participants yet</p>
+        )}
+        {participantIds.length > 0 && filteredIds.length === 0 && (
+          <p className="text-gray-500 text-xs py-2">No matches for &ldquo;{searchQuery}&rdquo;</p>
         )}
       </div>
 

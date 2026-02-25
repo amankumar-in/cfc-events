@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PollCreator from "./PollCreator";
 import AnnouncementSender from "./AnnouncementSender";
 import DownloadLinkSender from "./DownloadLinkSender";
@@ -50,13 +50,20 @@ function ActionHistory({ sessionId }: { sessionId: string }) {
   );
 }
 
+interface HandRaise {
+  participantId: string;
+  userName: string;
+}
+
 interface ActionsSidebarProps {
   onSendAction: (action: Record<string, unknown>) => void;
   sessionId?: string;
   roomName?: string;
+  raisedHands?: Map<string, HandRaise>;
+  onUpdateRaisedHands?: React.Dispatch<React.SetStateAction<Map<string, HandRaise>>>;
 }
 
-export default function ActionsSidebar({ onSendAction, sessionId, roomName }: ActionsSidebarProps) {
+export default function ActionsSidebar({ onSendAction, sessionId, roomName, raisedHands, onUpdateRaisedHands }: ActionsSidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     if (typeof window !== "undefined") {
       return (sessionStorage.getItem("admin-sidebar-tab") as Tab) || "chat";
@@ -125,7 +132,7 @@ export default function ActionsSidebar({ onSendAction, sessionId, roomName }: Ac
           <DailyChat sessionId={sessionId || ""} isAdmin />
         ) : activeTab === "participants" ? (
           <div className="flex-1 overflow-y-auto p-4">
-            <ParticipantManager />
+            <ParticipantManager raisedHands={raisedHands} onUpdateRaisedHands={onUpdateRaisedHands} />
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-4 space-y-6">

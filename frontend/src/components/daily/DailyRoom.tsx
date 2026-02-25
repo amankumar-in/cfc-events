@@ -11,13 +11,14 @@ import RecordingConsentBanner from "./RecordingConsentBanner";
 // Types
 // ---------------------------------------------------------------------------
 
-type ConnectionState = "idle" | "joining" | "joined" | "reconnecting" | "error";
+type ConnectionState = "idle" | "joining" | "joined" | "reconnecting" | "error" | "session-ended";
 
 type ErrorKind =
   | "permission-denied"
   | "device-not-found"
   | "network"
   | "room-full"
+  | "room-expired"
   | "webrtc-unsupported"
   | "generic";
 
@@ -35,6 +36,7 @@ interface DailyRoomProps {
   videoEnabled?: boolean;
   audioDeviceId?: string;
   videoDeviceId?: string;
+  onLeave?: () => void;
   children: ReactNode;
 }
 
@@ -115,6 +117,18 @@ function classifyError(err: unknown): ClassifiedError {
   }
 
   if (
+    lower.includes("no longer available") ||
+    lower.includes("room not found") ||
+    lower.includes("room has expired")
+  ) {
+    return {
+      kind: "room-expired",
+      message:
+        "This room is no longer available. The admin needs to create a new room from the session management page.",
+    };
+  }
+
+  if (
     lower.includes("network") ||
     lower.includes("connection") ||
     lower.includes("websocket") ||
@@ -147,11 +161,13 @@ function Spinner({ className = "w-10 h-10" }: { className?: string }) {
 function ErrorDisplay({
   error,
   onRetry,
+  onLeave,
 }: {
   error: ClassifiedError;
   onRetry?: () => void;
+  onLeave?: () => void;
 }) {
-  const canRetry = error.kind !== "room-full" && error.kind !== "webrtc-unsupported";
+  const canRetry = error.kind !== "room-full" && error.kind !== "room-expired" && error.kind !== "webrtc-unsupported";
 
   return (
     <div className="flex items-center justify-center h-96 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
@@ -218,6 +234,21 @@ function ErrorDisplay({
               />
             </svg>
           )}
+          {error.kind === "room-expired" && (
+            <svg
+              className="w-12 h-12 text-amber-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          )}
           {error.kind === "room-full" && (
             <svg
               className="w-12 h-12 text-yellow-500"
@@ -239,14 +270,24 @@ function ErrorDisplay({
           {error.message}
         </p>
 
-        {canRetry && onRetry && (
-          <button
-            onClick={onRetry}
-            className="px-4 py-2 bg-yellow-500 text-black font-medium hover:bg-yellow-400"
-          >
-            Retry
-          </button>
-        )}
+        <div className="flex items-center justify-center gap-3">
+          {canRetry && onRetry && (
+            <button
+              onClick={onRetry}
+              className="px-4 py-2 bg-yellow-500 text-black font-medium hover:bg-yellow-400"
+            >
+              Retry
+            </button>
+          )}
+          {onLeave && (
+            <button
+              onClick={onLeave}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium hover:border-gray-400 dark:hover:border-gray-500"
+            >
+              Back to Session
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -350,6 +391,7 @@ export default function DailyRoom({
   videoEnabled = true,
   audioDeviceId,
   videoDeviceId,
+  onLeave,
   children,
 }: DailyRoomProps) {
   const [callObject, setCallObject] = useState<DailyCallType | null>(null);
@@ -363,6 +405,7 @@ export default function DailyRoom({
   const tokenTimestampRef = useRef<number>(0);
   const tokenWarningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const attendanceIdRef = useRef<string | null>(null);
+  const intentionalLeaveRef = useRef(false);
 
   // -----------------------------------------------------------------------
   // Token refresh
@@ -492,13 +535,25 @@ export default function DailyRoom({
 
       // Left meeting (kicked, network failure after retry, etc.)
       daily.on("left-meeting", () => {
-        // If we are not in a "stale" teardown, treat as unexpected disconnect
-        if (!isStale()) {
-          setConnectionState("error");
-          setError({
-            kind: "network",
-            message: "You were disconnected from the session.",
-          });
+        if (isStale()) return;
+        // Intentional leave (session ended or user clicked leave) — don't show error
+        if (intentionalLeaveRef.current) {
+          intentionalLeaveRef.current = false;
+          return;
+        }
+        setConnectionState("error");
+        setError({
+          kind: "network",
+          message: "You were disconnected from the session.",
+        });
+      });
+
+      // Session ended broadcast — leave gracefully and show ended screen
+      daily.on("app-message", (ev: any) => {
+        if (ev?.data?.type === "session-status" && ev?.data?.status === "ended") {
+          intentionalLeaveRef.current = true;
+          setConnectionState("session-ended");
+          daily.leave().catch(() => {});
         }
       });
 
@@ -605,9 +660,36 @@ export default function DailyRoom({
   // Render
   // -----------------------------------------------------------------------
 
+  // Session ended — clean exit screen (not an error)
+  if (connectionState === "session-ended") {
+    return (
+      <div className="flex items-center justify-center h-96 bg-gray-100 dark:bg-gray-900">
+        <div className="text-center max-w-md px-6">
+          <div className="mb-4 flex justify-center">
+            <span className="h-4 w-4 bg-amber-500" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            Session Has Ended
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+            This session has been concluded by the host.
+          </p>
+          {onLeave && (
+            <button
+              onClick={onLeave}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium hover:border-gray-400 dark:hover:border-gray-500"
+            >
+              Back to Session
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   // Error state — full-page error screen
   if (connectionState === "error" && error) {
-    return <ErrorDisplay error={error} onRetry={handleRetry} />;
+    return <ErrorDisplay error={error} onRetry={handleRetry} onLeave={onLeave} />;
   }
 
   // Joining state — full-page spinner
