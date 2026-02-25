@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "chat_messages",
+  "info": {
+    "singularName": "chat-message",
+    "pluralName": "chat-messages",
+    "displayName": "Chat Message"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sessionId": { "type": "string", "required": true },
+    "senderName": { "type": "string", "required": true },
+    "message": { "type": "text", "required": true },
+    "timestamp": { "type": "datetime", "required": true },
+    "senderId": { "type": "string" },
+    "messageId": { "type": "string", "required": true }
+  }
+}

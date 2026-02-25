@@ -19,9 +19,11 @@ export default function AccountContent() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [sessions, setSessions] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const isAdmin = user?.isEventAdmin === true;
 
   // Auth guard
   useEffect(() => {
@@ -29,6 +31,22 @@ export default function AccountContent() {
       router.push("/auth/login?returnTo=/account");
     }
   }, [authLoading, isAuthenticated, router]);
+
+  // Fetch sessions for admin
+  useEffect(() => {
+    if (authLoading || !isAdmin) return;
+    const fetchSessions = async () => {
+      try {
+        const response = await fetchAPI(
+          `/sessions?filters[format][$ne]=in-person&populate[event][fields][0]=Title&populate[event][fields][1]=Slug&fields[0]=Title&fields[1]=Slug&fields[2]=format&fields[3]=streamType&fields[4]=StartDate&fields[5]=EndDate&fields[6]=dailyRoomName&sort=StartDate:asc`
+        );
+        setSessions(response?.data ?? []);
+      } catch (err) {
+        console.error("Error fetching sessions:", err);
+      }
+    };
+    fetchSessions();
+  }, [authLoading, isAdmin]);
 
   // Fetch tickets
   useEffect(() => {
@@ -192,6 +210,53 @@ export default function AccountContent() {
             </div>
           </div>
         </div>
+
+        {/* Admin Section */}
+        {isAdmin && sessions.length > 0 && (
+          <div className="mb-10">
+            <span className="inline-block mb-3 h-1 w-16 bg-yellow-500" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Admin — Manage Sessions
+            </h2>
+            <div className="space-y-2">
+              {sessions.map((s) => {
+                const event = s.event as { Title?: string; Slug?: string } | undefined;
+                const eventSlug = event?.Slug ?? "";
+                const slug = s.Slug as string;
+                return (
+                  <Link
+                    key={s.id as number}
+                    href={`/admin/events/${eventSlug}/sessions/${slug}/live`}
+                    className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-yellow-500 transition-colors"
+                  >
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {s.Title as string}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {event?.Title} &middot; {s.format as string} &middot; {s.streamType as string}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {s.dailyRoomName ? (
+                        <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
+                          Room Ready
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                          No Room
+                        </span>
+                      )}
+                      <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Tickets Section */}
         <div>

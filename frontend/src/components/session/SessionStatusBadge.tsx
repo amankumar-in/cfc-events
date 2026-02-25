@@ -1,10 +1,11 @@
 "use client";
 
-import { useSessionStatus, SessionStatus } from "@/lib/hooks/useSessionStatus";
+import { useSessionStatus, SessionStatus, LiveStatus } from "@/lib/hooks/useSessionStatus";
 
 interface SessionStatusBadgeProps {
   startDate: string;
   endDate: string;
+  liveStatus?: LiveStatus;
 }
 
 const statusConfig: Record<SessionStatus, { label: string; classes: string }> = {
@@ -22,8 +23,8 @@ const statusConfig: Record<SessionStatus, { label: string; classes: string }> = 
   },
 };
 
-export function SessionStatusBadge({ startDate, endDate }: SessionStatusBadgeProps) {
-  const status = useSessionStatus(startDate, endDate);
+export function SessionStatusBadge({ startDate, endDate, liveStatus }: SessionStatusBadgeProps) {
+  const status = useSessionStatus(startDate, endDate, liveStatus);
   const config = statusConfig[status];
 
   return (

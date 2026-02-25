@@ -4,6 +4,7 @@ const sessionDeepPopulate = [
   "populate[speakers][populate][0]=ProfileImage",
   "populate[venue][populate]=*",
   "populate[Image]=true",
+  "populate[event][fields][0]=Title&populate[event][fields][1]=Slug&populate[event][fields][2]=accessMode",
 ].join("&");
 
 export async function fetchSessions(params?: Record<string, string>) {

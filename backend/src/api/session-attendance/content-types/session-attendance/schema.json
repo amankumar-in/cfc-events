@@ -1,0 +1,19 @@
+{
+  "kind": "collectionType",
+  "collectionName": "session_attendances",
+  "info": {
+    "singularName": "session-attendance",
+    "pluralName": "session-attendances",
+    "displayName": "Session Attendance"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sessionId": { "type": "string", "required": true },
+    "userId": { "type": "string" },
+    "userName": { "type": "string" },
+    "joinedAt": { "type": "datetime", "required": true },
+    "leftAt": { "type": "datetime" }
+  }
+}

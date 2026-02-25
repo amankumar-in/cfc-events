@@ -369,6 +369,39 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiChatMessageChatMessage extends Struct.CollectionTypeSchema {
+  collectionName: 'chat_messages';
+  info: {
+    displayName: 'Chat Message';
+    pluralName: 'chat-messages';
+    singularName: 'chat-message';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::chat-message.chat-message'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text & Schema.Attribute.Required;
+    messageId: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    senderId: Schema.Attribute.String;
+    senderName: Schema.Attribute.String & Schema.Attribute.Required;
+    sessionId: Schema.Attribute.String & Schema.Attribute.Required;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiContactMessageContactMessage
   extends Struct.CollectionTypeSchema {
   collectionName: 'contact_messages';
@@ -698,6 +731,72 @@ export interface ApiOtpVerificationOtpVerification
   };
 }
 
+export interface ApiSessionAttendanceSessionAttendance
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'session_attendances';
+  info: {
+    displayName: 'Session Attendance';
+    pluralName: 'session-attendances';
+    singularName: 'session-attendance';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    joinedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    leftAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session-attendance.session-attendance'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    sessionId: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userId: Schema.Attribute.String;
+    userName: Schema.Attribute.String;
+  };
+}
+
+export interface ApiSessionAuditLogSessionAuditLog
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'session_audit_logs';
+  info: {
+    displayName: 'Session Audit Log';
+    pluralName: 'session-audit-logs';
+    singularName: 'session-audit-log';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    action: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    details: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::session-audit-log.session-audit-log'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    sessionId: Schema.Attribute.String & Schema.Attribute.Required;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userId: Schema.Attribute.String;
+  };
+}
+
 export interface ApiSessionSession extends Struct.CollectionTypeSchema {
   collectionName: 'sessions';
   info: {
@@ -727,6 +826,8 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'in-person'>;
     Image: Schema.Attribute.Media<'images'>;
     isRecorded: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    liveStatus: Schema.Attribute.Enumeration<['idle', 'live', 'ended']> &
+      Schema.Attribute.DefaultTo<'idle'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1558,6 +1659,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::chat-message.chat-message': ApiChatMessageChatMessage;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::entitlement.entitlement': ApiEntitlementEntitlement;
       'api::event.event': ApiEventEvent;
@@ -1566,6 +1668,8 @@ declare module '@strapi/strapi' {
       'api::organization.organization': ApiOrganizationOrganization;
       'api::organizer.organizer': ApiOrganizerOrganizer;
       'api::otp-verification.otp-verification': ApiOtpVerificationOtpVerification;
+      'api::session-attendance.session-attendance': ApiSessionAttendanceSessionAttendance;
+      'api::session-audit-log.session-audit-log': ApiSessionAuditLogSessionAuditLog;
       'api::session.session': ApiSessionSession;
       'api::speaker.speaker': ApiSpeakerSpeaker;
       'api::sponsor.sponsor': ApiSponsorSponsor;

@@ -127,6 +127,11 @@
       "target": "api::venue.venue",
       "inversedBy": "sessions"
     },
+    "liveStatus": {
+      "type": "enumeration",
+      "enum": ["idle", "live", "ended"],
+      "default": "idle"
+    },
     "ticketCategories": {
       "type": "relation",
       "relation": "manyToMany",

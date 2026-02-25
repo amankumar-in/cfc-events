@@ -3,7 +3,7 @@ import { checkAccess } from "@/lib/api/entitlements";
 
 export function useEntitlement(
   eventId: number | undefined,
-  sessionId?: number,
+  sessionId?: string,
   token?: string
 ) {
   return useQuery({

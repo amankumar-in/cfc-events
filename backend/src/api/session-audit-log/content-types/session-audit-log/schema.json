@@ -1,0 +1,19 @@
+{
+  "kind": "collectionType",
+  "collectionName": "session_audit_logs",
+  "info": {
+    "singularName": "session-audit-log",
+    "pluralName": "session-audit-logs",
+    "displayName": "Session Audit Log"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sessionId": { "type": "string", "required": true },
+    "userId": { "type": "string" },
+    "action": { "type": "string", "required": true },
+    "details": { "type": "json" },
+    "timestamp": { "type": "datetime", "required": true }
+  }
+}
