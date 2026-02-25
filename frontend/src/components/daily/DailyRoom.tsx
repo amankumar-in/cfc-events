@@ -1,11 +1,22 @@
 "use client";
 
-import { useEffect, useState, useRef, ReactNode, useCallback } from "react";
+import { useEffect, useState, useRef, ReactNode, useCallback, createContext, useContext } from "react";
 import DailyIframe, { DailyCall as DailyCallType } from "@daily-co/daily-js";
 import { DailyProvider, DailyAudio } from "@daily-co/daily-react";
 import { getMeetingToken, recordJoin, recordLeave } from "@/lib/api/daily";
 import { getToken } from "@/lib/auth/token";
 import RecordingConsentBanner from "./RecordingConsentBanner";
+
+// ---------------------------------------------------------------------------
+// Leave context — lets children signal an intentional leave
+// ---------------------------------------------------------------------------
+
+const LeaveContext = createContext<(() => void) | null>(null);
+
+/** Call this instead of daily.leave() to avoid the "disconnected" error. */
+export function useLeaveRoom() {
+  return useContext(LeaveContext);
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -408,6 +419,16 @@ export default function DailyRoom({
   const intentionalLeaveRef = useRef(false);
 
   // -----------------------------------------------------------------------
+  // Intentional leave — children should call this instead of daily.leave()
+  // -----------------------------------------------------------------------
+
+  const leaveRoom = useCallback(() => {
+    intentionalLeaveRef.current = true;
+    callRef.current?.leave().catch(() => {});
+    onLeave?.();
+  }, [onLeave]);
+
+  // -----------------------------------------------------------------------
   // Token refresh
   // -----------------------------------------------------------------------
 
@@ -709,24 +730,26 @@ export default function DailyRoom({
   // Joined (possibly reconnecting) — render children with optional overlays
   return (
     <DailyProvider callObject={callObject}>
-      <div className="relative h-full">
-        <DailyAudio />
+      <LeaveContext.Provider value={leaveRoom}>
+        <div className="relative h-full">
+          <DailyAudio />
 
-        {/* Recording consent banner */}
-        <RecordingConsentBanner isRecording={isRecording} />
+          {/* Recording consent banner */}
+          <RecordingConsentBanner isRecording={isRecording} />
 
-        {/* Token expiry warning banner */}
-        {tokenWarning && (
-          <TokenExpiryWarning onRefresh={handleTokenRefresh} />
-        )}
+          {/* Token expiry warning banner */}
+          {tokenWarning && (
+            <TokenExpiryWarning onRefresh={handleTokenRefresh} />
+          )}
 
-        {/* Reconnecting overlay — semi-transparent on top of the call */}
-        {connectionState === "reconnecting" && (
-          <ReconnectingOverlay onRejoin={handleRetry} />
-        )}
+          {/* Reconnecting overlay — semi-transparent on top of the call */}
+          {connectionState === "reconnecting" && (
+            <ReconnectingOverlay onRejoin={handleRetry} />
+          )}
 
-        {children}
-      </div>
+          {children}
+        </div>
+      </LeaveContext.Provider>
     </DailyProvider>
   );
 }

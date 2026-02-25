@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Video, VideoOff, Mic, MicOff } from "lucide-react";
 import DeviceSettings from "./DeviceSettings";
 import NetworkQuality from "./NetworkQuality";
+import { useLeaveRoom } from "./DailyRoom";
 
 type DailyControlsMode = "speaker" | "viewer" | "host";
 
@@ -25,6 +26,7 @@ export default function DailyControls({
 }: DailyControlsProps) {
   const daily = useDaily();
   const localParticipant = useLocalParticipant();
+  const leaveRoom = useLeaveRoom();
 
   const [handRaised, setHandRaised] = useState(false);
   const [reactionsOpen, setReactionsOpen] = useState(false);
@@ -77,9 +79,13 @@ export default function DailyControls({
   }, [daily, isScreenSharing]);
 
   const leaveCall = useCallback(() => {
-    daily?.leave();
+    if (leaveRoom) {
+      leaveRoom();
+    } else {
+      daily?.leave();
+    }
     onLeave?.();
-  }, [daily, onLeave]);
+  }, [daily, onLeave, leaveRoom]);
 
   const toggleHandRaise = useCallback(() => {
     const next = !handRaised;

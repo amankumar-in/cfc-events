@@ -19,6 +19,7 @@ import DailyControls from "./DailyControls";
 import DailyActionOverlay from "./DailyActionOverlay";
 import ParticipantNotifications from "./ParticipantNotifications";
 import NetworkQuality from "./NetworkQuality";
+import { useLeaveRoom } from "./DailyRoom";
 import ParticipantManager from "../admin/ParticipantManager";
 
 // ---------------------------------------------------------------------------
@@ -101,6 +102,7 @@ export default function DailyLivestream({
   sessionType,
 }: DailyLivestreamProps) {
   const daily = useDaily();
+  const leaveRoom = useLeaveRoom();
   const activeSpeakerId = useActiveSpeakerId();
   const { screens } = useScreenShare();
   const localParticipant = useLocalParticipant();
@@ -238,13 +240,17 @@ export default function DailyLivestream({
   // -------------------------------------------------------------------------
 
   const handleLeave = useCallback(() => {
-    daily?.leave();
+    if (leaveRoom) {
+      leaveRoom();
+    } else {
+      daily?.leave();
+    }
     if (onLeave) {
       onLeave();
     } else {
       window.history.back();
     }
-  }, [daily, onLeave]);
+  }, [daily, onLeave, leaveRoom]);
 
   // -------------------------------------------------------------------------
   // Render
