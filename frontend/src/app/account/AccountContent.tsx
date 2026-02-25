@@ -16,7 +16,7 @@ import {
 
 export default function AccountContent() {
   const router = useRouter();
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
 
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [sessions, setSessions] = useState<Record<string, unknown>[]>([]);
@@ -144,7 +144,7 @@ export default function AccountContent() {
   if (error) {
     return (
       <div className="bg-white dark:bg-gray-900 min-h-screen py-12">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-black mb-4">
               <svg
@@ -180,7 +180,7 @@ export default function AccountContent() {
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen py-12">
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Profile Section */}
         <div className="mb-10">
           <span className="inline-block mb-3 h-1 w-16 bg-yellow-500" />
@@ -208,59 +208,86 @@ export default function AccountContent() {
                 </p>
               </div>
             </div>
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={logout}
+                className="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Admin Section */}
-        {isAdmin && sessions.length > 0 && (
-          <div className="mb-10">
-            <span className="inline-block mb-3 h-1 w-16 bg-yellow-500" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Admin — Manage Sessions
-            </h2>
-            <div className="space-y-2">
-              {sessions.map((s) => {
-                const event = s.event as { Title?: string; Slug?: string } | undefined;
-                const eventSlug = event?.Slug ?? "";
-                const slug = s.Slug as string;
-                return (
-                  <Link
-                    key={s.id as number}
-                    href={`/admin/events/${eventSlug}/sessions/${slug}/live`}
-                    className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-yellow-500 transition-colors"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {s.Title as string}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {event?.Title} &middot; {s.format as string} &middot; {s.streamType as string}
-                      </p>
+        {isAdmin && sessions.length > 0 && (() => {
+          const grouped = new Map<string, { title: string; slug: string; sessions: typeof sessions }>();
+          for (const s of sessions) {
+            const event = s.event as { Title?: string; Slug?: string } | undefined;
+            const key = event?.Slug ?? "unknown";
+            if (!grouped.has(key)) {
+              grouped.set(key, { title: event?.Title ?? "Unknown Event", slug: key, sessions: [] });
+            }
+            grouped.get(key)!.sessions.push(s);
+          }
+          return (
+            <div className="mb-10">
+              <span className="inline-block mb-3 h-1 w-16 bg-yellow-500" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Admin — Manage Sessions
+              </h2>
+              <div className="space-y-8">
+                {Array.from(grouped.values()).map((group) => (
+                  <div key={group.slug}>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                      {group.title}
+                    </h3>
+                    <div className="space-y-2">
+                      {group.sessions.map((s) => {
+                        const slug = s.Slug as string;
+                        return (
+                          <Link
+                            key={s.id as number}
+                            href={`/admin/events/${group.slug}/sessions/${slug}/live`}
+                            className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-yellow-500 transition-colors"
+                          >
+                            <div>
+                              <p className="font-medium text-gray-900 dark:text-white">
+                                {s.Title as string}
+                              </p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {s.format as string} &middot; {s.streamType as string}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {s.dailyRoomName ? (
+                                <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
+                                  Room Ready
+                                </span>
+                              ) : (
+                                <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                                  No Room
+                                </span>
+                              )}
+                              <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
-                    <div className="flex items-center gap-3">
-                      {s.dailyRoomName ? (
-                        <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                          Room Ready
-                        </span>
-                      ) : (
-                        <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-                          No Room
-                        </span>
-                      )}
-                      <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </Link>
-                );
-              })}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Tickets Section */}
         <div>
-          <div className="flex justify-between items-center mb-6">
+          <span className="inline-block mb-3 h-1 w-16 bg-yellow-500" />
+          <div className="flex items-center gap-4 mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               My Tickets
             </h2>
@@ -268,7 +295,7 @@ export default function AccountContent() {
               <button
                 onClick={handleDownloadAll}
                 disabled={isGeneratingPDF}
-                className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-yellow-500 text-black disabled:opacity-50"
+                className="cursor-pointer inline-flex items-center px-3 py-1.5 text-sm font-medium bg-yellow-500 text-black shadow-md disabled:opacity-50"
               >
                 {isGeneratingPDF ? (
                   <span className="flex items-center">
@@ -319,57 +346,55 @@ export default function AccountContent() {
           {tickets.length > 0 ? (
             <div className="space-y-6">
               {tickets.map((ticket) => (
-                <div key={ticket.id}>
-                  <div className="flex justify-end mb-2">
-                    <button
-                      onClick={() => handleDownloadPDF(ticket)}
-                      disabled={isGeneratingPDF}
-                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-yellow-500 text-black disabled:opacity-50"
-                    >
-                      {isGeneratingPDF ? (
-                        <span className="flex items-center">
-                          <svg
-                            className="animate-spin -ml-1 mr-2 h-4 w-4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
-                          Processing...
-                        </span>
-                      ) : (
-                        <>
-                          <svg
-                            className="mr-1 h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
+                <div key={ticket.id} className="relative max-w-[800px]">
+                  <button
+                    onClick={() => handleDownloadPDF(ticket)}
+                    disabled={isGeneratingPDF}
+                    className="cursor-pointer absolute top-2 right-2 z-10 inline-flex items-center px-3 py-1.5 text-sm font-medium bg-yellow-500 text-black shadow-md disabled:opacity-50"
+                  >
+                    {isGeneratingPDF ? (
+                      <span className="flex items-center">
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
                             stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="square"
-                              strokeLinejoin="miter"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
-                            />
-                          </svg>
-                          Download Ticket
-                        </>
-                      )}
-                    </button>
-                  </div>
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : (
+                      <>
+                        <svg
+                          className="mr-1 h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="square"
+                            strokeLinejoin="miter"
+                            strokeWidth={2}
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                          />
+                        </svg>
+                        Download Ticket
+                      </>
+                    )}
+                  </button>
                   <TicketPreview ticket={ticket} />
                 </div>
               ))}

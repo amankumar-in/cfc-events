@@ -27,11 +27,11 @@ const eventNavItems = [
   { label: "Contact", path: "contact" },
 ];
 
-export default function Header() {
+export default function Header({ minimal = false }: { minimal?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { activeEvent } = useActiveEvent();
 
   // Detect if we're on an event-scoped page
@@ -64,6 +64,20 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
+  if (minimal) {
+    return (
+      <>
+        <header className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center h-16">
+              <Logo />
+            </div>
+          </div>
+        </header>
+      </>
+    );
+  }
+
   return (
     <>
       <header
@@ -89,17 +103,12 @@ export default function Header() {
               </nav>
               <div className="flex items-center space-x-3 ml-4">
                 {isAuthenticated ? (
-                  <>
-                    <Link
-                      href="/account"
-                      className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-yellow-500 dark:hover:text-yellow-500 transition-colors"
-                    >
-                      My Account
-                    </Link>
-                    <Button variant="secondary" buttonType="outline" size="sm" onClick={logout}>
-                      Sign Out
-                    </Button>
-                  </>
+                  <Link
+                    href="/account"
+                    className="text-base font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+                  >
+                    My Account
+                  </Link>
                 ) : (
                   <Button variant="primary" buttonType="outline" href="/auth/login">
                     Sign In
@@ -115,8 +124,8 @@ export default function Header() {
                   Register
                 </Button>
               ) : isAuthenticated ? (
-                <Button variant="primary" size="sm" onClick={logout}>
-                  Sign Out
+                <Button variant="primary" size="sm" href="/account">
+                  My Account
                 </Button>
               ) : (
                 <Button variant="primary" size="sm" href="/auth/login">
@@ -222,14 +231,9 @@ export default function Header() {
               <>
                 <div className="py-6 space-y-4">
                   {isAuthenticated ? (
-                    <>
-                      <Button variant="dark" fullWidth href="/account">
-                        My Account
-                      </Button>
-                      <Button variant="primary" fullWidth onClick={logout}>
-                        Sign Out
-                      </Button>
-                    </>
+                    <Button variant="primary" fullWidth href="/account">
+                      My Account
+                    </Button>
                   ) : (
                     <Button variant="primary" fullWidth href="/auth/login">
                       Sign In

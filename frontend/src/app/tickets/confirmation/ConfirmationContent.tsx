@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+
 import { fetchAPI } from "@/lib/api/api-config";
 import { generateQRCodeDataURL } from "@/lib/qrcode";
 import { TicketPreview } from "@/components/tickets/TicketPreview";
@@ -62,6 +62,7 @@ export default function ConfirmationContent() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isGeneratingTickets, setIsGeneratingTickets] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [eventSlug, setEventSlug] = useState<string | null>(null);
 
   // Ref for scrolling to tickets section
   const ticketsSectionRef = useRef<HTMLDivElement>(null);
@@ -240,6 +241,9 @@ export default function ConfirmationContent() {
           attendeeData = parsedData.attendees;
           ticketCategoryId = parsedData.ticketCategoryId;
           ticketQuantity = parsedData.quantity;
+          if (parsedData.eventSlug) {
+            setEventSlug(parsedData.eventSlug);
+          }
         }
       } catch (localStorageError) {
         console.error(
@@ -429,13 +433,12 @@ export default function ConfirmationContent() {
           <p className="text-black dark:text-gray-300 mt-2">
             {error || "We couldn't verify your payment details."}
           </p>
-          <Link
-            href="/tickets"
+          <button
             className="inline-flex items-center mt-4 px-4 py-2 text-sm font-medium bg-blue-600 text-white"
-            onClick={() => (window.location.href = "/tickets")}
+            onClick={() => window.location.href = eventSlug ? `/events/${eventSlug}` : "/"}
           >
-            Back to Tickets
-          </Link>
+            Go Back
+          </button>
         </div>
       </div>
     );
@@ -450,8 +453,8 @@ export default function ConfirmationContent() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Back Navigation */}
         <div className="mb-6">
-          <Link
-            href="/tickets"
+          <button
+            onClick={() => window.location.href = eventSlug ? `/events/${eventSlug}` : "/"}
             className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400"
           >
             <svg
@@ -466,8 +469,8 @@ export default function ConfirmationContent() {
                 clipRule="evenodd"
               />
             </svg>
-            Back to Tickets
-          </Link>
+            Go Back
+          </button>
         </div>
 
         {/* Payment Confirmation Panel */}
@@ -847,12 +850,12 @@ export default function ConfirmationContent() {
                         </p>
                       </div>
                       <div className="mt-4">
-                        <Link
-                          href="/tickets"
+                        <a
+                          href={eventSlug ? `/events/${eventSlug}/tickets` : "/tickets"}
                           className="inline-flex items-center px-4 py-2 text-sm font-medium bg-blue-600 text-white"
                         >
                           Try Again
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -864,10 +867,9 @@ export default function ConfirmationContent() {
 
         {/* Back to Home Link */}
         <div className="mt-6 text-center">
-          <Link
-            href="/"
+          <a
+            href={eventSlug ? `/events/${eventSlug}` : "/"}
             className="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-200 dark:bg-gray-700 text-black dark:text-white hover:bg-gray-300"
-            onClick={() => (window.location.href = "/")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -877,8 +879,8 @@ export default function ConfirmationContent() {
             >
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
             </svg>
-            Back to Home
-          </Link>
+            Go Back
+          </a>
         </div>
       </div>
     </div>

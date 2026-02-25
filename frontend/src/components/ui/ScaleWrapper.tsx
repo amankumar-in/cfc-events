@@ -9,14 +9,17 @@ interface ScaleWrapperProps {
 
 export function ScaleWrapper({ children, designWidth = 800 }: ScaleWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [height, setHeight] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     function updateScale() {
-      if (wrapperRef.current) {
+      if (wrapperRef.current && innerRef.current) {
         const currentWidth = wrapperRef.current.offsetWidth;
-        const newScale = currentWidth / designWidth;
+        const newScale = Math.min(1, currentWidth / designWidth);
         setScale(newScale);
+        setHeight(innerRef.current.offsetHeight * newScale);
       }
     }
     updateScale();
@@ -25,8 +28,9 @@ export function ScaleWrapper({ children, designWidth = 800 }: ScaleWrapperProps)
   }, [designWidth]);
 
   return (
-    <div ref={wrapperRef} style={{ width: "100%", overflow: "hidden" }}>
+    <div ref={wrapperRef} style={{ width: "100%", overflow: "hidden", height }}>
       <div
+        ref={innerRef}
         style={{
           width: designWidth,
           transform: `scale(${scale})`,

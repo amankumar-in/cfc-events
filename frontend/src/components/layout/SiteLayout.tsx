@@ -12,6 +12,7 @@ interface SiteLayoutProps {
 export default function SiteLayout({ children }: SiteLayoutProps) {
   const pathname = usePathname();
   const isAdminLive = pathname.startsWith("/admin");
+  const isTicketPurchase = pathname.startsWith("/tickets/buy");
 
   if (isAdminLive) {
     return <>{children}</>;
@@ -19,9 +20,9 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header minimal={isTicketPurchase} />
       <main className="flex-grow">{children}</main>
-      <Footer />
+      {!isTicketPurchase && <Footer />}
     </div>
   );
 }

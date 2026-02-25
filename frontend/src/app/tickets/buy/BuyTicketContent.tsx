@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchAPI } from "@/lib/api/api-config";
 import { Button } from "@/components/ui/Button";
-import { Logo } from "@/components/ui/Logo";
-import { Chip } from "@/components/ui/Chip";
+import { useAuth } from "@/components/auth/useAuth";
 
 interface TicketCategory {
   id: number;
@@ -41,6 +40,7 @@ export default function BuyTicketContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoryId");
+  const { user } = useAuth();
 
   const [ticketCategory, setTicketCategory] = useState<TicketCategory | null>(
     null
@@ -69,7 +69,7 @@ export default function BuyTicketContent() {
     const fetchTicketCategory = async () => {
       try {
         const response = await fetchAPI(
-          `/ticket-categories?filters[documentId][$eq]=${categoryId}`
+          `/ticket-categories?filters[documentId][$eq]=${categoryId}&populate=allowedEvents`
         );
         console.log("Ticket category response:", response);
 
@@ -88,6 +88,22 @@ export default function BuyTicketContent() {
 
     fetchTicketCategory();
   }, [categoryId]);
+
+  // Prefill form with logged-in user's info
+  useEffect(() => {
+    if (user) {
+      const name = user.name || "";
+      const email = user.email || "";
+      setFormData((prev) => ({
+        ...prev,
+        buyerName: name,
+        buyerEmail: email,
+        attendees: prev.attendees.map((a, i) =>
+          i === 0 ? { ...a, name, email } : a
+        ),
+      }));
+    }
+  }, [user]);
 
   // Helper function to format currency
   const formatCurrency = (amount: number, currency: string) => {
@@ -231,6 +247,7 @@ export default function BuyTicketContent() {
             attendees: formData.attendees,
             quantity: formData.quantity,
             ticketCategoryId: ticketCategory.documentId,
+            eventSlug: eventSlug || null,
           })
         );
       }
@@ -359,6 +376,10 @@ export default function BuyTicketContent() {
   // Calculate total price
   const totalPrice = formData.quantity * (ticketCategory?.price || 0);
 
+  // Determine the back/cancel URL based on the event
+  const eventSlug = (ticketCategory as TicketCategory & { allowedEvents?: { Slug?: string }[] })?.allowedEvents?.[0]?.Slug;
+  const cancelUrl = eventSlug ? `/events/${eventSlug}/tickets` : "/tickets";
+
   // Generate quantity options up to maxPurchaseQuantity
   const quantityOptions = () => {
     const options = [];
@@ -425,29 +446,23 @@ export default function BuyTicketContent() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-6 px-4 sm:py-8">
       <div className="max-w-6xl mx-auto">
-        {/* Logo and back link section */}
-        <div className="flex items-center">
-          <Logo />
-          <Chip variant="primary" size="sm" className="ml-2">
-            2025
-          </Chip>
-        </div>
-
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-sm">
-          {/* Title bar */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-600 bg-black text-white dark:bg-white dark:text-black">
-            <div className="relative">
-              <div className="absolute top-0 right-0 w-10 h-10 bg-yellow-500"></div>
-              <h1 className="text-2xl font-bold">
-                Purchase: {ticketCategory.name}
-              </h1>
-            </div>
+          {/* Title */}
+          <div className="p-6 bg-blue-600">
+            <h1 className="text-2xl font-bold text-white">
+              {ticketCategory.name}
+            </h1>
+            {(ticketCategory as TicketCategory & { allowedEvents?: { Title?: string }[] }).allowedEvents?.[0]?.Title && (
+              <p className="text-sm mt-1 text-blue-100">
+                {(ticketCategory as TicketCategory & { allowedEvents?: { Title?: string }[] }).allowedEvents![0].Title}
+              </p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
               {/* Left column - Ticket and Buyer Information */}
-              <div className="p-6 bg-gray-50 dark:bg-gray-700">
+              <div className="p-6 lg:pr-8 lg:border-r lg:border-gray-200 lg:dark:border-gray-600">
                 {/* Ticket info */}
                 <div className="flex flex-wrap justify-between items-center">
                   <div>
@@ -571,7 +586,7 @@ export default function BuyTicketContent() {
               </div>
 
               {/* Right column - Attendee Information */}
-              <div className="p-6 bg-gray-50 dark:bg-gray-700">
+              <div className="p-6 lg:pl-8">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
                   Attendee Information
                 </h2>
@@ -713,17 +728,17 @@ export default function BuyTicketContent() {
                     Processing...
                   </div>
                 ) : (
-                  "Pay Now"
+                  totalPrice <= 0 ? "Proceed" : "Pay Now"
                 )}
               </Button>
             </div>
 
             {/* Desktop payment actions */}
-            <div className="hidden sm:flex justify-between items-center mt-10 border-t border-gray-200 dark:border-gray-600 pt-6">
+            <div className="hidden sm:flex justify-between items-center mt-10 pt-6">
               <Button
                 variant="dark"
                 buttonType="outline"
-                onClick={() => (window.location.href = "/tickets")}
+                onClick={() => (window.location.href = cancelUrl)}
                 className="dark:border-white dark:text-white"
               >
                 Cancel
@@ -759,7 +774,7 @@ export default function BuyTicketContent() {
                     Processing...
                   </div>
                 ) : (
-                  "Proceed to Payment"
+                  totalPrice <= 0 ? "Proceed" : "Proceed to Payment"
                 )}
               </Button>
             </div>
