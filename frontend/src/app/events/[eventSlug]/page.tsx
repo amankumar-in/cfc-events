@@ -259,7 +259,7 @@ export default function EventLandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-6">Join This Event</h2>
           <p className="text-xl text-white/80 mb-8">
-            Get your tickets and access all sessions.
+            Register to access all sessions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button
@@ -267,7 +267,7 @@ export default function EventLandingPage() {
               size="lg"
               href={`/events/${event.Slug}/tickets`}
             >
-              Get Tickets
+              Register For Event
             </Button>
             <Button
               variant="light"

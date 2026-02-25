@@ -116,7 +116,7 @@ export function EventHero({ event }: EventHeroProps) {
 
           <div className="flex flex-wrap gap-4">
             <Button variant="primary" href={`/events/${event.Slug}/tickets`}>
-              Get Tickets
+              Register For Event
             </Button>
             <Button
               variant="light"

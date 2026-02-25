@@ -112,7 +112,7 @@ export default function Header() {
             <div className="flex md:hidden items-center space-x-3 ml-auto">
               {isEventPage && eventSlug ? (
                 <Button variant="primary" size="sm" href={`/events/${eventSlug}/tickets`}>
-                  Get Tickets
+                  Register
                 </Button>
               ) : isAuthenticated ? (
                 <Button variant="primary" size="sm" onClick={logout}>
@@ -170,7 +170,7 @@ export default function Header() {
                 )}
                 <div className="py-4 space-y-4">
                   <Button variant="primary" fullWidth href={`/events/${eventSlug}/tickets`}>
-                    Get Tickets
+                    Register
                   </Button>
                 </div>
 

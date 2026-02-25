@@ -88,7 +88,7 @@ export function EventNav({ eventSlug }: EventNavProps) {
               !scrolledPastHeader ? "hidden sm:block" : ""
             }`}>
               <Button variant="primary" size="sm" className="!text-xs sm:!text-sm !px-2 sm:!px-3" href={`${basePath}/tickets`}>
-                Get Tickets
+                Register
               </Button>
             </div>
           )}
