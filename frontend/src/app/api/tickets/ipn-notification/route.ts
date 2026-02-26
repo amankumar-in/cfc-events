@@ -226,7 +226,7 @@ export async function GET(request: NextRequest) {
                     if (ticketCategoryId) {
                       try {
                         const categoryResponse = await fetch(
-                          `${STRAPI_URL}/api/ticket-categories?filters[documentId][$eq]=${ticketCategoryId}`,
+                          `${STRAPI_URL}/api/ticket-categories?filters[documentId][$eq]=${ticketCategoryId}&populate[allowedEvents][populate][venue]=*&populate[allowedSessions][populate][event]=*&populate[allowedSessions][populate][venue]=*`,
                           {
                             headers: {
                               "Content-Type": "application/json",
@@ -263,8 +263,7 @@ export async function GET(request: NextRequest) {
                         .toString()
                         .padStart(4, "0")}`;
 
-                      // Generate QR code data (just use ticket number for now)
-                      const qrCodeData = ticketNumber;
+                      const qrCodeData = JSON.stringify({ ticketNumber, event: ticketCategory?.allowedEvents?.[0]?.Slug || "event" });
 
                       // Updated code (using documentId)
                       const ticketData = {
@@ -347,12 +346,18 @@ export async function GET(request: NextRequest) {
                           body: JSON.stringify({
                             email: purchase.buyerEmail,
                             name: purchase.buyerName,
-                            subject: "Your UNITE Expo 2025 Tickets",
+                            subject: `Your ${ticketCategory?.allowedEvents?.[0]?.Title || "Event"} Tickets`,
                             ticketNumber: "Multiple tickets",
                             referenceNumber: orderMerchantReference,
-                            text: `Thank you for your purchase. Your tickets for UNITE Expo 2025 have been generated. 
-                            Reference: ${orderMerchantReference}. 
-                            Please check your order confirmation page to download your tickets.`,
+                            eventInfo: {
+                              eventName: ticketCategory?.allowedEvents?.[0]?.Title || "Event",
+                              eventTagline: ticketCategory?.allowedEvents?.[0]?.ShortDescription || "",
+                              startDate: ticketCategory?.allowedEvents?.[0]?.StartDate || "",
+                              endDate: ticketCategory?.allowedEvents?.[0]?.EndDate || "",
+                              location: ticketCategory?.allowedEvents?.[0]?.venue
+                                ? `${ticketCategory.allowedEvents[0].venue.Name}, ${ticketCategory.allowedEvents[0].venue.City}, ${ticketCategory.allowedEvents[0].venue.Country}`
+                                : (ticketCategory?.allowedEvents?.[0]?.Location || ""),
+                            },
                           }),
                         });
 
@@ -616,7 +621,7 @@ export async function POST(request: NextRequest) {
                     if (ticketCategoryId) {
                       try {
                         const categoryResponse = await fetch(
-                          `${STRAPI_URL}/api/ticket-categories?filters[documentId][$eq]=${ticketCategoryId}`,
+                          `${STRAPI_URL}/api/ticket-categories?filters[documentId][$eq]=${ticketCategoryId}&populate[allowedEvents][populate][venue]=*&populate[allowedSessions][populate][event]=*&populate[allowedSessions][populate][venue]=*`,
                           {
                             headers: {
                               "Content-Type": "application/json",
@@ -653,8 +658,7 @@ export async function POST(request: NextRequest) {
                         .toString()
                         .padStart(4, "0")}`;
 
-                      // Generate QR code data (just use ticket number for now)
-                      const qrCodeData = ticketNumber;
+                      const qrCodeData = JSON.stringify({ ticketNumber, event: ticketCategory?.allowedEvents?.[0]?.Slug || "event" });
 
                       // Updated code (using documentId)
                       const ticketData = {
@@ -737,12 +741,18 @@ export async function POST(request: NextRequest) {
                           body: JSON.stringify({
                             email: purchase.buyerEmail,
                             name: purchase.buyerName,
-                            subject: "Your UNITE Expo 2025 Tickets",
+                            subject: `Your ${ticketCategory?.allowedEvents?.[0]?.Title || "Event"} Tickets`,
                             ticketNumber: "Multiple tickets",
                             referenceNumber: orderMerchantReference,
-                            text: `Thank you for your purchase. Your tickets for UNITE Expo 2025 have been generated. 
-                            Reference: ${orderMerchantReference}. 
-                            Please check your order confirmation page to download your tickets.`,
+                            eventInfo: {
+                              eventName: ticketCategory?.allowedEvents?.[0]?.Title || "Event",
+                              eventTagline: ticketCategory?.allowedEvents?.[0]?.ShortDescription || "",
+                              startDate: ticketCategory?.allowedEvents?.[0]?.StartDate || "",
+                              endDate: ticketCategory?.allowedEvents?.[0]?.EndDate || "",
+                              location: ticketCategory?.allowedEvents?.[0]?.venue
+                                ? `${ticketCategory.allowedEvents[0].venue.Name}, ${ticketCategory.allowedEvents[0].venue.City}, ${ticketCategory.allowedEvents[0].venue.Country}`
+                                : (ticketCategory?.allowedEvents?.[0]?.Location || ""),
+                            },
                           }),
                         });
 

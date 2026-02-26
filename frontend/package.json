@@ -22,7 +22,8 @@
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-fast-marquee": "^1.6.5"
+    "react-fast-marquee": "^1.6.5",
+    "react-parallax-tilt": "^1.7.319"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

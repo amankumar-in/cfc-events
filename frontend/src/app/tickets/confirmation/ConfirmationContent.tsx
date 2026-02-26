@@ -13,6 +13,9 @@ import {
   generateAllTicketPDFs,
   formatDate,
   formatCurrency,
+  TICKET_DEEP_POPULATE,
+  TICKET_CATEGORY_DEEP_POPULATE,
+  getTicketDisplayInfo,
 } from "@/lib/tickets/ticket-utils";
 
 // -------------------------------------------------------------------
@@ -63,9 +66,17 @@ export default function ConfirmationContent() {
   const [isGeneratingTickets, setIsGeneratingTickets] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [eventSlug, setEventSlug] = useState<string | null>(null);
+  const [eventContext, setEventContext] = useState<{
+    eventName?: string;
+    eventLocation?: string;
+    eventStartDate?: string;
+    eventEndDate?: string;
+  }>({});
 
   // Ref for scrolling to tickets section
   const ticketsSectionRef = useRef<HTMLDivElement>(null);
+  // Guard against duplicate ticket generation (React Strict Mode double-fire)
+  const ticketGenerationStarted = useRef(false);
   const scrollToTickets = () => {
     ticketsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -176,24 +187,54 @@ export default function ConfirmationContent() {
                   data.paymentStatus === "Completed" &&
                   data.statusCode === 1
                 ) {
-                  const ticketsResponse = await fetchAPI(
-                    `/tickets?filters[purchase][referenceNumber][$eq]=${data.merchantReference}&populate=ticketCategory`
-                  );
-                  if (
-                    ticketsResponse &&
-                    ticketsResponse.data &&
-                    ticketsResponse.data.length > 0
-                  ) {
-                    console.log("Tickets already exist for this purchase");
-                    const ticketsWithQR = await generateQRCodeImages(
-                      ticketsResponse.data
+                  let existingTickets = null;
+                  try {
+                    const simpleResponse = await fetchAPI(
+                      `/tickets?filters[purchase][referenceNumber][$eq]=${data.merchantReference}&populate=*`
                     );
+                    console.log("Existing tickets check:", simpleResponse?.data?.length || 0, "found");
+                    if (simpleResponse?.data?.length > 0) {
+                      const ids = simpleResponse.data.map((t: Ticket) => t.documentId || t.id);
+                      try {
+                        const deepResponse = await fetchAPI(
+                          `/tickets?${ids.map((id: string | number, i: number) => `filters[documentId][$in][${i}]=${id}`).join("&")}&${TICKET_DEEP_POPULATE}`
+                        );
+                        existingTickets = deepResponse?.data?.length > 0 ? deepResponse.data : simpleResponse.data;
+                      } catch {
+                        console.error("Deep populate failed, using simple data");
+                        existingTickets = simpleResponse.data;
+                      }
+                    }
+                  } catch (ticketFetchError) {
+                    console.error("Error checking existing tickets:", ticketFetchError);
+                    // Continue to generateTickets
+                  }
+
+                  if (existingTickets) {
+                    console.log("Tickets already exist for this purchase");
+                    const firstTicket = existingTickets[0];
+                    const ev = firstTicket?.ticketCategory?.allowedEvents?.[0];
+                    if (ev?.Slug) setEventSlug(ev.Slug);
+                    if (ev?.Title) {
+                      setEventContext({
+                        eventName: ev.Title,
+                        eventLocation: ev.venue
+                          ? `${ev.venue.Name}, ${ev.venue.City}, ${ev.venue.Country}`
+                          : ev.Location || undefined,
+                        eventStartDate: ev.StartDate || undefined,
+                        eventEndDate: ev.EndDate || undefined,
+                      });
+                    }
+                    const ticketsWithQR = await generateQRCodeImages(existingTickets);
                     setTickets(ticketsWithQR);
-                  } else {
+                  } else if (!ticketGenerationStarted.current) {
+                    ticketGenerationStarted.current = true;
                     await generateTickets(
                       purchaseResponse.data[0],
                       orderTrackingId
                     );
+                  } else {
+                    console.log("Ticket generation already in progress, skipping duplicate call");
                   }
                 }
               }
@@ -223,6 +264,7 @@ export default function ConfirmationContent() {
     _transactionId: string
   ) => {
     try {
+      console.log("=== generateTickets called ===", { purchaseRef: purchase.referenceNumber, purchaseDocId: purchase.documentId });
       setIsGeneratingTickets(true);
       let STRAPI_URL = process.env.NEXT_PUBLIC_API_URL;
       if (STRAPI_URL && STRAPI_URL.includes("localhost")) {
@@ -230,6 +272,8 @@ export default function ConfirmationContent() {
       }
       let attendeeData: Attendee[] = [];
       let ticketCategoryId: string | null = null;
+      let eventId: string | null = null;
+      let sessionId: string | null = null;
       let ticketQuantity = 1;
 
       try {
@@ -240,10 +284,18 @@ export default function ConfirmationContent() {
           const parsedData = JSON.parse(storedData);
           attendeeData = parsedData.attendees;
           ticketCategoryId = parsedData.ticketCategoryId;
+          eventId = parsedData.eventId || null;
+          sessionId = parsedData.sessionId || null;
           ticketQuantity = parsedData.quantity;
           if (parsedData.eventSlug) {
             setEventSlug(parsedData.eventSlug);
           }
+          setEventContext({
+            eventName: parsedData.eventName || undefined,
+            eventLocation: parsedData.eventLocation || undefined,
+            eventStartDate: parsedData.eventStartDate || undefined,
+            eventEndDate: parsedData.eventEndDate || undefined,
+          });
         }
       } catch (localStorageError) {
         console.error(
@@ -287,7 +339,7 @@ export default function ConfirmationContent() {
       if (ticketCategoryId) {
         try {
           const categoryResponse = await fetchAPI(
-            `/ticket-categories?filters[documentId][$eq]=${ticketCategoryId}`
+            `/ticket-categories?filters[documentId][$eq]=${ticketCategoryId}&${TICKET_CATEGORY_DEEP_POPULATE}`
           );
           if (
             categoryResponse &&
@@ -308,7 +360,8 @@ export default function ConfirmationContent() {
         )
           .toString()
           .padStart(4, "0")}`;
-        const qrContent = { ticketNumber, event: "UNITE" };
+        const sessionSlug = ticketCategory?.allowedSessions?.[0]?.Slug;
+        const qrContent = { ticketNumber, event: ticketCategory?.allowedEvents?.[0]?.Slug || eventSlug || "event", ...(sessionSlug ? { session: sessionSlug } : {}) };
         const qrCodeData = JSON.stringify(qrContent);
         const ticketData = {
           ticketNumber,
@@ -322,6 +375,8 @@ export default function ConfirmationContent() {
           ticketCategory: ticketCategory
             ? { connect: [{ documentId: ticketCategory.documentId }] }
             : null,
+          event: eventId ? { connect: [{ documentId: eventId }] } : null,
+          session: sessionId ? { connect: [{ documentId: sessionId }] } : null,
         };
 
         try {
@@ -358,19 +413,27 @@ export default function ConfirmationContent() {
         try {
           const baseUrl = window.location.origin;
           const confirmationUrl = `${baseUrl}/tickets/confirmation?OrderTrackingId=${orderTrackingId}&OrderMerchantReference=${purchase.referenceNumber}`;
+          // Derive event info from ticket data or stored context
+          const displayInfo = generatedTickets[0] ? getTicketDisplayInfo(generatedTickets[0]) : null;
+          const emailEventName = displayInfo?.eventName || eventContext.eventName || "Event";
           const emailData = {
             email: purchase.buyerEmail,
             name: purchase.buyerName,
-            subject: "Your UNITE Expo 2025 Tickets",
+            subject: `Your ${emailEventName} Tickets`,
             ticketDetails: generatedTickets.map((ticket) => ({
               ticketNumber: ticket.ticketNumber,
               attendeeName: ticket.attendeeName,
               attendeeEmail: ticket.attendeeEmail,
               ticketCategory: ticket.ticketCategory,
             })),
-            eventDate: "April 12-30, 2025",
-            eventLocation: "Kampala International Convention Centre, Uganda",
             confirmationUrl,
+            eventInfo: {
+              eventName: emailEventName,
+              eventTagline: displayInfo?.eventTagline || "",
+              startDate: displayInfo?.startDate || eventContext.eventStartDate || "",
+              endDate: displayInfo?.endDate || eventContext.eventEndDate || "",
+              location: displayInfo?.location || eventContext.eventLocation || "",
+            },
           };
           const emailResponse = await fetch("/api/tickets/send-email", {
             method: "POST",
@@ -486,8 +549,8 @@ export default function ConfirmationContent() {
                   stroke="currentColor"
                 >
                   <path
-                    strokeLinecap="square"
-                    strokeLinejoin="square"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     strokeWidth={2}
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
@@ -500,8 +563,8 @@ export default function ConfirmationContent() {
                   stroke="currentColor"
                 >
                   <path
-                    strokeLinecap="square"
-                    strokeLinejoin="square"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     strokeWidth={2}
                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
@@ -689,8 +752,8 @@ export default function ConfirmationContent() {
                             stroke="currentColor"
                           >
                             <path
-                              strokeLinecap="square"
-                              strokeLinejoin="square"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                               strokeWidth={2}
                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
                             />
@@ -752,8 +815,8 @@ export default function ConfirmationContent() {
                                   stroke="currentColor"
                                 >
                                   <path
-                                    strokeLinecap="square"
-                                    strokeLinejoin="square"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                     strokeWidth={2}
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
                                   />
@@ -764,7 +827,7 @@ export default function ConfirmationContent() {
                           </button>
                         </div>
                         {/* Ticket Preview */}
-                        <TicketPreview ticket={ticket} />
+                        <TicketPreview ticket={ticket} eventContext={eventContext} />
                       </div>
                     ))}
                   </div>

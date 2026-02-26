@@ -1,16 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+interface TicketDetail {
+  ticketNumber: string;
+  attendeeName: string;
+  attendeeEmail: string;
+  ticketCategory?: { name?: string };
+}
+
+interface EventInfoPayload {
+  eventName?: string;
+  eventTagline?: string;
+  startDate?: string;
+  endDate?: string;
+  location?: string;
+}
+
+function formatDateRange(startDate?: string, endDate?: string): string {
+  if (!startDate) return "";
+  const start = new Date(startDate);
+  const startStr = start.toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  if (!endDate) return startStr;
+  const end = new Date(endDate);
+  const endStr = end.toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  return `${startStr} – ${endStr}`;
+}
+
 export async function POST(request: NextRequest) {
   console.log("Email API endpoint called");
 
   try {
-    // Log request headers
-    console.log(
-      "Request headers:",
-      Object.fromEntries(request.headers.entries())
-    );
-
     const body = await request.json();
     console.log("Request body received:", JSON.stringify(body, null, 2));
 
@@ -18,11 +45,22 @@ export async function POST(request: NextRequest) {
       email,
       name,
       ticketDetails,
-      eventDate,
-      eventLocation,
       subject,
       confirmationUrl,
-    } = body;
+      eventInfo,
+      // Legacy fields (backwards compatible)
+      eventDate,
+      eventLocation,
+    } = body as {
+      email: string;
+      name?: string;
+      ticketDetails?: TicketDetail[];
+      subject?: string;
+      confirmationUrl?: string;
+      eventInfo?: EventInfoPayload;
+      eventDate?: string;
+      eventLocation?: string;
+    };
 
     if (!email) {
       console.error("Missing email field in request");
@@ -32,16 +70,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Email configuration:", {
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      secure: process.env.EMAIL_SECURE,
-      user: process.env.EMAIL_USER ? "Set (value hidden)" : "Not set",
-      pass: process.env.EMAIL_PASSWORD ? "Set (value hidden)" : "Not set",
-      from: process.env.EMAIL_FROM,
-    });
+    // Derive display values from eventInfo or legacy fields
+    const evName = eventInfo?.eventName || "Event";
+    const evTagline = eventInfo?.eventTagline || "";
+    const evDateStr = eventInfo?.startDate
+      ? formatDateRange(eventInfo.startDate, eventInfo.endDate)
+      : eventDate || "";
+    const evLocation = eventInfo?.location || eventLocation || "";
+    const supportEmail = process.env.SUPPORT_EMAIL || "";
+    const currentYear = new Date().getFullYear();
 
-    // Create a transporter with your email settings
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || "smtp.zeptomail.com",
       port: parseInt(process.env.EMAIL_PORT || "587"),
@@ -50,26 +88,22 @@ export async function POST(request: NextRequest) {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
       },
-      debug: true, // Enable debug output
     });
 
-    console.log("Email transporter created");
-
-    // Build a nice, rich HTML email with ticket details
     const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Your UNITE Expo 2025 Tickets</title>
+        <title>Your ${evName} Tickets</title>
       </head>
       <body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; color: #333333; background-color: #f4f4f4;">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
           <tr>
-            <td style="padding: 20px 0; text-align: center; background-color: #1e3a8a;">
-              <h1 style="margin: 0; color: white; font-size: 28px;">UNITE EXPO 2025</h1>
-              <p style="margin: 5px 0 0; color: #d1d5db; font-size: 16px;">Uganda Next Investment & Trade Expo</p>
+            <td style="padding: 24px 0; text-align: center; background-color: #1e3a8a;">
+              <h1 style="margin: 0; color: white; font-size: 26px; letter-spacing: 0.5px;">${evName}</h1>
+              ${evTagline ? `<p style="margin: 6px 0 0; color: #bfdbfe; font-size: 15px;">${evTagline}</p>` : ""}
             </td>
           </tr>
           <tr>
@@ -77,12 +111,10 @@ export async function POST(request: NextRequest) {
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                   <td>
-                    <h2 style="margin-top: 0; color: #1e3a8a; font-size: 22px;">Hello ${
-                      name || "Valued Guest"
-                    },</h2>
-                    <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.5;">Thank you for your purchase! Your tickets for UNITE Expo 2025 are ready.</p>
-                    
-                    <div style="background-color: #f3f4f6; padding: 20px; border-radius: 5px; margin-bottom: 25px;">
+                    <h2 style="margin-top: 0; color: #1e3a8a; font-size: 22px;">Hello ${name || "there"},</h2>
+                    <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6;">Thank you for registering! Your tickets for ${evName} are ready.</p>
+
+                    <div style="background-color: #f8fafc; padding: 20px; border-radius: 6px; margin-bottom: 25px; border: 1px solid #e2e8f0;">
                       <h3 style="margin-top: 0; color: #1e3a8a; font-size: 18px;">Ticket Details</h3>
                       ${
                         ticketDetails
@@ -90,21 +122,17 @@ export async function POST(request: NextRequest) {
                       <table role="presentation" width="100%" cellspacing="0" cellpadding="8" border="0" style="font-size: 15px;">
                         ${ticketDetails
                           .map(
-                            (ticket, index) => `
+                            (ticket: TicketDetail, index: number) => `
                         <tr style="${
-                          index % 2 === 0 ? "background-color: #f9fafb;" : ""
+                          index % 2 === 0 ? "background-color: #f1f5f9;" : ""
                         }">
-                          <td style="border-bottom: 1px solid #e5e7eb; padding: 12px 8px;">
+                          <td style="border-bottom: 1px solid #e2e8f0; padding: 12px 8px;">
                             <strong>Ticket #${index + 1}</strong><br>
-                            <span style="font-size: 14px; color: #6b7280;">${
-                              ticket.ticketNumber
-                            }</span>
+                            <span style="font-size: 13px; color: #64748b;">${ticket.ticketNumber}</span>
                           </td>
-                          <td style="border-bottom: 1px solid #e5e7eb; padding: 12px 8px;">
+                          <td style="border-bottom: 1px solid #e2e8f0; padding: 12px 8px;">
                             <strong>${ticket.attendeeName}</strong><br>
-                            <span style="font-size: 14px; color: #6b7280;">${
-                              ticket.ticketCategory?.name || "Standard Ticket"
-                            }</span>
+                            <span style="font-size: 13px; color: #64748b;">${ticket.ticketCategory?.name || "Ticket"}</span>
                           </td>
                         </tr>
                         `
@@ -113,44 +141,41 @@ export async function POST(request: NextRequest) {
                       </table>
                       `
                           : `
-                      <p style="margin: 0; font-size: 15px;">Your ticket purchase has been confirmed. Click the button below to view and download your tickets.</p>
+                      <p style="margin: 0; font-size: 15px;">Your registration has been confirmed. Click the button below to view and download your tickets.</p>
                       `
                       }
                     </div>
-                    
+
+                    ${confirmationUrl ? `
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${confirmationUrl}" style="background-color: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; text-align: center;">View & Download Your Tickets</a>
+                      <a href="${confirmationUrl}" style="background-color: #1e3a8a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; text-align: center; font-size: 15px;">View & Download Your Tickets</a>
                     </div>
-                    
-                    <h3 style="color: #1e3a8a; font-size: 18px;">Important Information</h3>
-                    <ul style="padding-left: 20px; font-size: 15px; line-height: 1.5;">
-                      <li>Event Date: ${eventDate || "April 12-30, 2025"}</li>
-                      <li>Location: ${
-                        eventLocation ||
-                        "Kampala International Convention Centre, Uganda"
-                      }</li>
+                    ` : ""}
+
+                    ${evDateStr || evLocation ? `
+                    <h3 style="color: #1e3a8a; font-size: 18px;">Event Details</h3>
+                    <ul style="padding-left: 20px; font-size: 15px; line-height: 1.6; color: #374151;">
+                      ${evDateStr ? `<li><strong>Date:</strong> ${evDateStr}</li>` : ""}
+                      ${evLocation ? `<li><strong>Location:</strong> ${evLocation}</li>` : ""}
                       <li>Please bring a printed copy of your ticket or show the digital version on your device</li>
-                      <li>Arrive 30 minutes before your scheduled sessions to allow time for check-in</li>
+                      <li>Arrive 30 minutes early to allow time for check-in</li>
                     </ul>
-                    
-                    <p style="margin: 30px 0 0; font-size: 16px; line-height: 1.5;">If you have any questions about your tickets or the event, please contact our support team at <a href="mailto:support@uniteexpo.org" style="color: #1e3a8a;">support@uniteexpo.org</a>.</p>
-                    
-                    <p style="margin: 20px 0 0; font-size: 16px; line-height: 1.5;">We look forward to seeing you at UNITE Expo 2025!</p>
-                    
-                    <p style="margin: 20px 0 0; font-size: 16px; line-height: 1.5;">Best regards,<br>The UNITE Expo 2025 Team</p>
+                    ` : ""}
+
+                    ${supportEmail ? `<p style="margin: 30px 0 0; font-size: 15px; line-height: 1.6; color: #374151;">If you have any questions, contact us at <a href="mailto:${supportEmail}" style="color: #1e3a8a;">${supportEmail}</a>.</p>` : ""}
+
+                    <p style="margin: 20px 0 0; font-size: 15px; line-height: 1.6; color: #374151;">We look forward to seeing you!</p>
+
+                    <p style="margin: 20px 0 0; font-size: 15px; line-height: 1.6; color: #374151;">Best regards,<br>The ${evName} Team</p>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
           <tr>
-            <td style="padding: 20px 30px; text-align: center; background-color: #f3f4f6; color: #6b7280; font-size: 14px;">
-              <p style="margin: 0 0 10px;">© 2025 UNITE Expo. All rights reserved.</p>
-              <p style="margin: 0;">Kampala International Convention Centre, Uganda</p>
-              <p style="margin: 15px 0 0;">
-                <a href="https://uniteexpo.org/privacy" style="color: #4b5563; text-decoration: underline; margin: 0 10px;">Privacy Policy</a>
-                <a href="https://uniteexpo.org/terms" style="color: #4b5563; text-decoration: underline; margin: 0 10px;">Terms of Service</a>
-              </p>
+            <td style="padding: 20px 30px; text-align: center; background-color: #f1f5f9; color: #64748b; font-size: 13px;">
+              <p style="margin: 0 0 8px;">&copy; ${currentYear} ${evName}. All rights reserved.</p>
+              ${evLocation ? `<p style="margin: 0;">${evLocation}</p>` : ""}
             </td>
           </tr>
         </table>
@@ -158,15 +183,10 @@ export async function POST(request: NextRequest) {
       </html>
     `;
 
-    console.log("Rich HTML created for email");
-
-    // Email options with full HTML content
     const mailOptions = {
-      from:
-        process.env.EMAIL_FROM ||
-        '"UNITE Expo" <tickets@rewardsforeducation.com>',
+      from: process.env.EMAIL_FROM || '"Events" <tickets@rewardsforeducation.com>',
       to: email,
-      subject: subject || "Your UNITE Expo 2025 Tickets",
+      subject: subject || `Your ${evName} Tickets`,
       html: htmlContent,
     };
 
@@ -176,8 +196,6 @@ export async function POST(request: NextRequest) {
       subject: mailOptions.subject,
     });
 
-    // Send the email
-    console.log("About to send email via nodemailer...");
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent with info:", info);
 
@@ -191,10 +209,6 @@ export async function POST(request: NextRequest) {
     console.error(
       "Error details:",
       error instanceof Error ? error.message : String(error)
-    );
-    console.error(
-      "Error stack:",
-      error instanceof Error ? error.stack : "No stack available"
     );
 
     return NextResponse.json(

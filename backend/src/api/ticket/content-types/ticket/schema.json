@@ -51,6 +51,18 @@
       "relation": "manyToOne",
       "target": "api::ticket-purchase.ticket-purchase",
       "inversedBy": "tickets"
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "tickets"
+    },
+    "session": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::session.session",
+      "inversedBy": "tickets"
     }
   }
 }

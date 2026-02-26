@@ -12,6 +12,7 @@ import {
   generateQRCodeImages,
   generateTicketPDF,
   generateAllTicketPDFs,
+  TICKET_DEEP_POPULATE,
 } from "@/lib/tickets/ticket-utils";
 
 export default function AccountContent() {
@@ -61,13 +62,23 @@ export default function AccountContent() {
         setLoading(true);
         const email = encodeURIComponent(user.email);
 
-        // Fetch tickets where user is the attendee OR the buyer
-        const response = await fetchAPI(
-          `/tickets?filters[$or][0][attendeeEmail][$eq]=${email}&filters[$or][1][purchase][buyerEmail][$eq]=${email}&populate=ticketCategory&populate=purchase&sort=createdAt:desc`
+        // Fetch tickets (simple populate first, then deep populate by ID)
+        const simpleResponse = await fetchAPI(
+          `/tickets?filters[$or][0][attendeeEmail][$eq]=${email}&filters[$or][1][purchase][buyerEmail][$eq]=${email}&populate=*&sort=createdAt:desc`
         );
 
-        if (response?.data && response.data.length > 0) {
-          const ticketsWithQR = await generateQRCodeImages(response.data);
+        if (simpleResponse?.data && simpleResponse.data.length > 0) {
+          let ticketsData = simpleResponse.data;
+          try {
+            const ids = simpleResponse.data.map((t: Ticket) => t.documentId || t.id);
+            const deepResponse = await fetchAPI(
+              `/tickets?${ids.map((id: string | number, i: number) => `filters[documentId][$in][${i}]=${id}`).join("&")}&${TICKET_DEEP_POPULATE}&sort=createdAt:desc`
+            );
+            if (deepResponse?.data?.length > 0) ticketsData = deepResponse.data;
+          } catch (e) {
+            console.error("Deep populate failed:", e);
+          }
+          const ticketsWithQR = await generateQRCodeImages(ticketsData);
           setTickets(ticketsWithQR);
         } else {
           setTickets([]);

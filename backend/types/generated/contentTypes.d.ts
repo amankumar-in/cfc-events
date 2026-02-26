@@ -548,6 +548,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::ticket-category.ticket-category'
     >;
+    tickets: Schema.Attribute.Relation<'oneToMany', 'api::ticket.ticket'>;
     Title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -861,6 +862,7 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::ticket-category.ticket-category'
     >;
+    tickets: Schema.Attribute.Relation<'oneToMany', 'api::ticket.ticket'>;
     Title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1072,6 +1074,7 @@ export interface ApiTicketTicket extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    event: Schema.Attribute.Relation<'manyToOne', 'api::event.event'>;
     isCheckedIn: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1085,6 +1088,7 @@ export interface ApiTicketTicket extends Struct.CollectionTypeSchema {
       'api::ticket-purchase.ticket-purchase'
     >;
     qrCodeData: Schema.Attribute.String;
+    session: Schema.Attribute.Relation<'manyToOne', 'api::session.session'>;
     ticketCategory: Schema.Attribute.Relation<
       'manyToOne',
       'api::ticket-category.ticket-category'

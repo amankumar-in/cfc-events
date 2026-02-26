@@ -5,6 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { fetchAPI } from "@/lib/api/api-config";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/components/auth/useAuth";
+import {
+  TICKET_CATEGORY_DEEP_POPULATE,
+  type EventInfo,
+  type SessionInfo,
+} from "@/lib/tickets/ticket-utils";
 
 interface TicketCategory {
   id: number;
@@ -19,6 +24,9 @@ interface TicketCategory {
   isActive: boolean;
   isFeatured: boolean;
   sortOrder: number;
+  grantsFullEventAccess?: boolean;
+  allowedEvents?: EventInfo[];
+  allowedSessions?: SessionInfo[];
 }
 
 interface Attendee {
@@ -69,7 +77,7 @@ export default function BuyTicketContent() {
     const fetchTicketCategory = async () => {
       try {
         const response = await fetchAPI(
-          `/ticket-categories?filters[documentId][$eq]=${categoryId}&populate=allowedEvents`
+          `/ticket-categories?filters[documentId][$eq]=${categoryId}&${TICKET_CATEGORY_DEEP_POPULATE}`
         );
         console.log("Ticket category response:", response);
 
@@ -247,7 +255,13 @@ export default function BuyTicketContent() {
             attendees: formData.attendees,
             quantity: formData.quantity,
             ticketCategoryId: ticketCategory.documentId,
+            eventId: event?.documentId || null,
+            sessionId: ticketCategory.grantsFullEventAccess ? null : (event?.sessions?.[0]?.documentId || ticketCategory?.allowedSessions?.[0]?.documentId || null),
             eventSlug: eventSlug || null,
+            eventName: eventName || null,
+            eventLocation: eventLocation || null,
+            eventStartDate: event?.StartDate || null,
+            eventEndDate: event?.EndDate || null,
           })
         );
       }
@@ -343,7 +357,7 @@ export default function BuyTicketContent() {
               referenceNumber,
               amount: totalAmount,
               currency: ticketCategory?.currency || "UGX",
-              description: `UNITE Expo 2025 Ticket - ${ticketCategory?.name}`,
+              description: `${eventName} - ${ticketCategory?.name}`,
               buyerName: formData.buyerName,
               buyerEmail: formData.buyerEmail,
               buyerPhone: formData.buyerPhone || "",
@@ -376,8 +390,13 @@ export default function BuyTicketContent() {
   // Calculate total price
   const totalPrice = formData.quantity * (ticketCategory?.price || 0);
 
-  // Determine the back/cancel URL based on the event
-  const eventSlug = (ticketCategory as TicketCategory & { allowedEvents?: { Slug?: string }[] })?.allowedEvents?.[0]?.Slug;
+  // Derive event info from the ticket category
+  const event = ticketCategory?.allowedEvents?.[0];
+  const eventSlug = event?.Slug;
+  const eventName = event?.Title ?? "Event";
+  const eventLocation = event?.venue
+    ? `${event.venue.Name}, ${event.venue.City}, ${event.venue.Country}`
+    : (event?.Location ?? "");
   const cancelUrl = eventSlug ? `/events/${eventSlug}/tickets` : "/tickets";
 
   // Generate quantity options up to maxPurchaseQuantity
@@ -452,9 +471,9 @@ export default function BuyTicketContent() {
             <h1 className="text-2xl font-bold text-white">
               {ticketCategory.name}
             </h1>
-            {(ticketCategory as TicketCategory & { allowedEvents?: { Title?: string }[] }).allowedEvents?.[0]?.Title && (
+            {event?.Title && (
               <p className="text-sm mt-1 text-blue-100">
-                {(ticketCategory as TicketCategory & { allowedEvents?: { Title?: string }[] }).allowedEvents![0].Title}
+                {event.Title}
               </p>
             )}
           </div>

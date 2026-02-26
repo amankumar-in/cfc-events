@@ -137,6 +137,12 @@
       "relation": "manyToMany",
       "target": "api::ticket-category.ticket-category",
       "mappedBy": "allowedSessions"
+    },
+    "tickets": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ticket.ticket",
+      "mappedBy": "session"
     }
   }
 }

@@ -106,7 +106,9 @@ export default async function HomePage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="max-w-3xl">
-            <span className="inline-block mb-4 h-1 w-16 bg-yellow-500" />
+            <span className="inline-block mb-4 px-4 py-1.5 bg-yellow-500 text-gray-900 text-sm font-bold uppercase tracking-wide">
+              100% Scholarship Available
+            </span>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
               {eventTitle}
             </h1>
@@ -163,8 +165,8 @@ export default async function HomePage() {
               },
               {
                 icon: Award,
-                value: "Up to 100%",
-                label: "Scholarships Available",
+                value: "100% Scholarship",
+                label: "For Eligible Students",
               },
               {
                 icon: MonitorPlay,
