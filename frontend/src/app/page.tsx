@@ -20,6 +20,7 @@ import {
   ChevronRight,
   ExternalLink,
 } from "lucide-react";
+import { CollegeMarquee } from "@/components/ui/CollegeMarquee";
 
 // ── Data Fetching ────────────────────────────────────────────────────
 
@@ -105,45 +106,52 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900/70 via-blue-900/40 to-gray-900/60" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="max-w-3xl">
-            <span className="inline-block mb-4 px-4 py-1.5 bg-yellow-500 text-gray-900 text-sm font-bold uppercase tracking-wide">
-              100% Scholarship Available
-            </span>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              {eventTitle}
-            </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+            <div className="lg:col-span-3">
+              <span className="inline-block mb-4 px-4 py-1.5 bg-yellow-500 text-gray-900 text-sm font-bold uppercase tracking-wide">
+                100% Scholarship Available
+              </span>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                {eventTitle}
+              </h1>
 
-            <div className="flex flex-wrap gap-6 mb-6 text-gray-300">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-yellow-500" />
-                <span>{eventDate}</span>
+              <div className="flex flex-wrap gap-6 mb-6 text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-yellow-500" />
+                  <span>{eventDate}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-yellow-500" />
+                  <span>{eventLocation}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-yellow-500" />
-                <span>{eventLocation}</span>
+
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl">
+                {eventDescription}
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  href={eventSlug ? `/events/${eventSlug}/tickets` : "/events"}
+                >
+                  Register Free
+                </Button>
+                <Button
+                  variant="light"
+                  buttonType="outline"
+                  size="lg"
+                  href={eventSlug ? `/events/${eventSlug}/sessions` : "/events"}
+                >
+                  View Schedule
+                </Button>
               </div>
             </div>
 
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl">
-              {eventDescription}
-            </p>
-
-            <div className="flex flex-wrap gap-4">
-              <Button
-                variant="primary"
-                size="lg"
-                href={eventSlug ? `/events/${eventSlug}/tickets` : "/events"}
-              >
-                Register Free
-              </Button>
-              <Button
-                variant="light"
-                buttonType="outline"
-                size="lg"
-                href={eventSlug ? `/events/${eventSlug}/sessions` : "/events"}
-              >
-                View Schedule
-              </Button>
+            {/* College Marquee — desktop only */}
+            <div className="hidden lg:block lg:col-span-2">
+              <CollegeMarquee />
             </div>
           </div>
         </div>
