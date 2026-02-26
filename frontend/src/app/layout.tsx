@@ -39,12 +39,21 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://events.coinsforcollege.org",
     siteName: "CFC Events",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "CFC Events - Coins For College",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "CFC Events - Coins For College",
     description:
       "Discover and participate in events, conferences, and sessions hosted by Coins For College.",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
