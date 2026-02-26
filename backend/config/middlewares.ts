@@ -40,6 +40,7 @@ export default [
         /\.intuitionexchange\.com$/,
         /\.intuitionexchange\.org$/,
         "https://coinsforcollege.org",
+        "https://events.coinsforcollege.org",
         "https://intuitionexchange.com",
         "https://intuitionexchange.org",
       ],
