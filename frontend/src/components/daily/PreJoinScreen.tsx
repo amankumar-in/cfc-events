@@ -115,7 +115,6 @@ export default function PreJoinScreen({
   const mountedRef = useRef(true);
 
   /* ----- Daily's audio level hook --------------------------------- */
-  // eslint-disable-next-line deprecation/deprecation
   useAudioLevel(
     audioTrack,
     useCallback((volume: number) => {

@@ -109,6 +109,7 @@ export default function DailyLivestream({
 
   // Efficient speaker detection via native filtered hooks (no hidden components)
   const ownerIds = useParticipantIds({ filter: "owner" });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const promotedFilter = useCallback((p: any) => {
     if (p.owner) return false; // Owners tracked separately via string filter
     const canSend = p.permissions?.canSend;
@@ -205,7 +206,7 @@ export default function DailyLivestream({
   // Clean up hand raises when a specific participant leaves (event-driven)
   useDailyEvent(
     "participant-left",
-    useCallback((ev: any) => {
+    useCallback((ev: { participant?: { session_id?: string } }) => {
       const leftId = ev?.participant?.session_id;
       if (leftId) {
         setHandRaises((prev) => prev.filter((h) => h.sessionId !== leftId));

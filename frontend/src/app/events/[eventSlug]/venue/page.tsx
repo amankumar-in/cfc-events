@@ -6,7 +6,7 @@ import { useEventSessions } from "@/lib/hooks/useEventSessions";
 import { SessionWithSpeakers } from "@/lib/utils/speakers";
 import { getStrapiURL } from "@/lib/api/api-config";
 import { PageBanner } from "@/components/event/PageBanner";
-import { VenueDetail, VenueDetailData } from "@/components/venue/VenueDetail";
+import { VenueDetailData } from "@/components/venue/VenueDetail";
 
 export default function VenuePage() {
   const event = useEventContext();

@@ -93,6 +93,7 @@ export default function DailyParticipantGrid() {
   // Native filtered IDs — only applies hideNoVideo filter in gallery view
   const participantFilter = useMemo(() => {
     if (layout !== "gallery" || !hideNoVideo) return undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (p: any) => p.tracks?.video?.state === "playable";
   }, [hideNoVideo, layout]);
 
@@ -101,7 +102,7 @@ export default function DailyParticipantGrid() {
   // Clear pinned participant when they leave (event-driven, not render-time check)
   useDailyEvent(
     "participant-left",
-    useCallback((ev: any) => {
+    useCallback((ev: { participant?: { session_id?: string } }) => {
       const leftId = ev?.participant?.session_id;
       if (leftId) {
         setPinnedId((prev) => (prev === leftId ? null : prev));

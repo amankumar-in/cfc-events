@@ -7,7 +7,6 @@ import { useEventSessions } from "@/lib/hooks/useEventSessions";
 import { SessionCard } from "@/components/session/SessionCard";
 import { FeaturedSessionCard } from "@/components/session/FeaturedSessionCard";
 import { PageBanner } from "@/components/event/PageBanner";
-import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 
 interface SessionData {

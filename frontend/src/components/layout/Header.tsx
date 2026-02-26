@@ -31,7 +31,7 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { activeEvent } = useActiveEvent();
 
   // Detect if we're on an event-scoped page

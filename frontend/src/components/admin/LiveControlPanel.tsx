@@ -103,7 +103,7 @@ function LiveControlPanelInner({
 
   useDailyEvent(
     "participant-left",
-    useCallback((ev: any) => {
+    useCallback((ev: { participant?: { session_id?: string } }) => {
       const leftId = ev?.participant?.session_id;
       if (leftId) {
         setRaisedHands((prev) => {

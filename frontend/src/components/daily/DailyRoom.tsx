@@ -450,7 +450,7 @@ export default function DailyRoom({
 
   const handleTokenRefresh = useCallback(async () => {
     try {
-      const freshToken = await fetchFreshToken();
+      await fetchFreshToken();
       const daily = callRef.current;
       if (daily) {
         // Daily.co doesn't have a direct "update token" method on an active
@@ -570,6 +570,7 @@ export default function DailyRoom({
       });
 
       // Session ended broadcast — leave gracefully and show ended screen
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       daily.on("app-message", (ev: any) => {
         if (ev?.data?.type === "session-status" && ev?.data?.status === "ended") {
           intentionalLeaveRef.current = true;
