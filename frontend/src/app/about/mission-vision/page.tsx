@@ -100,7 +100,7 @@ function MissionSection() {
             </h2>
             <div className="space-y-6 text-gray-600 dark:text-gray-300">
               <p className="text-lg">
-                UNITE 2025 is dedicated to accelerating Uganda&apos;s economic
+                CFC Events is dedicated to accelerating community
                 development by creating a dynamic platform that showcases
                 investment opportunities and facilitates meaningful
                 partnerships.
@@ -144,7 +144,7 @@ function MissionSection() {
                 </div>
               </div>
               <p>
-                Through UNITE Expo 2025, we aim to create a vibrant marketplace
+                Through CFC Events, we aim to create a vibrant marketplace
                 of ideas, opportunities, and connections that will drive
                 investment, job creation, and prosperity across Uganda.
               </p>
@@ -278,7 +278,7 @@ function VisionSection() {
                 </div>
               </div>
               <p>
-                UNITE Expo 2025 contributes to this vision by creating a
+                CFC Events contributes to this vision by creating a
                 platform where investment meets opportunity, ideas meet
                 resources, and global markets meet local enterprise.
               </p>
@@ -432,7 +432,7 @@ function ValuesSection() {
             Our Core Values
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            The principles that guide everything we do at UNITE Expo, informing
+            The principles that guide everything we do at CFC Events, informing
             our decisions and actions
           </p>
         </div>
@@ -485,7 +485,7 @@ function CorePrinciplesSection() {
             <div className="bg-black text-white dark:bg-white dark:text-black p-6 border border-gray-200 dark:border-gray-600">
               <h3 className="text-xl font-bold mb-4">Strategic Direction</h3>
               <p>
-                By adhering to these principles, UNITE Expo 2025 aims to be more
+                By adhering to these principles, CFC Events aims to be more
                 than an event—we strive to be a catalyst for lasting economic
                 transformation in Uganda.
               </p>
@@ -566,7 +566,7 @@ function CTASection() {
               Share Our Vision for Uganda&apos;s Future
             </h2>
             <p className="text-lg mb-8">
-              Join us at UNITE Expo 2025 and be part of Uganda&apos;s economic
+              Join us at CFC Events and be part of our community&apos;s
               transformation story. Together, we can build a more prosperous and
               globally integrated Uganda.
             </p>
@@ -590,7 +590,7 @@ function CTASection() {
               <div className="absolute top-0 right-0 w-16 h-16 bg-blue-600"></div>
               <h3 className="text-2xl font-bold mb-6">Strategic Partnership</h3>
               <p className="mb-6">
-                UNITE Expo 2025 offers more than exhibition space—we provide a
+                CFC Events offers more than event space—we provide a
                 comprehensive platform for building lasting relationships and
                 creating real business opportunities.
               </p>

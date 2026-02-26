@@ -30,18 +30,18 @@ export async function GET(request: NextRequest) {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: testEmail,
-      subject: "UNITE Expo - Test Email",
+      subject: "CFC Events - Test Email",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background-color: #1e3a8a; padding: 20px; text-align: center; color: white;">
-            <h1 style="margin: 0;">UNITE EXPO 2025</h1>
-            <p style="margin: 5px 0 0;">Uganda Next Investment & Trade Expo</p>
+            <h1 style="margin: 0;">CFC EVENTS</h1>
+            <p style="margin: 5px 0 0;">Coins For College Events Platform</p>
           </div>
           
           <div style="padding: 20px; border: 1px solid #e5e7eb; border-top: none;">
             <p>Hello,</p>
             
-            <p>This is a test email to verify the email configuration for UNITE Expo 2025 ticket system.</p>
+            <p>This is a test email to verify the email configuration for CFC Events ticket system.</p>
             
             <div style="background-color: #f3f4f6; padding: 15px; margin: 20px 0; border-radius: 5px;">
               <p style="margin: 0 0 10px;"><strong>Test Time:</strong> ${new Date().toISOString()}</p>
@@ -49,11 +49,11 @@ export async function GET(request: NextRequest) {
             
             <p>If you received this email, your email configuration is working correctly!</p>
             
-            <p>Best regards,<br>UNITE Expo 2025 Team</p>
+            <p>Best regards,<br>CFC Events Team</p>
           </div>
           
           <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #6b7280;">
-            <p>© 2025 UNITE Expo. All rights reserved.</p>
+            <p>© 2025 CFC Events. All rights reserved.</p>
             <p>Kampala International Convention Centre, Uganda</p>
           </div>
         </div>

@@ -15,7 +15,7 @@ export default function PDFTestComponent() {
       try {
         const qrContent = JSON.stringify({
           ticketNumber: "TIX-12345-6789",
-          event: "UNITE",
+          event: "CFC Events",
         });
         const qrCodeDataUrl = await generateQRCodeDataURL(qrContent);
         setQrCodeImage(qrCodeDataUrl);
@@ -50,7 +50,7 @@ export default function PDFTestComponent() {
       // Sample ticket data
       const ticketData = {
         ticketNumber: "TIX-12345-6789",
-        eventName: "UNITE EXPO 2025",
+        eventName: "CFC EVENTS",
         eventTagline: "Uganda Next Investment & Trade Expo",
         attendeeName: "John Doe",
         attendeeEmail: "john.doe@example.com",
@@ -269,7 +269,7 @@ export default function PDFTestComponent() {
 
                   // Event name at bottom of QR section
                   {
-                    text: "UNITE EXPO 2025",
+                    text: "CFC EVENTS",
                     style: "qrEventName",
                     absolutePosition: { x: 465, y: 230 },
                   },
@@ -345,7 +345,7 @@ export default function PDFTestComponent() {
 
       // Generate and download the PDF
       if (qrCodeImage) {
-        pdfMake.createPdf(docDefinition).download(`UNITE-Expo-Ticket.pdf`);
+        pdfMake.createPdf(docDefinition).download(`CFC-Events-Ticket.pdf`);
       } else {
         alert("QR code not loaded yet. Please wait and try again.");
       }
@@ -368,7 +368,7 @@ export default function PDFTestComponent() {
           <div className="flex-grow">
             {/* Header with blue background */}
             <div className="bg-blue-900 text-white py-3 px-5">
-              <h3 className="font-bold text-xl">UNITE EXPO 2025</h3>
+              <h3 className="font-bold text-xl">CFC EVENTS</h3>
               <p className="text-xs text-gray-300">
                 Uganda Next Investment & Trade Expo
               </p>
@@ -457,7 +457,7 @@ export default function PDFTestComponent() {
                 </div>
               )}
               <p className="text-xs text-gray-600 mb-2">SCAN TO VERIFY</p>
-              <p className="text-xs font-bold">UNITE EXPO 2025</p>
+              <p className="text-xs font-bold">CFC EVENTS</p>
             </div>
           </div>
         </div>

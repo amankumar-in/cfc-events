@@ -29,7 +29,7 @@ function HeroSection() {
           <div>
             <span className="inline-block mb-3 h-1 w-16 bg-yellow-500"></span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              About UNITE Expo 2025
+              About CFC Events
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
               Uganda&apos;s premier platform connecting international investors with
@@ -93,9 +93,9 @@ function MissionSection() {
               Our Mission & Vision
             </h2>
             <p className="text-lg mb-8 text-gray-600 dark:text-gray-300">
-              UNITE Expo 2025 aims to establish Uganda as a premier investment
-              destination by showcasing the country&apos;s economic potential and
-              connecting international investors with local opportunities.
+              CFC Events aims to connect communities with impactful
+              conferences, workshops, and networking opportunities that
+              drive positive change.
             </p>
             <Button
               variant="primary"
@@ -180,15 +180,15 @@ function AboutExpoSection() {
             </h2>
             <div className="text-gray-600 dark:text-gray-300 space-y-4">
               <p>
-                UNITE (Uganda Next - Investment &amp; Trade Expo) 2025 is the
-                largest and most comprehensive investment and trade exhibition
-                in Uganda, showcasing the country&apos;s vast potential across
-                various sectors of the economy.
+                CFC Events is a comprehensive event platform by
+                Coins For College, connecting communities with
+                impactful conferences, workshops, and sessions across
+                various fields.
               </p>
               <p>
                 Organized by the Uganda Investment Authority in collaboration
-                with the Ministry of Trade, Industry, and Cooperatives, UNITE
-                Expo 2025 serves as a platform for local and international
+                with partners and organizations, CFC Events
+                serves as a platform for local and international
                 businesses to connect, collaborate, and explore investment
                 opportunities in Uganda.
               </p>
@@ -200,7 +200,7 @@ function AboutExpoSection() {
                 networking opportunities with government and business leaders.
               </p>
               <p>
-                UNITE Expo 2025 is part of Uganda&apos;s broader strategy to attract
+                CFC Events is part of Coins For College&apos;s broader strategy to create
                 $5 billion in foreign direct investment by 2026, diversify the
                 economy, and create sustainable jobs for its growing population.
               </p>
@@ -395,8 +395,8 @@ function ThematicAreasSection() {
             Thematic Investment Areas
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            UNITE Expo 2025 focuses on six key sectors that represent Uganda&apos;s
-            greatest investment potential and strategic development priorities.
+            CFC Events focuses on key areas that represent our
+            greatest impact potential and strategic development priorities.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -465,7 +465,7 @@ function KeyFiguresSection() {
         <div className="mb-12">
           <span className="inline-block mb-3 h-1 w-16 bg-yellow-500"></span>
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            UNITE Expo 2025 by the Numbers
+            CFC Events by the Numbers
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
             The scale and scope of East Africa&apos;s premier investment and trade
@@ -540,8 +540,8 @@ function OrganizersSection() {
             Organizing Partners
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            UNITE Expo 2025 is a collaborative effort between government
-            agencies, private sector organizations, and international partners.
+            CFC Events is a collaborative effort between organizations,
+            communities, and international partners.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -669,7 +669,7 @@ function CTASection() {
           Be Part of Uganda&apos;s Economic Growth Story
         </h2>
         <p className="text-xl max-w-3xl mx-auto mb-10">
-          Join us at UNITE Expo 2025 and discover investment opportunities in
+          Join us at CFC Events and discover opportunities in
           one of Africa&apos;s fastest-growing economies.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">

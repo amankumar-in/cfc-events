@@ -1,6 +1,6 @@
 {
-  "name": "UNITE 2025",
-  "short_name": "UNITE",
+  "name": "CFC Events",
+  "short_name": "CFC Events",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "##f0b000",
-  "background_color": "##f0b000",
+  "theme_color": "#f0b000",
+  "background_color": "#f0b000",
   "display": "standalone"
 }

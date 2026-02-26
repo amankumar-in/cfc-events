@@ -140,7 +140,7 @@ function HeroSection() {
               Contact Us
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Get in touch with our team about UNITE Expo 2025
+              Get in touch with our team about CFC Events
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" href="#contact-form">
@@ -270,7 +270,7 @@ function ContactOptionsSection() {
     {
       title: "Sponsorship Opportunities",
       description:
-        "Interested in sponsoring UNITE Expo? Explore our sponsorship packages.",
+        "Interested in sponsoring CFC Events? Explore our sponsorship packages.",
       email: "sponsors@uniteexpo.org",
       phone: "+256 700 000 001",
       icon: (
@@ -679,7 +679,7 @@ function ContactFormSection({
                     </div>
                     <div className="text-gray-700 dark:text-gray-300">
                       <p className="font-medium text-black dark:text-white">
-                        UNITE Expo Headquarters
+                        CFC Events Headquarters
                       </p>
                       <p>Plot 123, Kampala Road</p>
                       <p>Kampala, Uganda</p>
@@ -849,7 +849,7 @@ function SocialMediaSection() {
         </div>
 
         <p className="text-lg">
-          Follow us on social media for the latest updates about UNITE Expo 2025
+          Follow us on social media for the latest updates about CFC Events
         </p>
       </div>
     </section>

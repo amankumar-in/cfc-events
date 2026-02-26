@@ -10,17 +10,19 @@ import { ThemeProvider } from "next-themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CFC Events - Multi-Event Platform",
+  title: "CFC Events - Coins For College",
   description:
-    "Discover and participate in events, conferences, and sessions across the platform.",
+    "Discover and participate in events, conferences, and sessions hosted by Coins For College.",
   keywords: [
+    "CFC Events",
+    "Coins For College",
     "Events",
     "Conferences",
     "Sessions",
     "Virtual Events",
     "Livestream",
   ],
-  viewport: "width=device-width, initial-scale=1",
+  metadataBase: new URL("https://events.coinsforcollege.org"),
   appleWebApp: {
     title: "CFC Events",
     capable: true,
@@ -31,17 +33,18 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: "CFC Events - Multi-Event Platform",
+    title: "CFC Events - Coins For College",
     description:
-      "Discover and participate in events, conferences, and sessions across the platform.",
+      "Discover and participate in events, conferences, and sessions hosted by Coins For College.",
     type: "website",
+    url: "https://events.coinsforcollege.org",
     siteName: "CFC Events",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CFC Events - Multi-Event Platform",
+    title: "CFC Events - Coins For College",
     description:
-      "Discover and participate in events, conferences, and sessions across the platform.",
+      "Discover and participate in events, conferences, and sessions hosted by Coins For College.",
   },
   robots: {
     index: true,

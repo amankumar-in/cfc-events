@@ -126,7 +126,7 @@ function HeroSection() {
           <div>
             <span className="inline-block mb-3 h-1 w-16 bg-yellow-500"></span>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              UNITE Expo 2025 Tickets
+              CFC Events Tickets
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
               Secure your place at Uganda&apos;s premier investment and trade expo
@@ -339,7 +339,7 @@ function FAQsSection() {
     {
       question: "What's included in the All-Access Pass?",
       answer:
-        "The All-Access Pass provides entry to all events at UNITE Expo 2025, including keynote speeches, workshops, networking events, and the exhibition area. You'll also receive priority check-in and complimentary refreshments.",
+        "The All-Access Pass provides entry to all events at CFC Events, including keynote speeches, workshops, networking events, and the exhibition area. You'll also receive priority check-in and complimentary refreshments.",
     },
     {
       question: "Can I purchase tickets at the venue?",

@@ -1,5 +1,5 @@
 // src/styles/design-tokens.ts
-// Design tokens for the UNITE Expo website
+// Design tokens for the CFC Events website
 
 /**
  * Color Palette

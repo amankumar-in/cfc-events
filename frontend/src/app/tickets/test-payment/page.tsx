@@ -8,7 +8,7 @@ export default function TestPaymentPage() {
     reference: `TEST-${Date.now()}`,
     amount: 1000,
     currency: "UGX",
-    description: "Test Payment for UNITE Expo 2025",
+    description: "Test Payment for CFC Events",
     callbackUrl: "http://localhost:3000/tickets/test-callback",
     customerName: "Test User",
     customerEmail: "test@example.com",

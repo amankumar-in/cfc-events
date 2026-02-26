@@ -89,7 +89,7 @@ export default function PaymentContent() {
           referenceNumber: purchase.referenceNumber,
           amount: purchase.totalAmount,
           currency: purchase.currency,
-          description: `Ticket purchase for UNITE Expo 2025`,
+          description: `Ticket purchase for CFC Events`,
           buyerName: purchase.buyerName,
           buyerEmail: purchase.buyerEmail,
           buyerPhone: purchase.buyerPhone || "",
