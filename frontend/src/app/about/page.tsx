@@ -8,18 +8,18 @@ export default function AboutPage() {
     <main className="bg-white dark:bg-gray-900">
       <HeroSection />
       <MissionSection />
-      <AboutExpoSection />
-      <ThematicAreasSection />
+      <PlatformSection />
+      <ServicesSection />
       <KeyFiguresSection />
-      <OrganizersSection />
-      <TimelineSection />
+      <EcosystemSection />
+      <HowItWorksSection />
       <CTASection />
     </main>
   );
 }
 
 // -------------------------------------------------------------------
-// Hero Section - redesigned to match homepage style
+// Hero Section
 // -------------------------------------------------------------------
 function HeroSection() {
   return (
@@ -32,8 +32,9 @@ function HeroSection() {
               About CFC Events
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Uganda&apos;s premier platform connecting international investors with
-              opportunities in one of Africa&apos;s most dynamic economies.
+              Empowering families for higher education success through events
+              that connect students with international universities,
+              scholarships, and opportunities worldwide.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" href="/about/mission-vision">
@@ -52,20 +53,30 @@ function HeroSection() {
           <div className="bg-gray-100 dark:bg-gray-700 p-6 border border-gray-200 dark:border-gray-600">
             <div className="p-8 bg-black text-white dark:bg-white dark:text-black relative">
               <div className="absolute top-0 right-0 w-16 h-16 bg-blue-600"></div>
-              <h2 className="text-2xl font-bold mb-4">July 7-14, 2025</h2>
-              <p className="mb-4">Kampala International Conference Centre</p>
-              <ul className="space-y-2">
-                <li className="flex items-center">
-                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3"></span>
-                  <span>300+ Exhibitors</span>
+              <h2 className="text-2xl font-bold mb-4">The CFC Ecosystem</h2>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3 mt-1 flex-shrink-0"></span>
+                  <span>
+                    Coins For College — Digital token economies for academic
+                    institutions
+                  </span>
                 </li>
-                <li className="flex items-center">
-                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3"></span>
-                  <span>20000+ Attendees</span>
+                <li className="flex items-start">
+                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3 mt-1 flex-shrink-0"></span>
+                  <span>
+                    Rewards For Education — 100% free student placement platform
+                  </span>
                 </li>
-                <li className="flex items-center">
-                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3"></span>
-                  <span>50+ Countries</span>
+                <li className="flex items-start">
+                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3 mt-1 flex-shrink-0"></span>
+                  <span>
+                    CFC Events — Education fairs, conferences, and livestreams
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-4 h-4 inline-block bg-yellow-500 mr-3 mt-1 flex-shrink-0"></span>
+                  <span>3 Guaranteed University Offers for every student</span>
                 </li>
               </ul>
             </div>
@@ -77,7 +88,7 @@ function HeroSection() {
 }
 
 // -------------------------------------------------------------------
-// Mission Section
+// Mission & Vision Section
 // -------------------------------------------------------------------
 function MissionSection() {
   return (
@@ -93,9 +104,10 @@ function MissionSection() {
               Our Mission & Vision
             </h2>
             <p className="text-lg mb-8 text-gray-600 dark:text-gray-300">
-              CFC Events aims to connect communities with impactful
-              conferences, workshops, and networking opportunities that
-              drive positive change.
+              Coins For College provides an equal opportunity for everyone to
+              access higher education, regardless of circumstance. We remove the
+              mental, financial, and academic barriers to college for all
+              students.
             </p>
             <Button
               variant="primary"
@@ -115,9 +127,10 @@ function MissionSection() {
                   Vision
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  To position Uganda as East Africa&apos;s leading investment hub,
-                  driving sustainable economic growth and creating prosperity
-                  for all Ugandans.
+                  A world where every student can access higher education
+                  regardless of their financial circumstances, powered by
+                  technology that aligns the incentives of universities,
+                  families, and students.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 border border-gray-200 dark:border-gray-600">
@@ -128,9 +141,9 @@ function MissionSection() {
                   Mission
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  To showcase Uganda&apos;s investment opportunities, connect
-                  international investors with local partners, and facilitate
-                  meaningful business relationships.
+                  To provide an equal opportunity for everyone to access higher
+                  education by removing the mental, financial, and academic
+                  barriers to college for all students.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 border border-gray-200 dark:border-gray-600">
@@ -141,8 +154,10 @@ function MissionSection() {
                   Values
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Integrity, transparency, inclusivity, sustainability, and
-                  excellence in all our operations and partnerships.
+                  Educational equity, transparency, student-first design, and
+                  zero-cost access — we are paid by our university partners for
+                  successful placements, ensuring our incentives are aligned with
+                  student success.
                 </p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 border border-gray-200 dark:border-gray-600">
@@ -153,8 +168,10 @@ function MissionSection() {
                   Impact
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  To catalyze $500M in new investments, create 10,000+ jobs, and
-                  establish 200+ international business partnerships by 2026.
+                  Scholarships up to $120,000, students applying to universities
+                  across 5+ countries (USA, UK, Canada, Germany, Australia), and
+                  3 guaranteed offers from international universities for every
+                  student.
                 </p>
               </div>
             </div>
@@ -166,9 +183,9 @@ function MissionSection() {
 }
 
 // -------------------------------------------------------------------
-// About Expo Section
+// About the Platform Section
 // -------------------------------------------------------------------
-function AboutExpoSection() {
+function PlatformSection() {
   return (
     <section className="py-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,73 +193,74 @@ function AboutExpoSection() {
           <div className="md:col-span-2">
             <span className="inline-block mb-3 h-1 w-16 bg-blue-600"></span>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-              Uganda&apos;s Premier Investment &amp; Trade Exhibition
+              Your Global Future Starts Here
             </h2>
             <div className="text-gray-600 dark:text-gray-300 space-y-4">
               <p>
-                CFC Events is a comprehensive event platform by
-                Coins For College, connecting communities with
-                impactful conferences, workshops, and sessions across
-                various fields.
+                CFC Events is the events arm of the Coins For College ecosystem.
+                We organize education fairs, university recruitment events,
+                scholarship expos, and virtual conferences that connect students
+                and families with international universities and educational
+                opportunities.
               </p>
               <p>
-                Organized by the Uganda Investment Authority in collaboration
-                with partners and organizations, CFC Events
-                serves as a platform for local and international
-                businesses to connect, collaborate, and explore investment
-                opportunities in Uganda.
+                Coins For College, founded in 2019, builds digital token
+                economies for academic institutions. Students earn Scholarship
+                Points from K-12 for academic performance and extracurricular
+                involvement. Parents accumulate Tuition Coins ($TUIT) for
+                supporting their children&apos;s education, which can be
+                redeemed toward college expenses.
               </p>
               <p>
-                The expo features exhibitions from key sectors including
-                agriculture, energy, manufacturing, ICT, tourism, and financial
-                services, as well as investment forums, B2B matchmaking
-                sessions, presentations on Uganda&apos;s investment incentives, and
-                networking opportunities with government and business leaders.
+                Rewards For Education (RFE), powered by College Coins, is our
+                100% free student platform that provides AI-powered tutoring,
+                visa documentation assistance, application management, language
+                proficiency training, and finance planning — all at zero cost to
+                students and families.
               </p>
               <p>
-                CFC Events is part of Coins For College&apos;s broader strategy to create
-                $5 billion in foreign direct investment by 2026, diversify the
-                economy, and create sustainable jobs for its growing population.
+                Through CFC Events, we bring this ecosystem to life with
+                in-person and virtual events where students meet university
+                representatives face-to-face, learn about scholarship
+                opportunities, and get hands-on help with their applications.
               </p>
             </div>
           </div>
           <div className="md:col-span-1">
             <div className="bg-black text-white dark:bg-white dark:text-black h-full p-6 border border-gray-200 dark:border-gray-600">
-              <h3 className="text-xl font-bold mb-6">Key Features</h3>
+              <h3 className="text-xl font-bold mb-6">What We Offer at Events</h3>
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <div className="bg-yellow-500 text-black h-8 w-8 flex items-center justify-center mr-3 flex-shrink-0">
                     <span>01</span>
                   </div>
-                  <span>Sector-specific investment showcases</span>
+                  <span>University recruitment and admissions guidance</span>
                 </li>
                 <li className="flex items-start">
                   <div className="bg-yellow-500 text-black h-8 w-8 flex items-center justify-center mr-3 flex-shrink-0">
                     <span>02</span>
                   </div>
-                  <span>
-                    High-level investment forums and policy discussions
-                  </span>
+                  <span>Scholarship and financial aid workshops</span>
                 </li>
                 <li className="flex items-start">
                   <div className="bg-yellow-500 text-black h-8 w-8 flex items-center justify-center mr-3 flex-shrink-0">
                     <span>03</span>
                   </div>
-                  <span>Structured B2B and B2G matchmaking sessions</span>
+                  <span>Visa documentation and application support</span>
                 </li>
                 <li className="flex items-start">
                   <div className="bg-yellow-500 text-black h-8 w-8 flex items-center justify-center mr-3 flex-shrink-0">
                     <span>04</span>
                   </div>
-                  <span>
-                    Site visits to special economic zones and industrial parks
-                  </span>
+                  <span>AI tutoring and language proficiency demos</span>
                 </li>
                 <li className="flex items-start">
                   <div className="bg-yellow-500 text-black h-8 w-8 flex items-center justify-center mr-3 flex-shrink-0">
                     <span>05</span>
                   </div>
-                  <span>Investment facilitation and aftercare services</span>
+                  <span>
+                    One-on-one sessions with university representatives
+                  </span>
                 </li>
               </ul>
             </div>
@@ -254,98 +272,14 @@ function AboutExpoSection() {
 }
 
 // -------------------------------------------------------------------
-// Thematic Areas Section
+// Services Section
 // -------------------------------------------------------------------
-function ThematicAreasSection() {
-  const thematicAreas = [
+function ServicesSection() {
+  const services = [
     {
-      title: "Agriculture & Agro-processing",
+      title: "AI-Powered Tutoring",
       description:
-        "Value addition in coffee, tea, dairy, fruits, and commercial farming opportunities.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Energy & Minerals",
-      description:
-        "Renewable energy, oil and gas, mining, and mineral beneficiation projects.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 10V3L4 14h7v7l9-11h-7z"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Manufacturing",
-      description:
-        "Light manufacturing, textiles, pharmaceuticals, and industrial park investments.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Tourism & Hospitality",
-      description:
-        "Luxury accommodation, adventure tourism, and cultural tourism investments.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "ICT & Innovation",
-      description:
-        "Tech hubs, BPO, software development, and digital infrastructure projects.",
+        "24/7 AI tutoring for Math, Science, and English with instant remedial lessons to help students prepare for university admissions.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -364,9 +298,9 @@ function ThematicAreasSection() {
       ),
     },
     {
-      title: "Infrastructure",
+      title: "Scholarship & Finance Planning",
       description:
-        "Transport, logistics, real estate, and urban development investments.",
+        "Connecting students to merit-based scholarships, financial aid, and university grants — with awards up to $120,000 per student.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -379,7 +313,103 @@ function ThematicAreasSection() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Visa Documentation",
+      description:
+        "Help compiling and organizing financial proofs, academic transcripts, and identity documents to get visa-ready.",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Language Training",
+      description:
+        "CEFR-aligned curriculum (A1\u2013C2) supporting 20+ languages, with exam-specific prep for IELTS, TOEFL, TestDaF, and DELF.",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Application Management",
+      description:
+        "Statement of Purpose builder with AI feedback, recommendation letter coordination, deadline tracking, and document version control.",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "University Matching",
+      description:
+        "3 guaranteed offers from international universities. We match students with the right institutions based on their profile, goals, and preferences.",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 14l9-5-9-5-9 5 9 5z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
           />
         </svg>
       ),
@@ -392,26 +422,26 @@ function ThematicAreasSection() {
         <div className="text-center mb-12">
           <span className="inline-block mb-3 h-1 w-16 bg-blue-600 mx-auto"></span>
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            Thematic Investment Areas
+            What Students Get — 100% Free
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            CFC Events focuses on key areas that represent our
-            greatest impact potential and strategic development priorities.
+            Every service on the Rewards For Education platform is completely
+            free. No subscription fees, no tutoring costs, no commissions.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {thematicAreas.map((area) => (
+          {services.map((service) => (
             <div
-              key={area.title}
+              key={service.title}
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600"
             >
               <div className="p-6">
-                <div className="text-yellow-500 mb-4">{area.icon}</div>
+                <div className="text-yellow-500 mb-4">{service.icon}</div>
                 <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-                  {area.title}
+                  {service.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {area.description}
+                  {service.description}
                 </p>
               </div>
             </div>
@@ -428,34 +458,34 @@ function ThematicAreasSection() {
 function KeyFiguresSection() {
   const figures = [
     {
-      value: "300+",
-      label: "Exhibitors",
-      description: "Representing key sectors of the economy",
+      value: "$120K",
+      label: "Maximum Scholarship",
+      description: "Award per student through university partnerships",
     },
     {
-      value: "5000+",
-      label: "Attendees",
-      description: "Business leaders, investors, and policymakers",
+      value: "3",
+      label: "Guaranteed Offers",
+      description: "University offers for every student on the platform",
     },
     {
-      value: "50+",
-      label: "Speakers",
-      description: "Global experts and thought leaders",
+      value: "20+",
+      label: "Languages",
+      description: "Supported for CEFR-aligned proficiency training",
     },
     {
-      value: "30+",
+      value: "5+",
       label: "Countries",
-      description: "International delegation participation",
+      description: "USA, UK, Canada, Germany, Australia and more",
     },
     {
-      value: "$1B+",
-      label: "Investment Potential",
-      description: "Projects and opportunities showcased",
+      value: "100%",
+      label: "Free",
+      description: "No fees, no commissions — free for all students",
     },
     {
-      value: "75+",
-      label: "B2B Events",
-      description: "Matchmaking and networking sessions",
+      value: "24/7",
+      label: "AI Tutoring",
+      description: "Always-available tutoring for Math, Science, and English",
     },
   ];
 
@@ -465,11 +495,10 @@ function KeyFiguresSection() {
         <div className="mb-12">
           <span className="inline-block mb-3 h-1 w-16 bg-yellow-500"></span>
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            CFC Events by the Numbers
+            By the Numbers
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            The scale and scope of East Africa&apos;s premier investment and trade
-            exhibition.
+            Real data from the Rewards For Education platform and CFC Events.
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -498,36 +527,30 @@ function KeyFiguresSection() {
 }
 
 // -------------------------------------------------------------------
-// Organizers Section
+// Ecosystem Section
 // -------------------------------------------------------------------
-function OrganizersSection() {
-  const organizers = [
+function EcosystemSection() {
+  const platforms = [
     {
-      name: "Uganda Investment Authority",
-      role: "Lead Organizer",
+      name: "Coins For College",
+      role: "Parent Company",
       description:
-        "Responsible for overall coordination and investment facilitation.",
-      logoPlaceholder: "UIA",
+        "Digital token economies for academic institutions. Students earn Scholarship Points, parents accumulate Tuition Coins ($TUIT) redeemable toward college expenses.",
+      logoPlaceholder: "CFC",
     },
     {
-      name: "Ministry of Trade, Industry & Cooperatives",
-      role: "Co-organizer",
-      description: "Provides policy guidance and international trade linkages.",
-      logoPlaceholder: "MTIC",
+      name: "Rewards For Education",
+      role: "Student Platform",
+      description:
+        "100% free platform providing AI tutoring, visa help, application management, language training, and scholarship matching — all funded by university partnerships.",
+      logoPlaceholder: "RFE",
     },
     {
-      name: "Private Sector Foundation Uganda",
-      role: "Strategic Partner",
+      name: "CFC Events",
+      role: "Events Platform",
       description:
-        "Represents private sector interests and business participation.",
-      logoPlaceholder: "PSFU",
-    },
-    {
-      name: "Uganda Export Promotion Board",
-      role: "Strategic Partner",
-      description:
-        "Facilitates export promotion and market access initiatives.",
-      logoPlaceholder: "UEPB",
+        "Education fairs, university recruitment events, scholarship expos, and virtual conferences connecting students with universities worldwide.",
+      logoPlaceholder: "Events",
     },
   ];
 
@@ -537,48 +560,39 @@ function OrganizersSection() {
         <div className="mb-12">
           <span className="inline-block mb-3 h-1 w-16 bg-blue-600"></span>
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            Organizing Partners
+            The CFC Ecosystem
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            CFC Events is a collaborative effort between organizations,
-            communities, and international partners.
+            Three platforms working together to make higher education accessible
+            for every student.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {organizers.map((org) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {platforms.map((platform) => (
             <div
-              key={org.name}
+              key={platform.name}
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600"
             >
               <div className="h-32 flex items-center justify-center bg-gray-100 dark:bg-gray-600">
                 <span className="text-3xl font-bold text-gray-400 dark:text-gray-400">
-                  {org.logoPlaceholder}
+                  {platform.logoPlaceholder}
                 </span>
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-1 text-gray-900 dark:text-white">
-                  {org.name}
+                  {platform.name}
                 </h3>
                 <div className="mb-2">
                   <Chip variant="primary" size="sm">
-                    {org.role}
+                    {platform.role}
                   </Chip>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {org.description}
+                  {platform.description}
                 </p>
               </div>
             </div>
           ))}
-        </div>
-        <div className="mt-8 text-center">
-          <Button
-            variant="primary"
-            buttonType="outline"
-            href="/about/mission-vision"
-          >
-            Learn More About Our Partners
-          </Button>
         </div>
       </div>
     </section>
@@ -586,33 +600,29 @@ function OrganizersSection() {
 }
 
 // -------------------------------------------------------------------
-// Timeline Section
+// How It Works Section
 // -------------------------------------------------------------------
-function TimelineSection() {
-  const timelineEvents = [
+function HowItWorksSection() {
+  const steps = [
     {
-      date: "March 15, 2025",
-      title: "Opening Ceremony",
+      title: "Join the Platform",
       description:
-        "Official opening by H.E. The President of Uganda with keynote speeches from government officials and dignitaries.",
+        "Sign up on Rewards For Education for free. No subscription fees, no hidden costs. Get your personalized roadmap to a global university.",
     },
     {
-      date: "March 16, 2025",
-      title: "Sector-Specific Investment Forums",
+      title: "Prepare & Learn",
       description:
-        "Parallel investment forums focusing on each thematic area with presentations and panel discussions.",
+        "Access AI tutoring, language training, and academic resources. Earn Scholarship Points for your progress through the Coins For College system.",
     },
     {
-      date: "March 17, 2025",
-      title: "B2B Matchmaking Day",
+      title: "Apply with Confidence",
       description:
-        "Structured business matchmaking sessions, site visits to industrial parks, and networking events.",
+        "Use the application manager to build your SOP, coordinate recommendation letters, and track deadlines. Get matched with universities that fit your profile.",
     },
     {
-      date: "March 18, 2025",
-      title: "Closing & Investment Announcements",
+      title: "Attend Events & Connect",
       description:
-        "Closing ceremony featuring investment commitment announcements and awards presentation.",
+        "Join CFC Events education fairs to meet university representatives face-to-face, attend scholarship workshops, and get hands-on admissions support.",
     },
   ];
 
@@ -622,32 +632,31 @@ function TimelineSection() {
         <div className="mb-12">
           <span className="inline-block mb-3 h-1 w-16 bg-yellow-500"></span>
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            Event Timeline
+            How It Works
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            Four days of investment opportunities, knowledge sharing, and
-            networking.
+            From sign-up to university admission — every step is supported.
           </p>
         </div>
         <div className="space-y-6">
-          {timelineEvents.map((event, index) => (
-            <div key={event.title} className="grid grid-cols-12 gap-4">
+          {steps.map((step, index) => (
+            <div key={step.title} className="grid grid-cols-12 gap-4">
               <div className="col-span-12 md:col-span-3">
                 <div className="flex items-center h-full">
                   <div className="bg-yellow-500 text-black p-3">
-                    <span className="font-bold">Day {index + 1}</span>
+                    <span className="font-bold">Step {index + 1}</span>
                   </div>
                   <div className="bg-black text-white dark:bg-white dark:text-black p-3 flex-grow">
-                    <span>{event.date}</span>
+                    <span>{step.title}</span>
                   </div>
                 </div>
               </div>
               <div className="col-span-12 md:col-span-9 border border-gray-200 dark:border-gray-600 p-6 bg-gray-50 dark:bg-gray-700">
                 <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-                  {event.title}
+                  {step.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  {event.description}
+                  {step.description}
                 </p>
               </div>
             </div>
@@ -659,31 +668,33 @@ function TimelineSection() {
 }
 
 // -------------------------------------------------------------------
-// CTA Section - styled to match homepage
+// CTA Section
 // -------------------------------------------------------------------
 function CTASection() {
   return (
     <section className="bg-black text-white dark:bg-white dark:text-black py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl md:text-5xl font-bold mb-6">
-          Be Part of Uganda&apos;s Economic Growth Story
+          Your Global Future Starts Here
         </h2>
         <p className="text-xl max-w-3xl mx-auto mb-10">
-          Join us at CFC Events and discover opportunities in
-          one of Africa&apos;s fastest-growing economies.
+          Everything you need to succeed — from AI tutoring and finance planning
+          to visa documentation assistance. 100% free for students and families.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button variant="primary" size="lg" href="/tickets">
-            Register Now
+          <Button variant="primary" size="lg" href="/events">
+            Browse Events
           </Button>
           <Button
             variant="light"
             buttonType="outline"
             size="lg"
-            href="/contact"
+            href="https://rewardsforeducation.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="border-white text-white dark:border-black dark:text-black"
           >
-            Become an Exhibitor
+            Join Rewards For Education
           </Button>
         </div>
       </div>

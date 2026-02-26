@@ -51,30 +51,36 @@ function HeroSection() {
               Our Mission & Vision
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Driving Uganda&apos;s economic transformation through strategic
-              investments and partnerships
+              Removing the mental, financial, and academic barriers to higher
+              education for all students.
             </p>
           </div>
           <div className="md:w-1/3 bg-black text-white dark:bg-white dark:text-black p-8 border border-gray-200 dark:border-gray-600">
             <div className="relative">
               <div className="absolute top-0 right-0 w-12 h-12 bg-blue-600"></div>
-              <h2 className="text-2xl font-bold mb-4">Strategic Goals</h2>
+              <h2 className="text-2xl font-bold mb-4">What We Stand For</h2>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <span className="w-2 h-2 inline-block bg-yellow-500 mt-2 mr-3 flex-shrink-0"></span>
-                  <span>$5B in new investments by 2026</span>
+                  <span>
+                    Equal access to higher education for every student
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 inline-block bg-yellow-500 mt-2 mr-3 flex-shrink-0"></span>
-                  <span>Create 50,000 new jobs</span>
+                  <span>
+                    Zero-cost services funded by university partnerships
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 inline-block bg-yellow-500 mt-2 mr-3 flex-shrink-0"></span>
-                  <span>Establish 200+ international partnerships</span>
+                  <span>
+                    Technology-driven student support from K-12 to college
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 inline-block bg-yellow-500 mt-2 mr-3 flex-shrink-0"></span>
-                  <span>Expand exports by 30%</span>
+                  <span>Global reach across 5+ destination countries</span>
                 </li>
               </ul>
             </div>
@@ -100,54 +106,53 @@ function MissionSection() {
             </h2>
             <div className="space-y-6 text-gray-600 dark:text-gray-300">
               <p className="text-lg">
-                CFC Events is dedicated to accelerating community
-                development by creating a dynamic platform that showcases
-                investment opportunities and facilitates meaningful
-                partnerships.
+                Coins For College provides an equal opportunity for everyone to
+                access higher education, regardless of circumstance. We remove
+                the mental, financial, and academic barriers to college for all
+                students.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-gray-200 dark:border-gray-600 p-4 bg-white dark:bg-gray-800">
                   <h3 className="font-bold text-black dark:text-white mb-2">
-                    Connecting Investors
+                    Connecting Students
                   </h3>
                   <p>
-                    Connecting international investors with high-potential
-                    opportunities across Uganda&apos;s diverse economy
+                    Connecting students with 3 guaranteed offers from
+                    international universities across the USA, UK, Canada,
+                    Germany, and Australia.
                   </p>
                 </div>
                 <div className="border border-gray-200 dark:border-gray-600 p-4 bg-white dark:bg-gray-800">
                   <h3 className="font-bold text-black dark:text-white mb-2">
-                    Showcasing Uganda
+                    Removing Barriers
                   </h3>
                   <p>
-                    Showcasing Uganda&apos;s competitive advantages and strategic
-                    position in the East African Community
+                    Every service is 100% free — no platform fees, no tutoring
+                    costs, no commissions. We are paid by university partners for
+                    successful placements.
                   </p>
                 </div>
                 <div className="border border-gray-200 dark:border-gray-600 p-4 bg-white dark:bg-gray-800">
                   <h3 className="font-bold text-black dark:text-white mb-2">
-                    Facilitating Partnerships
+                    Empowering Families
                   </h3>
                   <p>
-                    Facilitating meaningful partnerships between foreign
-                    investors and local businesses
+                    Parents accumulate Tuition Coins ($TUIT) by supporting their
+                    children&apos;s education. Students earn Scholarship Points
+                    from K-12 for academic and extracurricular achievements.
                   </p>
                 </div>
                 <div className="border border-gray-200 dark:border-gray-600 p-4 bg-white dark:bg-gray-800">
                   <h3 className="font-bold text-black dark:text-white mb-2">
-                    Knowledge Transfer
+                    Technology-Driven
                   </h3>
                   <p>
-                    Promoting knowledge transfer and capacity building through
-                    networking and dialogue
+                    AI-powered tutoring available 24/7, CEFR-aligned language
+                    training in 20+ languages, and smart application management
+                    with AI feedback on Statements of Purpose.
                   </p>
                 </div>
               </div>
-              <p>
-                Through CFC Events, we aim to create a vibrant marketplace
-                of ideas, opportunities, and connections that will drive
-                investment, job creation, and prosperity across Uganda.
-              </p>
             </div>
           </div>
           <div className="md:col-span-5">
@@ -156,25 +161,29 @@ function MissionSection() {
                 <div className="absolute top-0 right-0 w-16 h-16 bg-blue-600"></div>
                 <h3 className="text-2xl font-bold mb-6">Our Commitment</h3>
                 <p className="mb-6">
-                  We are committed to positioning Uganda as a premier investment
-                  destination by:
+                  We are committed to making higher education accessible for
+                  every student by:
                 </p>
                 <ul className="space-y-4">
                   <li className="flex items-start">
                     <span className="w-4 h-4 inline-block bg-yellow-500 mt-1 mr-3 flex-shrink-0"></span>
-                    <span>Supporting Uganda Vision 2040</span>
+                    <span>
+                      Supporting students from K-12 through university admission
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-4 h-4 inline-block bg-yellow-500 mt-1 mr-3 flex-shrink-0"></span>
-                    <span>Building an inclusive economy</span>
+                    <span>
+                      Building digital token economies that fund scholarships
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-4 h-4 inline-block bg-yellow-500 mt-1 mr-3 flex-shrink-0"></span>
-                    <span>Promoting sustainable development</span>
+                    <span>Aligning university and student incentives</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-4 h-4 inline-block bg-yellow-500 mt-1 mr-3 flex-shrink-0"></span>
-                    <span>Facilitating regional integration</span>
+                    <span>Making higher education accessible globally</span>
                   </li>
                 </ul>
               </div>
@@ -199,25 +208,25 @@ function VisionSection() {
               <div className="absolute top-0 right-0 w-16 h-16 bg-blue-600"></div>
               <h3 className="text-3xl font-bold mb-6">Our Vision</h3>
               <p className="text-xl mb-6">
-                A Prosperous and Globally Integrated Uganda
+                Accessible Higher Education for All
               </p>
               <div className="w-32 h-1 bg-yellow-500 mb-8"></div>
               <p>
-                We envision Uganda as a thriving investment destination and a
-                key player in the global economy, leveraging its strategic
-                position, abundant resources, and entrepreneurial spirit.
+                A world where every student can access higher education —
+                regardless of financial circumstance — powered by technology that
+                makes the process transparent, supported, and free.
               </p>
             </div>
           </div>
           <div>
             <span className="inline-block mb-3 h-1 w-16 bg-yellow-500"></span>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-              Our Vision for Uganda
+              What We&apos;re Building Toward
             </h2>
             <div className="space-y-6 text-gray-600 dark:text-gray-300">
               <p className="text-lg">
-                We envision Uganda as a thriving investment destination and a
-                key player in the global economy, where:
+                We envision a future where access to higher education is not
+                determined by financial circumstance:
               </p>
               <div className="space-y-4">
                 <div className="flex items-start">
@@ -226,9 +235,10 @@ function VisionSection() {
                   </div>
                   <p>
                     <span className="font-bold text-black dark:text-white">
-                      Strategic investments
+                      Every student
                     </span>{" "}
-                    drive sustainable growth across all sectors of the economy
+                    has access to international university offers with full
+                    support
                   </p>
                 </div>
                 <div className="flex items-start">
@@ -237,9 +247,10 @@ function VisionSection() {
                   </div>
                   <p>
                     <span className="font-bold text-black dark:text-white">
-                      Ugandan businesses
+                      Financial barriers
                     </span>{" "}
-                    are competitive regionally and globally
+                    are eliminated through scholarships up to $120,000 and
+                    zero-cost services
                   </p>
                 </div>
                 <div className="flex items-start">
@@ -248,9 +259,10 @@ function VisionSection() {
                   </div>
                   <p>
                     <span className="font-bold text-black dark:text-white">
-                      Economic opportunities
+                      Families are empowered
                     </span>{" "}
-                    are accessible to all Ugandans
+                    through digital token systems that reward educational
+                    engagement
                   </p>
                 </div>
                 <div className="flex items-start">
@@ -259,9 +271,9 @@ function VisionSection() {
                   </div>
                   <p>
                     <span className="font-bold text-black dark:text-white">
-                      Innovation and technology
+                      Universities and students
                     </span>{" "}
-                    adoption accelerate development
+                    are connected through a model where incentives are aligned
                   </p>
                 </div>
                 <div className="flex items-start">
@@ -270,17 +282,17 @@ function VisionSection() {
                   </div>
                   <p>
                     <span className="font-bold text-black dark:text-white">
-                      Uganda serves
+                      Technology
                     </span>{" "}
-                    as a model for sustainable and inclusive economic growth in
-                    Africa
+                    removes friction from every step — tutoring, applications,
+                    visas, and language prep
                   </p>
                 </div>
               </div>
               <p>
-                CFC Events contributes to this vision by creating a
-                platform where investment meets opportunity, ideas meet
-                resources, and global markets meet local enterprise.
+                CFC Events brings this vision to life through education fairs,
+                university recruitment events, and conferences that connect
+                students directly with opportunities.
               </p>
             </div>
           </div>
@@ -296,9 +308,9 @@ function VisionSection() {
 function ValuesSection() {
   const values = [
     {
-      title: "Integrity",
+      title: "Educational Equity",
       description:
-        "We uphold the highest standards of integrity and transparency in all our interactions, providing trustworthy information and facilitating honest connections.",
+        "Equal opportunity for everyone to access higher education, regardless of circumstance. No student should be left behind because of finances.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -317,9 +329,9 @@ function ValuesSection() {
       ),
     },
     {
-      title: "Innovation",
+      title: "Transparency",
       description:
-        "We embrace creative and forward-thinking approaches to showcase Uganda's potential and connect stakeholders in meaningful ways.",
+        "No hidden fees. No commissions. We are paid by our university partners for successful placements, ensuring our incentives are aligned with student success.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -332,15 +344,42 @@ function ValuesSection() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M13 10V3L4 14h7v7l9-11h-7z"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
           />
         </svg>
       ),
     },
     {
-      title: "Inclusivity",
+      title: "Student-First",
       description:
-        "We create opportunities for all stakeholders, regardless of size or sector, ensuring diverse participation and representation.",
+        "Every tool, every feature, every event is designed around what families need most. We build based on what students and parents ask for.",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Accessibility",
+      description:
+        "100% free for all students and families. AI tutoring, visa help, application management, language training, and scholarship matching — all included.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -359,9 +398,9 @@ function ValuesSection() {
       ),
     },
     {
-      title: "Collaboration",
+      title: "Innovation",
       description:
-        "We foster a spirit of partnership and teamwork, believing that together we can achieve greater impact and success.",
+        "From blockchain-based Scholarship Points and Tuition Coins to AI-powered tutoring and SOP builders — we use technology to solve real problems.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -374,36 +413,15 @@ function ValuesSection() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
           />
         </svg>
       ),
     },
     {
-      title: "Impact",
+      title: "Global Reach",
       description:
-        "We are committed to delivering real, measurable results that contribute to Uganda's economic development and prosperity.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Sustainability",
-      description:
-        "We promote investments and partnerships that are environmentally responsible, socially beneficial, and economically viable in the long term.",
+        "Students applying to universities across USA (45%), UK (30%), Canada (12%), Germany (8%), and Australia (5%) — with support for 20+ languages.",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -432,8 +450,8 @@ function ValuesSection() {
             Our Core Values
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            The principles that guide everything we do at CFC Events, informing
-            our decisions and actions
+            The principles behind everything we build at Coins For College and
+            Rewards For Education.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -466,7 +484,7 @@ function ValuesSection() {
 }
 
 // -------------------------------------------------------------------
-// Core Principles Section
+// Guiding Principles Section
 // -------------------------------------------------------------------
 function CorePrinciplesSection() {
   return (
@@ -479,15 +497,16 @@ function CorePrinciplesSection() {
               Guiding Principles
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-              Beyond our core values, these operational principles shape how we
-              execute our mission and work toward our vision.
+              How we operate day-to-day across CFC Events and Rewards For
+              Education.
             </p>
             <div className="bg-black text-white dark:bg-white dark:text-black p-6 border border-gray-200 dark:border-gray-600">
-              <h3 className="text-xl font-bold mb-4">Strategic Direction</h3>
+              <h3 className="text-xl font-bold mb-4">Real Outcomes</h3>
               <p>
-                By adhering to these principles, CFC Events aims to be more
-                than an event—we strive to be a catalyst for lasting economic
-                transformation in Uganda.
+                These principles ensure that CFC Events and Rewards For
+                Education deliver real outcomes — not just information, but
+                actual university offers, real scholarships, and tangible
+                support.
               </p>
             </div>
           </div>
@@ -501,9 +520,8 @@ function CorePrinciplesSection() {
                   Results-Oriented
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  We prioritize tangible outcomes over process, constantly
-                  measuring and evaluating our impact against concrete goals and
-                  targets.
+                  3 guaranteed offers from international universities. We measure
+                  success by student placements, not just engagement.
                 </p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-6">
@@ -511,12 +529,11 @@ function CorePrinciplesSection() {
                   <span className="bg-yellow-500 text-black h-8 w-8 inline-flex items-center justify-center mr-3">
                     02
                   </span>
-                  Client-Centered
+                  Aligned Incentives
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  We put the needs of investors, exhibitors, and attendees at
-                  the center of our planning and execution, ensuring value for
-                  all stakeholders.
+                  We are paid by university partners for successful placements.
+                  This means our success is directly tied to student success.
                 </p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-6">
@@ -527,9 +544,9 @@ function CorePrinciplesSection() {
                   Data-Driven
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  We base our decisions on solid research, market intelligence,
-                  and feedback, continuously refining our approach for maximum
-                  effectiveness.
+                  Real-time insights into student preferences, popular
+                  destinations, and family needs. We build tools based on what
+                  the community asks for.
                 </p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-6">
@@ -537,12 +554,11 @@ function CorePrinciplesSection() {
                   <span className="bg-yellow-500 text-black h-8 w-8 inline-flex items-center justify-center mr-3">
                     04
                   </span>
-                  Long-Term Focus
+                  End-to-End Support
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  We design our programs for lasting impact, focusing on
-                  investments and partnerships that will deliver sustained
-                  benefits beyond the expo itself.
+                  From AI tutoring and language prep to visa documentation and
+                  application management — every step of the journey is covered.
                 </p>
               </div>
             </div>
@@ -563,43 +579,44 @@ function CTASection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Share Our Vision for Uganda&apos;s Future
+              Start Your Journey
             </h2>
             <p className="text-lg mb-8">
-              Join us at CFC Events and be part of our community&apos;s
-              transformation story. Together, we can build a more prosperous and
-              globally integrated Uganda.
+              Everything you need to succeed, in one platform. Visa, finance,
+              academics, language, and application support — all 100% free.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button variant="primary" size="lg" href="/tickets">
-                Register Now
+              <Button variant="primary" size="lg" href="/events">
+                Browse Events
               </Button>
               <Button
                 variant="light"
                 buttonType="outline"
                 size="lg"
-                href="/about"
+                href="https://rewardsforeducation.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="border-white text-white dark:border-black dark:text-black"
               >
-                Meet Our Team
+                Join Rewards For Education
               </Button>
             </div>
           </div>
           <div className="bg-white text-black dark:bg-black dark:text-white p-8 border border-gray-200 dark:border-gray-600">
             <div className="relative p-6">
               <div className="absolute top-0 right-0 w-16 h-16 bg-blue-600"></div>
-              <h3 className="text-2xl font-bold mb-6">Strategic Partnership</h3>
+              <h3 className="text-2xl font-bold mb-6">The CFC Ecosystem</h3>
               <p className="mb-6">
-                CFC Events offers more than event space—we provide a
-                comprehensive platform for building lasting relationships and
-                creating real business opportunities.
+                Coins For College, Rewards For Education, and CFC Events work
+                together to provide end-to-end support — from K-12 Scholarship
+                Points to university admission and beyond.
               </p>
               <div className="flex items-center">
                 <Link
-                  href="/contact"
+                  href="/about"
                   className="flex items-center text-black dark:text-white hover:text-yellow-500 dark:hover:text-yellow-500 font-medium"
                 >
-                  <span>Inquire About Partnerships</span>
+                  <span>Learn More About Us</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="ml-2 h-5 w-5"
