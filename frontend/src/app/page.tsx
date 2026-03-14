@@ -35,7 +35,8 @@ async function getFeaturedEvent() {
     ].join("&");
 
     const res = await fetchAPI(
-      `/events?filters[isFeatured][$eq]=true&filters[StartDate][$gte]=${now}&sort=StartDate:asc&pagination[limit]=1&${populate}`
+      `/events?filters[isFeatured][$eq]=true&filters[StartDate][$gte]=${now}&sort=StartDate:asc&pagination[limit]=1&${populate}`,
+      { next: { revalidate: 60 } }
     );
     return res?.data?.[0] ?? null;
   } catch {
@@ -47,7 +48,8 @@ async function getUpcomingEvents() {
   try {
     const now = new Date().toISOString();
     const res = await fetchAPI(
-      `/events?filters[StartDate][$gte]=${now}&populate=*&sort=StartDate:asc&pagination[limit]=4`
+      `/events?filters[StartDate][$gte]=${now}&populate=*&sort=StartDate:asc&pagination[limit]=4`,
+      { next: { revalidate: 60 } }
     );
     return res?.data ?? [];
   } catch {
