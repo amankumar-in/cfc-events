@@ -158,7 +158,7 @@ export default function ContactPage() {
                     value={form.phone}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="+256 700 000 000"
+                    placeholder="+1 (202) 555-1234"
                   />
                 </div>
                 <div>

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const {
       reference, // Unique order reference from your system
       amount, // Payment amount
-      currency = "UGX", // Currency code (default UGX)
+      currency = "USD", // Currency code (default USD)
       description, // Order description
       callbackUrl, // URL to redirect after payment
       cancellationUrl, // URL to redirect on cancellation (optional)
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       customerName, // Customer name
       customerEmail, // Customer email
       customerPhone, // Customer phone
-      customerCountry = "UG", // Customer country code (default UG)
+      customerCountry = "US", // Customer country code (default US)
       branchName, // Branch name (optional)
       redirectMode = "TOP_WINDOW", // TOP_WINDOW or PARENT_WINDOW
     } = body;

@@ -129,7 +129,7 @@ function HeroSection() {
               CFC Events Tickets
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Secure your place at Uganda&apos;s premier investment and trade expo
+              Secure your place at CFC&apos;s premier higher education events
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="primary" href="#tickets">

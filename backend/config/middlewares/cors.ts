@@ -4,8 +4,7 @@ export default {
     "http://localhost:3000",
     "http://localhost:1337",
     "http://192.168.1.19:3000", // Add your IP address + port
-    "https://ugandanext.com",
-    "https://unite-frontend.onrender.com",
+    "https://events.coinsforcollege.org",
     "https://meea.coinsforcollege.org",
     "https://mea.coinsforcollege.org",
     "https://meea.onrender.com",

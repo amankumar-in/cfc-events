@@ -51,15 +51,15 @@ export default function PDFTestComponent() {
       const ticketData = {
         ticketNumber: "TIX-12345-6789",
         eventName: "CFC EVENTS",
-        eventTagline: "Uganda Next Investment & Trade Expo",
+        eventTagline: "Empowering Higher Education Access",
         attendeeName: "John Doe",
         attendeeEmail: "john.doe@example.com",
-        attendeePhone: "+256 123 456 789",
-        ticketCategory: "Business Pass",
+        attendeePhone: "+1 (202) 555-0100",
+        ticketCategory: "General Admission",
         validFrom: "May 15, 2025",
         validUntil: "May 17, 2025",
-        price: "50,000 UGX",
-        eventLocation: "Kampala International Convention Centre, Uganda",
+        price: "$50.00 USD",
+        eventLocation: "Washington, DC",
       };
 
       // Define the document definition
@@ -370,7 +370,7 @@ export default function PDFTestComponent() {
             <div className="bg-blue-900 text-white py-3 px-5">
               <h3 className="font-bold text-xl">CFC EVENTS</h3>
               <p className="text-xs text-gray-300">
-                Uganda Next Investment & Trade Expo
+                Empowering Higher Education Access
               </p>
             </div>
 
@@ -379,14 +379,14 @@ export default function PDFTestComponent() {
               <div className="mb-6">
                 <h4 className="text-lg font-bold">John Doe</h4>
                 <p className="text-sm text-gray-600">john.doe@example.com</p>
-                <p className="text-sm text-gray-600">+256 123 456 789</p>
+                <p className="text-sm text-gray-600">+1 (202) 555-0100</p>
               </div>
 
               {/* First row of info */}
               <div className="grid grid-cols-3 gap-6 mb-6">
                 <div>
                   <p className="text-xs text-gray-500">TICKET TYPE</p>
-                  <p className="text-sm">Business Pass</p>
+                  <p className="text-sm">General Admission</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">TICKET #</p>
@@ -394,7 +394,7 @@ export default function PDFTestComponent() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">PRICE</p>
-                  <p className="text-sm">50,000 UGX</p>
+                  <p className="text-sm">$50.00 USD</p>
                 </div>
               </div>
 
@@ -426,7 +426,7 @@ export default function PDFTestComponent() {
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>
                 <span className="text-xs text-gray-600 italic">
-                  Kampala International Convention Centre, Uganda
+                  Washington, DC
                 </span>
               </div>
 

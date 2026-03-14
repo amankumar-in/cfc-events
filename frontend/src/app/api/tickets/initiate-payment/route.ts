@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
       billing_address: {
         email_address: buyerEmail || "",
         phone_number: buyerPhone || "",
-        country_code: "UG", // Default to Uganda
+        country_code: "US", // Default to United States
         first_name: firstName,
         middle_name: "",
         last_name: lastName,

@@ -269,7 +269,7 @@ export default function BuyTicketContent() {
       console.log("Creating purchase with data:", {
         referenceNumber,
         totalAmount,
-        currency: ticketCategory?.currency || "UGX",
+        currency: ticketCategory?.currency || "USD",
         paymentStatus: "pending",
         purchaseDate: new Date().toISOString(),
         buyerName: formData.buyerName,
@@ -284,7 +284,7 @@ export default function BuyTicketContent() {
           data: {
             referenceNumber,
             totalAmount,
-            currency: ticketCategory?.currency || "UGX",
+            currency: ticketCategory?.currency || "USD",
             paymentStatus: "pending",
             purchaseDate: new Date().toISOString(),
             buyerName: formData.buyerName,
@@ -356,7 +356,7 @@ export default function BuyTicketContent() {
             body: JSON.stringify({
               referenceNumber,
               amount: totalAmount,
-              currency: ticketCategory?.currency || "UGX",
+              currency: ticketCategory?.currency || "USD",
               description: `${eventName} - ${ticketCategory?.name}`,
               buyerName: formData.buyerName,
               buyerEmail: formData.buyerEmail,

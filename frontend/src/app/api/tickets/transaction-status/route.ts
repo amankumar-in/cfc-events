@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         description: "Free ticket processed successfully",
         paymentAccount: "",
         merchantReference: orderMerchantReference,
-        currency: "UGX",
+        currency: "USD",
         message: "Free ticket transaction completed successfully",
       });
     }

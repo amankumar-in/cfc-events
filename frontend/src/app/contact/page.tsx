@@ -149,7 +149,7 @@ function HeroSection() {
               <Button
                 variant="dark"
                 buttonType="outline"
-                href="tel:+256700000000"
+                href="tel:+12025551234"
                 className="dark:border-white dark:text-white"
               >
                 Call Us
@@ -179,7 +179,7 @@ function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold">Email</p>
-                    <p>info@uniteexpo.org</p>
+                    <p>info@coinsforcollege.org</p>
                   </div>
                 </li>
                 <li className="flex items-start">
@@ -200,7 +200,7 @@ function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold">Phone</p>
-                    <p>+256 700 000 000</p>
+                    <p>+1 (202) 555-1234</p>
                   </div>
                 </li>
                 <li className="flex items-start">
@@ -227,8 +227,8 @@ function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold">Address</p>
-                    <p>Plot 123, Kampala Road</p>
-                    <p>Kampala, Uganda</p>
+                    <p>1234 Education Lane</p>
+                    <p>Washington, DC 20001</p>
                   </div>
                 </li>
               </ul>
@@ -249,8 +249,8 @@ function ContactOptionsSection() {
       title: "General Inquiries",
       description:
         "Have questions about the expo? Our team is ready to assist you.",
-      email: "info@uniteexpo.org",
-      phone: "+256 700 000 000",
+      email: "info@coinsforcollege.org",
+      phone: "+1 (202) 555-1234",
       icon: (
         <svg
           className="w-6 h-6"
@@ -271,8 +271,8 @@ function ContactOptionsSection() {
       title: "Sponsorship Opportunities",
       description:
         "Interested in sponsoring CFC Events? Explore our sponsorship packages.",
-      email: "sponsors@uniteexpo.org",
-      phone: "+256 700 000 001",
+      email: "sponsors@coinsforcollege.org",
+      phone: "+1 (202) 555-1235",
       icon: (
         <svg
           className="w-6 h-6"
@@ -293,8 +293,8 @@ function ContactOptionsSection() {
       title: "Media & Press",
       description:
         "For media inquiries, press passes, and promotional materials.",
-      email: "media@uniteexpo.org",
-      phone: "+256 700 000 002",
+      email: "media@coinsforcollege.org",
+      phone: "+1 (202) 555-1236",
       icon: (
         <svg
           className="w-6 h-6"
@@ -649,7 +649,7 @@ function ContactFormSection({
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
                   Our office is open Monday through Friday, 9:00 AM to 5:00 PM
-                  (EAT).
+                  (EST).
                 </p>
               </div>
 
@@ -681,8 +681,8 @@ function ContactFormSection({
                       <p className="font-medium text-black dark:text-white">
                         CFC Events Headquarters
                       </p>
-                      <p>Plot 123, Kampala Road</p>
-                      <p>Kampala, Uganda</p>
+                      <p>1234 Education Lane</p>
+                      <p>Washington, DC 20001</p>
                     </div>
                   </div>
 
@@ -706,7 +706,7 @@ function ContactFormSection({
                       <p className="font-medium text-black dark:text-white">
                         Main Phone
                       </p>
-                      <p>+256 700 000 000</p>
+                      <p>+1 (202) 555-1234</p>
                     </div>
                   </div>
 
@@ -730,7 +730,7 @@ function ContactFormSection({
                       <p className="font-medium text-black dark:text-white">
                         Email
                       </p>
-                      <p>info@uniteexpo.org</p>
+                      <p>info@coinsforcollege.org</p>
                     </div>
                   </div>
                 </div>
@@ -739,7 +739,7 @@ function ContactFormSection({
               {/* Map Embed */}
               <div className="h-64 w-full border-b border-gray-200 dark:border-gray-600">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7575293756577!2d32.573971299999994!3d0.316619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbb0afbb1ae1d%3A0x3c240fcd8cc8df7!2sKampala%20Rd%2C%20Kampala%2C%20Uganda!5e0!3m2!1sen!2sus!4v1649919564388!5m2!1sen!2sus"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3105.1530703876844!2d-77.0368707!3d38.9071923!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89b7b7bcdecbb1df%3A0x715969d86d0b76bf!2sWashington%2C%20DC!5e0!3m2!1sen!2sus!4v1649919564388!5m2!1sen!2sus"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -780,7 +780,7 @@ function SocialMediaSection() {
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-3xl mx-auto mb-8">
           <a
-            href="https://twitter.com/uniteexpo"
+            href="https://twitter.com/coinsforcollege"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-white dark:border-black p-4 h-16 flex items-center justify-center hover:bg-yellow-500 hover:text-black hover:border-yellow-500 dark:hover:bg-yellow-500 dark:hover:text-black dark:hover:border-yellow-500 transition-colors"
@@ -792,7 +792,7 @@ function SocialMediaSection() {
           </a>
 
           <a
-            href="https://facebook.com/uniteexpo"
+            href="https://facebook.com/coinsforcollege"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-white dark:border-black p-4 h-16 flex items-center justify-center hover:bg-yellow-500 hover:text-black hover:border-yellow-500 dark:hover:bg-yellow-500 dark:hover:text-black dark:hover:border-yellow-500 transition-colors"
@@ -808,7 +808,7 @@ function SocialMediaSection() {
           </a>
 
           <a
-            href="https://instagram.com/uniteexpo"
+            href="https://instagram.com/coinsforcollege"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-white dark:border-black p-4 h-16 flex items-center justify-center hover:bg-yellow-500 hover:text-black hover:border-yellow-500 dark:hover:bg-yellow-500 dark:hover:text-black dark:hover:border-yellow-500 transition-colors"
@@ -824,7 +824,7 @@ function SocialMediaSection() {
           </a>
 
           <a
-            href="https://linkedin.com/company/uniteexpo"
+            href="https://linkedin.com/company/coinsforcollege"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-white dark:border-black p-4 h-16 flex items-center justify-center hover:bg-yellow-500 hover:text-black hover:border-yellow-500 dark:hover:bg-yellow-500 dark:hover:text-black dark:hover:border-yellow-500 transition-colors"
@@ -836,7 +836,7 @@ function SocialMediaSection() {
           </a>
 
           <a
-            href="https://youtube.com/uniteexpo"
+            href="https://youtube.com/coinsforcollege"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-white dark:border-black p-4 h-16 flex items-center justify-center hover:bg-yellow-500 hover:text-black hover:border-yellow-500 dark:hover:bg-yellow-500 dark:hover:text-black dark:hover:border-yellow-500 transition-colors"

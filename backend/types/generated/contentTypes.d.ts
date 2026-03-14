@@ -978,7 +978,7 @@ export interface ApiTicketCategoryTicketCategory
       Schema.Attribute.Private;
     currency: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'UGX'>;
+      Schema.Attribute.DefaultTo<'USD'>;
     description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     grantsFullEventAccess: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
@@ -1031,7 +1031,7 @@ export interface ApiTicketPurchaseTicketPurchase
       Schema.Attribute.Private;
     currency: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'UGX'>;
+      Schema.Attribute.DefaultTo<'USD'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1118,7 +1118,7 @@ export interface ApiVenueVenue extends Struct.CollectionTypeSchema {
     City: Schema.Attribute.String & Schema.Attribute.Required;
     Country: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'Uganda'>;
+      Schema.Attribute.DefaultTo<'United States'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
           
           <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #6b7280;">
             <p>© 2025 CFC Events. All rights reserved.</p>
-            <p>Kampala International Convention Centre, Uganda</p>
+            <p>CFC Events - Coins For College</p>
           </div>
         </div>
       `,

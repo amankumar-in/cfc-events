@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
           paymentStatus: "COMPLETED",
           paymentMethod: "Test Method",
           amount: 100,
-          currency: "UGX",
+          currency: "USD",
         };
       } else {
         // Get real payment status from Pesapal
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
           paymentStatus: "COMPLETED",
           paymentMethod: "Test Method",
           amount: 100,
-          currency: "UGX",
+          currency: "USD",
         };
       } else {
         // Get real payment status from Pesapal

@@ -41,7 +41,7 @@
     "Country": {
       "type": "string",
       "required": true,
-      "default": "Uganda"
+      "default": "United States"
     },
     "Phone": {
       "type": "string"

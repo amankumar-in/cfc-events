@@ -21,7 +21,7 @@
     "currency": {
       "type": "string",
       "required": true,
-      "default": "UGX"
+      "default": "USD"
     },
     "paymentStatus": {
       "type": "enumeration",
