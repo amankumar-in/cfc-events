@@ -21,6 +21,12 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { CollegeMarquee } from "@/components/ui/CollegeMarquee";
+import { FinancialPreparedness } from "@/components/home/FinancialPreparedness";
+import { VisaPreparedness } from "@/components/home/VisaPreparedness";
+import { AdmissionRequirements } from "@/components/home/AdmissionRequirements";
+import { ComePrepared } from "@/components/home/ComePrepared";
+import { DataPrivacy } from "@/components/home/DataPrivacy";
+import { OnlinePrograms } from "@/components/home/OnlinePrograms";
 
 // ── Data Fetching ────────────────────────────────────────────────────
 
@@ -257,6 +263,24 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── 3b. Financial Preparedness — Accordion layout ────────── */}
+      <FinancialPreparedness eventSlug={eventSlug} />
+
+      {/* ── 3c. Visa Preparedness — Timeline + checklist layout ──── */}
+      <VisaPreparedness />
+
+      {/* ── 3d. Admission Requirements — Tabbed panels layout ───── */}
+      <AdmissionRequirements eventSlug={eventSlug} />
+
+      {/* ── 3e. Come Prepared — Bold statement cards on dark bg ──── */}
+      <ComePrepared />
+
+      {/* ── 3f. Data Privacy — Numbered icon steps layout ────────── */}
+      <DataPrivacy />
+
+      {/* ── 3g. Online Programs — Split image + Q&A layout ──────── */}
+      <OnlinePrograms />
 
       {/* ── 4. Featured Speakers ──────────────────────────────────── */}
       {speakers.length > 0 && (
