@@ -9,7 +9,6 @@ import {
   Globe,
   GraduationCap,
   Clock,
-  Monitor,
   ChevronRight,
   ExternalLink,
   ShieldCheck,

@@ -11,7 +11,6 @@ import {
   HelpCircle,
   MessageSquare,
   Target,
-  ChevronRight,
 } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────

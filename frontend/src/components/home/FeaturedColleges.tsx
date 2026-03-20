@@ -1,8 +1,7 @@
 import { fetchFeaturedColleges } from "@/lib/api/colleges";
 import { getStrapiURL } from "@/lib/api/api-config";
-import { Chip } from "@/components/ui/Chip";
 import { Button } from "@/components/ui/Button";
-import { ChevronRight, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 import Link from "next/link";
 import { getProgramImage } from "@/lib/utils/program-images";
 
