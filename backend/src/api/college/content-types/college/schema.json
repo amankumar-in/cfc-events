@@ -1,0 +1,94 @@
+{
+  "kind": "collectionType",
+  "collectionName": "colleges",
+  "info": {
+    "singularName": "college",
+    "pluralName": "colleges",
+    "displayName": "College"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Name",
+      "required": true
+    },
+    "ShortName": {
+      "type": "string"
+    },
+    "Logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "BannerImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "ShortDescription": {
+      "type": "text",
+      "required": true
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "Website": {
+      "type": "string"
+    },
+    "City": {
+      "type": "string"
+    },
+    "Country": {
+      "type": "string",
+      "default": "United States"
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "public",
+        "private"
+      ]
+    },
+    "Accreditation": {
+      "type": "text"
+    },
+    "Featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "SortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "Faculty": {
+      "type": "component",
+      "repeatable": true,
+      "component": "college.faculty"
+    },
+    "programs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::program.program",
+      "mappedBy": "college"
+    },
+    "events": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::event.event",
+      "inversedBy": "colleges"
+    }
+  }
+}

@@ -27,6 +27,7 @@ import { AdmissionRequirements } from "@/components/home/AdmissionRequirements";
 import { ComePrepared } from "@/components/home/ComePrepared";
 import { DataPrivacy } from "@/components/home/DataPrivacy";
 import { OnlinePrograms } from "@/components/home/OnlinePrograms";
+import { FeaturedColleges } from "@/components/home/FeaturedColleges";
 
 // ── Data Fetching ────────────────────────────────────────────────────
 
@@ -168,6 +169,9 @@ export default async function HomePage() {
         <div className="absolute bottom-0 right-0 w-24 h-24 bg-yellow-500 opacity-80" />
         <div className="absolute top-12 right-24 w-12 h-12 bg-blue-500 opacity-60" />
       </section>
+
+      {/* ── 1b. Featured Colleges & Programs ──────────────────── */}
+      <FeaturedColleges />
 
       {/* ── 2. Stats Strip ────────────────────────────────────────── */}
       <section className="py-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">

@@ -148,6 +148,18 @@
       "relation": "oneToMany",
       "target": "api::ticket.ticket",
       "mappedBy": "event"
+    },
+    "colleges": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::college.college",
+      "mappedBy": "events"
+    },
+    "programs": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::program.program",
+      "mappedBy": "events"
     }
   }
 }

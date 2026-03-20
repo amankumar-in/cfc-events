@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_program_testimonial_items",
+  "info": {
+    "displayName": "Testimonial Item",
+    "icon": "message-circle",
+    "description": "A student or alumni testimonial"
+  },
+  "options": {},
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Role": {
+      "type": "string",
+      "required": true
+    },
+    "Quote": {
+      "type": "text",
+      "required": true
+    },
+    "Photo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

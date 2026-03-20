@@ -402,6 +402,51 @@ export interface ApiChatMessageChatMessage extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCollegeCollege extends Struct.CollectionTypeSchema {
+  collectionName: 'colleges';
+  info: {
+    displayName: 'College';
+    pluralName: 'colleges';
+    singularName: 'college';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Accreditation: Schema.Attribute.Text;
+    BannerImage: Schema.Attribute.Media<'images'>;
+    City: Schema.Attribute.String;
+    Country: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'United States'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Blocks;
+    events: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
+    Faculty: Schema.Attribute.Component<'college.faculty', true>;
+    Featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::college.college'
+    > &
+      Schema.Attribute.Private;
+    Logo: Schema.Attribute.Media<'images'>;
+    Name: Schema.Attribute.String & Schema.Attribute.Required;
+    programs: Schema.Attribute.Relation<'oneToMany', 'api::program.program'>;
+    publishedAt: Schema.Attribute.DateTime;
+    ShortDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    ShortName: Schema.Attribute.String;
+    Slug: Schema.Attribute.UID<'Name'> & Schema.Attribute.Required;
+    SortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    Type: Schema.Attribute.Enumeration<['public', 'private']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Website: Schema.Attribute.String;
+  };
+}
+
 export interface ApiContactMessageContactMessage
   extends Struct.CollectionTypeSchema {
   collectionName: 'contact_messages';
@@ -509,6 +554,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
       ]
     > &
       Schema.Attribute.Required;
+    colleges: Schema.Attribute.Relation<'manyToMany', 'api::college.college'>;
     contactMessages: Schema.Attribute.Relation<
       'oneToMany',
       'api::contact-message.contact-message'
@@ -533,6 +579,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::organizer.organizer'
     >;
+    programs: Schema.Attribute.Relation<'manyToMany', 'api::program.program'>;
     publishedAt: Schema.Attribute.DateTime;
     sessions: Schema.Attribute.Relation<'oneToMany', 'api::session.session'>;
     ShortDescription: Schema.Attribute.Text & Schema.Attribute.Required;
@@ -729,6 +776,78 @@ export interface ApiOtpVerificationOtpVerification
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     verified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+  };
+}
+
+export interface ApiProgramProgram extends Struct.CollectionTypeSchema {
+  collectionName: 'programs';
+  info: {
+    displayName: 'Program';
+    pluralName: 'programs';
+    singularName: 'program';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    AdmissionImage: Schema.Attribute.Media<'images'>;
+    AdmissionRequirements: Schema.Attribute.Blocks;
+    ApplicationDeadline: Schema.Attribute.String;
+    ApplicationURL: Schema.Attribute.String;
+    BannerImage: Schema.Attribute.Media<'images'>;
+    CareerImage: Schema.Attribute.Media<'images'>;
+    CareerOutcomes: Schema.Attribute.Blocks;
+    CareerPaths: Schema.Attribute.Component<'program.career-path', true>;
+    college: Schema.Attribute.Relation<'manyToOne', 'api::college.college'>;
+    Courses: Schema.Attribute.Component<'program.course-item', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Credits: Schema.Attribute.String;
+    Curriculum: Schema.Attribute.Blocks;
+    CurriculumImage: Schema.Attribute.Media<'images'>;
+    DegreeLevel: Schema.Attribute.Enumeration<
+      ['associate', 'bachelor', 'master', 'doctorate', 'certificate', 'diploma']
+    > &
+      Schema.Attribute.Required;
+    Duration: Schema.Attribute.String;
+    events: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
+    FAQ: Schema.Attribute.Blocks;
+    Featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    FieldOfStudy: Schema.Attribute.String & Schema.Attribute.Required;
+    FinancialAidInfo: Schema.Attribute.Text;
+    Format: Schema.Attribute.Enumeration<['online', 'on-campus', 'hybrid']> &
+      Schema.Attribute.DefaultTo<'on-campus'>;
+    Highlights: Schema.Attribute.Component<'program.highlight-item', true>;
+    Image: Schema.Attribute.Media<'images'>;
+    Language: Schema.Attribute.String & Schema.Attribute.DefaultTo<'English'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::program.program'
+    > &
+      Schema.Attribute.Private;
+    Name: Schema.Attribute.String & Schema.Attribute.Required;
+    Overview: Schema.Attribute.Blocks;
+    OverviewImage: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    ShortDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    SkillsYouWillGain: Schema.Attribute.Text;
+    Slug: Schema.Attribute.UID<'Name'> & Schema.Attribute.Required;
+    SortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    StartDate: Schema.Attribute.String;
+    Stats: Schema.Attribute.Component<'program.stat-highlight', true>;
+    Tags: Schema.Attribute.Text;
+    TestimonialItems: Schema.Attribute.Component<
+      'program.testimonial-item',
+      true
+    >;
+    Testimonials: Schema.Attribute.Blocks;
+    Tuition: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    WhatYouWillLearn: Schema.Attribute.Blocks;
   };
 }
 
@@ -1664,6 +1783,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::chat-message.chat-message': ApiChatMessageChatMessage;
+      'api::college.college': ApiCollegeCollege;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::entitlement.entitlement': ApiEntitlementEntitlement;
       'api::event.event': ApiEventEvent;
@@ -1672,6 +1792,7 @@ declare module '@strapi/strapi' {
       'api::organization.organization': ApiOrganizationOrganization;
       'api::organizer.organizer': ApiOrganizerOrganizer;
       'api::otp-verification.otp-verification': ApiOtpVerificationOtpVerification;
+      'api::program.program': ApiProgramProgram;
       'api::session-attendance.session-attendance': ApiSessionAttendanceSessionAttendance;
       'api::session-audit-log.session-audit-log': ApiSessionAuditLogSessionAuditLog;
       'api::session.session': ApiSessionSession;

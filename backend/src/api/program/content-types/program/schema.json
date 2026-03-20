@@ -1,0 +1,189 @@
+{
+  "kind": "collectionType",
+  "collectionName": "programs",
+  "info": {
+    "singularName": "program",
+    "pluralName": "programs",
+    "displayName": "Program"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Name",
+      "required": true
+    },
+    "ShortDescription": {
+      "type": "text",
+      "required": true
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "BannerImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "DegreeLevel": {
+      "type": "enumeration",
+      "enum": [
+        "associate",
+        "bachelor",
+        "master",
+        "doctorate",
+        "certificate",
+        "diploma"
+      ],
+      "required": true
+    },
+    "FieldOfStudy": {
+      "type": "string",
+      "required": true
+    },
+    "Tags": {
+      "type": "text"
+    },
+    "Duration": {
+      "type": "string"
+    },
+    "Format": {
+      "type": "enumeration",
+      "enum": [
+        "online",
+        "on-campus",
+        "hybrid"
+      ],
+      "default": "on-campus"
+    },
+    "Language": {
+      "type": "string",
+      "default": "English"
+    },
+    "Credits": {
+      "type": "string"
+    },
+    "StartDate": {
+      "type": "string"
+    },
+    "ApplicationDeadline": {
+      "type": "string"
+    },
+    "Tuition": {
+      "type": "string"
+    },
+    "FinancialAidInfo": {
+      "type": "text"
+    },
+    "Overview": {
+      "type": "blocks"
+    },
+    "OverviewImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "WhatYouWillLearn": {
+      "type": "blocks"
+    },
+    "SkillsYouWillGain": {
+      "type": "text"
+    },
+    "Curriculum": {
+      "type": "blocks"
+    },
+    "CurriculumImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "AdmissionRequirements": {
+      "type": "blocks"
+    },
+    "AdmissionImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "CareerOutcomes": {
+      "type": "blocks"
+    },
+    "CareerImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "Testimonials": {
+      "type": "blocks"
+    },
+    "FAQ": {
+      "type": "blocks"
+    },
+    "Highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.highlight-item"
+    },
+    "Courses": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.course-item"
+    },
+    "TestimonialItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.testimonial-item"
+    },
+    "Stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.stat-highlight"
+    },
+    "CareerPaths": {
+      "type": "component",
+      "repeatable": true,
+      "component": "program.career-path"
+    },
+    "ApplicationURL": {
+      "type": "string"
+    },
+    "Featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "SortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "college": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::college.college",
+      "inversedBy": "programs"
+    },
+    "events": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::event.event",
+      "inversedBy": "programs"
+    }
+  }
+}

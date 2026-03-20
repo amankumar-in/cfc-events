@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_program_stat_highlights",
+  "info": {
+    "displayName": "Stat Highlight",
+    "icon": "trending-up",
+    "description": "A key statistic or metric for the program"
+  },
+  "options": {},
+  "attributes": {
+    "Value": {
+      "type": "string",
+      "required": true
+    },
+    "Label": {
+      "type": "string",
+      "required": true
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

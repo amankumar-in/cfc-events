@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_college_faculties",
+  "info": {
+    "displayName": "Faculty",
+    "icon": "user",
+    "description": "Faculty member of a college"
+  },
+  "options": {},
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Designation": {
+      "type": "string",
+      "required": true
+    },
+    "Department": {
+      "type": "string"
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

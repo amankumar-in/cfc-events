@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_program_career_paths",
+  "info": {
+    "displayName": "Career Path",
+    "icon": "briefcase",
+    "description": "A career outcome with title and salary"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "SalaryRange": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "text"
+    }
+  }
+}

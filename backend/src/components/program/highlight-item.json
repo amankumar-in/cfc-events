@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_program_highlight_items",
+  "info": {
+    "displayName": "Highlight Item",
+    "icon": "check-circle",
+    "description": "A key differentiator or selling point"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}
