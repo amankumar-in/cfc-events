@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { getStrapiURL } from "@/lib/api/api-config";
+import { getProgramSectionImage } from "@/lib/utils/program-images";
 import {
   BookOpen,
   Briefcase,
@@ -124,24 +125,13 @@ function renderBlocks(blocks: Block[] | undefined | null) {
   });
 }
 
-// ── Section fallback images ───────────────────────────────────────────
-
-const sectionFallbacks: Record<string, string> = {
-  overview: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop&q=80",
-  curriculum: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=500&fit=crop&q=80",
-  admissions: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&h=500&fit=crop&q=80",
-  careers: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=500&fit=crop&q=80",
-};
-
-function getSectionImage(section: string, image?: { url: string } | null): string {
-  if (image?.url) return getStrapiURL(image.url);
-  return sectionFallbacks[section] || sectionFallbacks.overview;
-}
+// Section images now handled by getProgramSectionImage from program-images.ts
 
 // ── Component ─────────────────────────────────────────────────────────
 
 interface ProgramTabsProps {
   program: {
+    Slug?: string;
     Overview?: Block[];
     OverviewImage?: { url: string } | null;
     WhatYouWillLearn?: Block[];
@@ -170,6 +160,7 @@ interface Tab {
 }
 
 export function ProgramTabs({ program }: ProgramTabsProps) {
+  const slug = program.Slug || "";
   const tabs: Tab[] = [];
 
   const hasHighlights = program.Highlights && program.Highlights.length > 0;
@@ -207,7 +198,7 @@ export function ProgramTabs({ program }: ProgramTabsProps) {
                 <div className="lg:col-span-2">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
-                      src={getSectionImage("overview", program.OverviewImage)}
+                      src={getProgramSectionImage(slug, "overview", program.OverviewImage)}
                       alt=""
                       className="w-full h-full object-cover"
                     />
@@ -379,7 +370,7 @@ export function ProgramTabs({ program }: ProgramTabsProps) {
               <div className="lg:col-span-2">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img
-                    src={getSectionImage("curriculum", program.CurriculumImage)}
+                    src={getProgramSectionImage(slug, "curriculum", program.CurriculumImage)}
                     alt=""
                     className="w-full h-full object-cover"
                   />
@@ -411,7 +402,7 @@ export function ProgramTabs({ program }: ProgramTabsProps) {
           <div className="lg:col-span-2">
             <div className="relative aspect-[4/3] overflow-hidden mb-6">
               <img
-                src={getSectionImage("admissions", program.AdmissionImage)}
+                src={getProgramSectionImage(slug, "admissions", program.AdmissionImage)}
                 alt=""
                 className="w-full h-full object-cover"
               />
@@ -459,7 +450,7 @@ export function ProgramTabs({ program }: ProgramTabsProps) {
                 <div className="lg:col-span-2">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
-                      src={getSectionImage("careers", program.CareerImage)}
+                      src={getProgramSectionImage(slug, "careers", program.CareerImage)}
                       alt=""
                       className="w-full h-full object-cover"
                     />

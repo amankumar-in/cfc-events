@@ -10,6 +10,7 @@ import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/components/auth/useAuth";
 import { useActiveEvent } from "@/components/layout/ActiveEventContext";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const platformNavItems = [
   { name: "All Events", href: "/events" },
@@ -114,6 +115,7 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
                     Sign In
                   </Button>
                 )}
+                <ThemeToggle />
               </div>
             </div>
 
@@ -224,6 +226,9 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
                     >
                       All Events
                     </Link>
+                    <div className="flex justify-center py-4">
+                      <ThemeToggle />
+                    </div>
                   </div>
                 </nav>
               </>
@@ -252,6 +257,9 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
                       {item.name}
                     </NavigationLink>
                   ))}
+                  <div className="flex justify-center py-4">
+                    <ThemeToggle />
+                  </div>
                 </nav>
               </>
             )}
