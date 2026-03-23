@@ -1,0 +1,92 @@
+diff --git a/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.js b/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.js
+index fcfe06d..4d2d6d4 100644
+--- a/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.js
++++ b/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.js
+@@ -7,7 +7,10 @@ function getFilenameFromURL(url) {
+     return new URL(url).pathname.split('/').pop();
+ }
+ const urlsToAssets = async (urls)=>{
+-    const assetPromises = urls.map((url)=>fetch(url).then(async (res)=>{
++    const assetPromises = urls.map(async (url)=>{
++        try {
++            // Try direct browser fetch first
++            const res = await fetch(url);
+             const blob = await res.blob();
+             const loadedFile = new File([
+                 blob
+@@ -20,7 +23,28 @@ const urlsToAssets = async (urls)=>{
+                 mime: res.headers.get('content-type'),
+                 rawFile: loadedFile
+             };
+-        }));
++        } catch (e) {
++            // CORS failed — use server-side proxy endpoint
++            const proxyRes = await fetch('/api/upload-from-url', {
++                method: 'POST',
++                headers: { 'Content-Type': 'application/json' },
++                body: JSON.stringify({ url }),
++            });
++            if (!proxyRes.ok) throw new Error('Server-side fetch failed');
++            const uploaded = await proxyRes.json();
++            const file = Array.isArray(uploaded) ? uploaded[0] : uploaded;
++            // Fetch the uploaded file back from Strapi to create a rawFile
++            const fileRes = await fetch(file.url);
++            const blob = await fileRes.blob();
++            const loadedFile = new File([blob], file.name, { type: file.mime });
++            return {
++                name: file.name,
++                url: file.url,
++                mime: file.mime,
++                rawFile: loadedFile
++            };
++        }
++    });
+     // Retrieve the assets metadata
+     const assetsResults = await Promise.all(assetPromises);
+     const assets = assetsResults.map((fullFilledAsset)=>({
+diff --git a/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.mjs b/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.mjs
+index 7d4eb18..2ffb6ac 100644
+--- a/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.mjs
++++ b/node_modules/@strapi/upload/dist/admin/utils/urlsToAssets.mjs
+@@ -5,7 +5,10 @@ function getFilenameFromURL(url) {
+     return new URL(url).pathname.split('/').pop();
+ }
+ const urlsToAssets = async (urls)=>{
+-    const assetPromises = urls.map((url)=>fetch(url).then(async (res)=>{
++    const assetPromises = urls.map(async (url)=>{
++        try {
++            // Try direct browser fetch first
++            const res = await fetch(url);
+             const blob = await res.blob();
+             const loadedFile = new File([
+                 blob
+@@ -18,7 +21,28 @@ const urlsToAssets = async (urls)=>{
+                 mime: res.headers.get('content-type'),
+                 rawFile: loadedFile
+             };
+-        }));
++        } catch (e) {
++            // CORS failed — use server-side proxy endpoint
++            const proxyRes = await fetch('/api/upload-from-url', {
++                method: 'POST',
++                headers: { 'Content-Type': 'application/json' },
++                body: JSON.stringify({ url }),
++            });
++            if (!proxyRes.ok) throw new Error('Server-side fetch failed');
++            const uploaded = await proxyRes.json();
++            const file = Array.isArray(uploaded) ? uploaded[0] : uploaded;
++            // Fetch the uploaded file back from Strapi to create a rawFile
++            const fileRes = await fetch(file.url);
++            const blob = await fileRes.blob();
++            const loadedFile = new File([blob], file.name, { type: file.mime });
++            return {
++                name: file.name,
++                url: file.url,
++                mime: file.mime,
++                rawFile: loadedFile
++            };
++        }
++    });
+     // Retrieve the assets metadata
+     const assetsResults = await Promise.all(assetPromises);
+     const assets = assetsResults.map((fullFilledAsset)=>({
