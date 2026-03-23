@@ -23,6 +23,7 @@ interface Program {
   Tuition?: string;
   Featured: boolean;
   Image?: { url: string };
+  BannerImage?: { url: string };
   college?: College;
 }
 
@@ -31,7 +32,7 @@ interface Program {
 async function getAllPrograms() {
   try {
     const res = await fetchAPI(
-      `/programs?populate[Image]=true&populate[college][populate][0]=Logo&sort=SortOrder:asc&pagination[limit]=100`,
+      `/programs?populate[Image]=true&populate[BannerImage]=true&populate[college][populate][0]=Logo&sort=SortOrder:asc&pagination[limit]=100`,
       { next: { revalidate: 60 } }
     );
     return (res?.data ?? []) as Program[];
