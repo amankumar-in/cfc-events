@@ -5,7 +5,8 @@ const collegeDeepPopulate = [
   "populate[BannerImage]=true",
   "populate[Faculty][populate][0]=Image",
   "populate[programs][populate][0]=Image",
-  "populate[programs][populate][1]=college",
+  "populate[programs][populate][1]=BannerImage",
+  "populate[programs][populate][2]=college",
   "populate[events][populate]=*",
 ].join("&");
 
