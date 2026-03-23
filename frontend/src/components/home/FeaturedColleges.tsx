@@ -18,6 +18,7 @@ interface Program {
   Format?: string;
   Featured: boolean;
   Image?: { url: string };
+  BannerImage?: { url: string };
 }
 
 interface College {

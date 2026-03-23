@@ -27,6 +27,7 @@ interface Program {
   Tuition?: string;
   Featured: boolean;
   Image?: { url: string } | null;
+  BannerImage?: { url: string } | null;
   college?: College;
 }
 

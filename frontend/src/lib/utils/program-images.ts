@@ -112,9 +112,23 @@ const defaultCollegeBanner =
 
 export function getProgramImage(program: {
   Image?: { url: string } | null;
+  BannerImage?: { url: string } | null;
   Slug?: string;
   FieldOfStudy?: string;
 }): string {
+  if (program.Image?.url) return getStrapiURL(program.Image.url);
+  if (program.BannerImage?.url) return getStrapiURL(program.BannerImage.url);
+  if (program.Slug && slugImages[program.Slug]) return slugImages[program.Slug];
+  return fieldImages[program.FieldOfStudy || ""] || defaultImage;
+}
+
+export function getProgramBannerImage(program: {
+  BannerImage?: { url: string } | null;
+  Image?: { url: string } | null;
+  Slug?: string;
+  FieldOfStudy?: string;
+}): string {
+  if (program.BannerImage?.url) return getStrapiURL(program.BannerImage.url);
   if (program.Image?.url) return getStrapiURL(program.Image.url);
   if (program.Slug && slugImages[program.Slug]) return slugImages[program.Slug];
   return fieldImages[program.FieldOfStudy || ""] || defaultImage;

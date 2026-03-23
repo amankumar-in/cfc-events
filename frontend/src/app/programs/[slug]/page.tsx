@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { fetchProgramBySlug } from "@/lib/api/programs";
 import { getStrapiURL } from "@/lib/api/api-config";
-import { getProgramImage } from "@/lib/utils/program-images";
+import { getProgramBannerImage } from "@/lib/utils/program-images";
 import { ProgramTabs } from "@/components/program/ProgramTabs";
 import { Chip } from "@/components/ui/Chip";
 import { Button } from "@/components/ui/Button";
@@ -135,7 +135,7 @@ export default async function ProgramDetailPage({
       <section className="relative bg-gray-900 text-white">
         <div className="absolute inset-0 overflow-hidden">
           <img
-            src={getProgramImage(program)}
+            src={getProgramBannerImage(program)}
             alt=""
             className="w-full h-full object-cover"
           />
