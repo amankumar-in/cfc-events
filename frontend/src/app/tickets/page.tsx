@@ -156,7 +156,7 @@ function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold">Early Bird Ends</p>
-                    <p>May 31, 2025</p>
+                    <p>August 31, 2026</p>
                   </div>
                 </li>
                 <li className="flex items-start">
@@ -165,7 +165,7 @@ function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold">General Registration</p>
-                    <p>May 1 - June 28, 2025</p>
+                    <p>August 1 - October 31, 2026</p>
                   </div>
                 </li>
                 <li className="flex items-start">
@@ -174,7 +174,7 @@ function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold">Event Dates</p>
-                    <p>July 7-14, 2025</p>
+                    <p>November 2-4, 2026</p>
                   </div>
                 </li>
               </ul>

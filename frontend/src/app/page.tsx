@@ -96,7 +96,7 @@ export default async function HomePage() {
         month: "long",
         day: "numeric",
       })
-    : "June 15, 2026";
+    : "November 2, 2026";
   const eventLocation = featuredEvent?.Location || "Online (Virtual)";
 
   return (

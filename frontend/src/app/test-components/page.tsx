@@ -249,7 +249,7 @@ export default function TestComponentsPage() {
               <div className="p-4 bg-white border border-gray-300 inline-block">
                 <div className="flex items-center gap-2">
                   <Logo forceMode="light" />
-                  <Chip variant="primary">2025</Chip>
+                  <Chip variant="primary">2026</Chip>
                 </div>
               </div>
             </div>
@@ -269,7 +269,7 @@ export default function TestComponentsPage() {
               <div className="p-4 bg-white border border-gray-300 inline-block">
                 <div className="flex items-center gap-2">
                   <Logo forceMode="light" />
-                  <Chip variant="outline">2025</Chip>
+                  <Chip variant="outline">2026</Chip>
                 </div>
               </div>
             </div>
