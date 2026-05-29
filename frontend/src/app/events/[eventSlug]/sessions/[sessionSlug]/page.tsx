@@ -20,6 +20,56 @@ import { getStrapiURL } from "@/lib/api/api-config";
 import Link from "next/link";
 import { VenueDetail, VenueDetailData } from "@/components/venue/VenueDetail";
 
+interface BlockChild {
+  type: string;
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+  children?: BlockChild[];
+}
+
+interface Block {
+  type: string;
+  level?: number;
+  children?: BlockChild[];
+}
+
+function renderBlockText(children: BlockChild[]): React.ReactNode[] {
+  return children.map((child, i) => {
+    let node: React.ReactNode = child.text ?? "";
+    if (child.bold) node = <strong key={i}>{node}</strong>;
+    if (child.italic) node = <em key={i}>{node}</em>;
+    return node;
+  });
+}
+
+function renderBlocks(blocks: Block[]) {
+  return blocks.map((block, i) => {
+    const content = block.children ? renderBlockText(block.children) : null;
+    if (block.type === "heading") {
+      return (
+        <h3 key={i} className="text-xl font-bold mt-6 mb-3 text-gray-900 dark:text-white">
+          {content}
+        </h3>
+      );
+    }
+    if (block.type === "list") {
+      return (
+        <ul key={i} className="list-disc list-inside mb-4 space-y-1">
+          {block.children?.map((item, j) => (
+            <li key={j}>{item.children ? renderBlockText(item.children) : item.text}</li>
+          ))}
+        </ul>
+      );
+    }
+    return (
+      <p key={i} className="mb-4 leading-relaxed">
+        {content}
+      </p>
+    );
+  });
+}
+
 export default function SessionDetailPage({
   params,
 }: {
@@ -113,6 +163,9 @@ function SessionContent({
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  const descriptionBlocks = session.Description as Block[] | undefined;
+  const hasDescription = Array.isArray(descriptionBlocks) && descriptionBlocks.length > 0;
 
   const canJoin = status === "live" && (format === "virtual" || format === "hybrid") && roomUrl;
 
@@ -390,13 +443,20 @@ function SessionContent({
       )}
 
       {/* Session description */}
-      {session.ShortDescription && (
+      {(session.ShortDescription || hasDescription) && (
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="prose dark:prose-invert max-w-3xl">
-              <p className="text-lg text-gray-600 dark:text-gray-300">
-                {String(session.ShortDescription)}
-              </p>
+              {session.ShortDescription && (
+                <p className="text-lg text-gray-600 dark:text-gray-300 font-medium mb-6">
+                  {String(session.ShortDescription)}
+                </p>
+              )}
+              {hasDescription && (
+                <div className="text-gray-700 dark:text-gray-300">
+                  {renderBlocks(descriptionBlocks!)}
+                </div>
+              )}
             </div>
           </div>
         </section>
