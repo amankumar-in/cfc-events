@@ -82,7 +82,9 @@ export default function VenuePage() {
                 {event.Location}
               </h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Detailed venue information will be announced soon.
+                {event.Location?.toLowerCase().includes("online") || event.Location?.toLowerCase().includes("virtual")
+                  ? "This is a virtual event. You will join the sessions online directly from this platform."
+                  : "Detailed venue information will be announced soon."}
               </p>
             </div>
           )}
